@@ -18,7 +18,7 @@ int main()
         ctx.background(p6::NamedColor::Blue);
         ctx.circle(
             p6::Center{ctx.mouse()},
-            p6::Radius{0.2f}
+            p6::Radius{0.05f}
         );
     };
 
