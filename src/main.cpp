@@ -8,6 +8,8 @@ int main()
 {
     Boid boid{glm::vec2(0, 0), glm::vec2(0.01, 0.01)};
 
+    Boid boi{glm::vec2(0.8, 0.5), glm::vec2(0.005, 0.001)};
+
     // Run the tests
     if (doctest::Context{}.run() != 0)
         return EXIT_FAILURE;
@@ -30,7 +32,10 @@ int main()
         //     p6::Radius{0.05f}
         // );
         boid.draw(ctx);
-        boid.move();
+        boid.move(ctx);
+
+        boi.draw(ctx);
+        boi.move(ctx);
     };
 
     // Should be done last. It starts the infinite loop.

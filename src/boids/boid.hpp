@@ -13,8 +13,8 @@ public:
         : m_coord(coord), m_direction(direction) {}
 
     // Methods
-    void move();
-    void comeBack();
+    void move(p6::Context& ctx);
+    void comeBack(p6::Context& ctx);
     void draw(p6::Context& ctx);
 
     //  //Behaviour

@@ -1,34 +1,33 @@
 #include "boid.hpp"
+#include <cstdlib>
 #include <iostream>
 
-void Boid::move()
+void Boid::move(p6::Context& ctx)
 {
     m_coord += m_direction;
-    comeBack();
+    comeBack(ctx);
 }
 
-void Boid::comeBack()
+void Boid::comeBack(p6::Context& ctx)
 {
     constexpr float eps = 0.02;
-    // if (m_coord[0] > ctx.aspect_ratio() || m_coord[0] < -ctx.aspect_ratio())
-
-    // if (m_coord[0] - ctx.aspect_ratio() < 0.02)
-    // {
-    //     this->m_direction = -this->m_direction;
-    // }
-    // if (m_coord[0])
 
     if (1 - m_coord[1] < eps)
     {
-        m_direction = -m_direction;
+        m_direction[1] = -m_direction[1];
     }
     if (1 + m_coord[1] < -eps)
     {
-        m_direction = -m_direction;
+        m_direction[1] = -m_direction[1];
     }
-
-    // si coor-bord< Epsilon alors
-    // direction = -direction
+    if (ctx.aspect_ratio() - m_coord[0] < eps)
+    {
+        m_direction[0] = -m_direction[0];
+    }
+    if (-ctx.aspect_ratio() - m_coord[0] > eps)
+    {
+        m_direction[0] = -m_direction[0];
+    }
 }
 
 void Boid::draw(p6::Context& ctx)
