@@ -5,12 +5,17 @@
 #include "doctest/doctest.h"
 #include "p6/p6.h"
 
-
 int main()
 {
-    Boid boid{glm::vec2(0, 0), glm::vec2(0.001, 0.001)};
+    // TODO : changer la direction pour qu'elle soit aléatoire
+    Boid              comparaison{glm::vec2(0, 0), glm::vec2(0.001, 0.001)};
+    std::vector<Boid> boids;
 
-    Boid boi{glm::vec2(0.1, 0.2), glm::vec2(0.005, 0.001)};
+    for (int i = 0; i < 1; i++)
+    {
+        Boid test{glm::vec2(0, 0), glm::vec2(0.001 * -(double)(i % 2), 0.001 * (double)(i % 4))};
+        boids.push_back(test);
+    }
 
     // Run the tests
     if (doctest::Context{}.run() != 0)
@@ -33,11 +38,14 @@ int main()
         //     p6::Center{boid.coord()}, // center = m_coord de mon boid
         //     p6::Radius{0.05f}
         // );
-        boid.draw(ctx);
-        boid.move(ctx);
 
-        boi.draw(ctx);
-        boi.move(ctx);
+        for (Boid& b : boids)
+        {
+            b.draw(ctx);
+            b.move(ctx);
+        }
+        comparaison.draw(ctx);
+        comparaison.move(ctx);
     };
 
     // Should be done last. It starts the infinite loop.

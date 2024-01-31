@@ -10,7 +10,7 @@ private:
     float     _size = 0.05f;
 
 public:
-    Boid(glm::vec2 coord, glm::vec2 direction = p6::random::direction())
+    Boid(const glm::vec2& coord, const glm::vec2& direction = p6::random::direction())
         : _coord(coord), _direction(direction) {}
 
     // Methods
