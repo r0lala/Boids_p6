@@ -17,6 +17,7 @@ public:
     void move(p6::Context& ctx);
     void comeBack(p6::Context& ctx);
     void draw(p6::Context& ctx);
+    void collide(Boid& other);
 
     //  //Behaviour
     // Cohesion

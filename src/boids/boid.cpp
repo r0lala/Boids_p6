@@ -8,6 +8,18 @@ void Boid::move(p6::Context& ctx)
     comeBack(ctx);
 }
 
+void Boid::collide(Boid& other)
+{
+    if (std::abs(_coord[0] - other._coord[0]) < 2. * _size
+        && std::abs(_coord[1] - other._coord[1]) < 2. * _size)
+    {
+        _direction[1]       = -_direction[1];
+        other._direction[1] = -other._direction[1];
+    }
+}
+
+// TODO change direction aléatoire
+
 void Boid::comeBack(p6::Context& ctx)
 {
     constexpr float eps    = 0.02; // TODO comparaison de float

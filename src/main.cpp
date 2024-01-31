@@ -11,10 +11,10 @@ int main()
     Boid              comparaison{glm::vec2(0, 0), glm::vec2(0.001, 0.001)};
     std::vector<Boid> boids;
 
-    for (int i = 0; i < 1; i++)
+    for (int i = 0; i < 7; i++)
     {
-        Boid test{glm::vec2(0, 0), glm::vec2(0.001 * -(double)(i % 2), 0.001 * (double)(i % 4))};
-        boids.push_back(test);
+        glm::vec2 direction = glm::vec2(0.001 * -(double)(i % 2) + 0.001, 0.001 * (double)(i) + 0.001);
+        boids.push_back(Boid(glm::vec2(0.1, 0.1), direction));
     }
 
     // Run the tests
@@ -43,6 +43,7 @@ int main()
         {
             b.draw(ctx);
             b.move(ctx);
+            comparaison.collide(b);
         }
         comparaison.draw(ctx);
         comparaison.move(ctx);
