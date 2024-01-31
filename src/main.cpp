@@ -1,14 +1,16 @@
 #include <cstdlib>
 #include "boids/boid.hpp"
 #define DOCTEST_CONFIG_IMPLEMENT
+#include <vector>
 #include "doctest/doctest.h"
 #include "p6/p6.h"
 
+
 int main()
 {
-    Boid boid{glm::vec2(0, 0), glm::vec2(0.01, 0.01)};
+    Boid boid{glm::vec2(0, 0), glm::vec2(0.001, 0.001)};
 
-    Boid boi{glm::vec2(0.8, 0.5), glm::vec2(0.005, 0.001)};
+    Boid boi{glm::vec2(0.1, 0.2), glm::vec2(0.005, 0.001)};
 
     // Run the tests
     if (doctest::Context{}.run() != 0)
@@ -21,7 +23,7 @@ int main()
     // Declare your infinite update loop.
     ctx.update = [&]() {
         // ctx.background(p6::NamedColor::Blue);
-        ctx.square(p6::Center{0., 0.}, p6::Radius{0.3f}, p6::Rotation{0.011_turn});
+        ctx.square(p6::Center{0., 0.}, p6::Radius{0.5f}, p6::Rotation{0.0_turn});
 
         ctx.circle(
             p6::Center{ctx.mouse()},

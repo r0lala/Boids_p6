@@ -4,36 +4,37 @@
 
 void Boid::move(p6::Context& ctx)
 {
-    m_coord += m_direction;
+    _coord += _direction;
     comeBack(ctx);
 }
 
 void Boid::comeBack(p6::Context& ctx)
 {
-    constexpr float eps = 0.02;
+    constexpr float eps    = 0.02; // TODO comparaison de float
+    constexpr float radius = 0.5;  // TODO param ?
 
-    if (1 - m_coord[1] < eps)
+    if (radius - _size < _coord[1])
     {
-        m_direction[1] = -m_direction[1];
+        _direction[1] = -_direction[1];
     }
-    if (1 + m_coord[1] < -eps)
+    if (radius - _size < -_coord[1])
     {
-        m_direction[1] = -m_direction[1];
+        _direction[1] = -_direction[1];
     }
-    if (ctx.aspect_ratio() - m_coord[0] < eps)
+    if (radius - _size < _coord[0])
     {
-        m_direction[0] = -m_direction[0];
+        _direction[0] = -_direction[0];
     }
-    if (-ctx.aspect_ratio() - m_coord[0] > eps)
+    if (-radius + _size > _coord[0])
     {
-        m_direction[0] = -m_direction[0];
+        _direction[0] = -_direction[0];
     }
 }
 
 void Boid::draw(p6::Context& ctx)
 {
     ctx.circle(
-        p6::Center{m_coord}, // center = m_coord de mon boid
-        p6::Radius{0.05f}    // TODO attribut ?
+        p6::Center{_coord}, // center = _coord de mon boid
+        p6::Radius{_size}
     );
 }

@@ -4,13 +4,14 @@
 
 class Boid {
 private:
-    glm::vec2 m_coord; // m_z
-    // bool  m_neighbor;
-    glm::vec2 m_direction;
+    glm::vec2 _coord; // m_z
+    // bool  _neighbor;
+    glm::vec2 _direction;
+    float     _size = 0.05f;
 
 public:
     Boid(glm::vec2 coord, glm::vec2 direction = p6::random::direction())
-        : m_coord(coord), m_direction(direction) {}
+        : _coord(coord), _direction(direction) {}
 
     // Methods
     void move(p6::Context& ctx);
@@ -26,6 +27,6 @@ public:
 
     glm::vec2 coord() const
     {
-        return m_coord;
+        return _coord;
     }
 };
