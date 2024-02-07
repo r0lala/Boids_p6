@@ -1,20 +1,25 @@
 #include <cstdlib>
 #include "boids/boid.hpp"
 #define DOCTEST_CONFIG_IMPLEMENT
+#include <time.h>
 #include <vector>
 #include "doctest/doctest.h"
 #include "p6/p6.h"
+#include "random/rand.hpp"
 
 int main()
 {
     // TODO : changer la direction pour qu'elle soit aléatoire
     Boid              comparaison{glm::vec2(0, 0), glm::vec2(0.001, 0.001)};
     std::vector<Boid> boids;
+    // int               pos = (int)rand01();
 
+    srand(time(NULL));
     for (int i = 0; i < 7; i++)
     {
-        glm::vec2 direction = glm::vec2(0.001 * -(double)(i % 2) + 0.001, 0.001 * (double)(i) + 0.001);
-        boids.push_back(Boid(glm::vec2(0.1, 0.1), direction));
+        double    sign      = pileFace(0.5f) ? 1. : -1.;
+        glm::vec2 direction = glm::vec2(0.001 * sign * ((double)(i % 5) + 0.001), 0.001 * ((double)(i) + 0.001));
+        boids.push_back(Boid(glm::vec2(rand() % 5 / 10., rand() % 5 / 10.), direction));
     }
 
     // Run the tests
@@ -41,9 +46,16 @@ int main()
 
         for (Boid& b : boids)
         {
+            comparaison.collide(b); // TODO for tests purpose
             b.draw(ctx);
             b.move(ctx);
-            comparaison.collide(b);
+
+            for (Boid& neighbor : boids)
+            {
+                if (b == neighbor)
+                    continue;
+                b.collide(neighbor);
+            }
         }
         comparaison.draw(ctx);
         comparaison.move(ctx);

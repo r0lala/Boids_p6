@@ -15,9 +15,14 @@ public:
 
     // Methods
     void move(p6::Context& ctx);
-    void comeBack(p6::Context& ctx);
-    void draw(p6::Context& ctx);
-    void collide(Boid& other);
+    // void bounceBorder(p6::Context& ctx); // TODO private ?
+    void draw(p6::Context& ctx) const;
+    void collide(const Boid& other);
+
+    bool operator==(const Boid& other) const;
+
+private:
+    void bounceBorder(p6::Context& ctx);
 
     //  //Behaviour
     // Cohesion
@@ -26,6 +31,7 @@ public:
 
     // Alignment
 
+public:
     glm::vec2 coord() const
     {
         return _coord;
