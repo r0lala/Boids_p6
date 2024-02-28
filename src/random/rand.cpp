@@ -12,6 +12,6 @@ double rand01()
 bool pileFace(double p)
 {
     // constexpr float epsilon = 0.5;
-    // assert(p > 0. && p < 1. && "p n'est pas dans la bonne intervalle");
+    // assert(p > 0. && p < 1. && "p not in the good interval");
     return rand01() < p;
 }

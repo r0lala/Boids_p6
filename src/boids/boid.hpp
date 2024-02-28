@@ -4,7 +4,8 @@
 
 class Boid {
 private:
-    glm::vec2 _coord; // m_z
+    glm::vec2 _coord = {0, 0}; // m_z
+
     // bool  _neighbor;
     glm::vec2 _direction;
     float     _size = 0.05f;
@@ -17,7 +18,7 @@ public:
     void move(p6::Context& ctx);
     // void bounceBorder(p6::Context& ctx); // TODO private ?
     void draw(p6::Context& ctx) const;
-    void collide(const Boid& other);
+    // void collide(const Boid& other);
 
     bool operator==(const Boid& other) const;
 
@@ -32,6 +33,7 @@ private:
     // Alignment
 
 public:
+    float     distanceBetweenBoids(Boid stranger);
     glm::vec2 coord() const
     {
         return _coord;

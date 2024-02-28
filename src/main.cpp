@@ -15,12 +15,15 @@ int main()
     // int               pos = (int)rand01();
 
     srand(time(NULL));
+
+    // TODO à commenter
     for (int i = 0; i < 7; i++)
     {
         double    sign      = pileFace(0.5f) ? 1. : -1.;
         glm::vec2 direction = glm::vec2(0.001 * sign * ((double)(i % 5) + 0.001), 0.001 * ((double)(i) + 0.001));
         boids.push_back(Boid(glm::vec2(rand() % 5 / 10., rand() % 5 / 10.), direction));
     }
+    // TODO -- fin commentaire
 
     // Run the tests
     if (doctest::Context{}.run() != 0)
@@ -46,16 +49,16 @@ int main()
 
         for (Boid& b : boids)
         {
-            comparaison.collide(b); // TODO for tests purpose
+            // comparaison.collide(b); // TODO for tests purpose
             b.draw(ctx);
             b.move(ctx);
 
-            for (Boid& neighbor : boids)
-            {
-                if (b == neighbor)
-                    continue;
-                b.collide(neighbor);
-            }
+            // for (Boid& neighbor : boids)
+            // {
+            //     if (b == neighbor)
+            //         continue;
+            //     b.collide(neighbor);
+            // }
         }
         comparaison.draw(ctx);
         comparaison.move(ctx);
