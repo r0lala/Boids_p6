@@ -16,23 +16,19 @@ public:
         : _coord(coord), _direction(direction) {}
 
     // Methods
-    void move(p6::Context& ctx);
-    // void bounceBorder(p6::Context& ctx); // TODO private ?
+    void move();
     void draw(p6::Context& ctx) const;
     // void collide(const Boid& other);
 
     bool operator==(const Boid& other) const;
 
-private:
     void bounceBorder(p6::Context& ctx);
 
 public:
     float distanceBetweenBoids(const Boid& stranger) const;
     void  setDirection(const glm::vec2& direction)
     {
-        // std::cout << _direction.x + " " + direction.y << std::endl;
         _direction = direction;
-        // std::cout << _direction.x + " " + direction.y << std::endl;
     }
     glm::vec2 direction() const { return _direction; }
     glm::vec2 coord() const

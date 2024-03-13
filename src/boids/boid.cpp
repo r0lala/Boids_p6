@@ -11,10 +11,9 @@ bool Boid::operator==(const Boid& other) const
 }
 
 // TODO changer pour que ce soit le swarm qui s'en occupe ?
-void Boid::move(p6::Context& ctx)
+void Boid::move()
 {
     _coord += _direction;
-    bounceBorder(ctx);
 }
 
 // void Boid::collide(const Boid& other)
@@ -38,18 +37,22 @@ void Boid::bounceBorder(p6::Context& ctx)
 
     if (radius - _size < _coord[1])
     {
+        _coord[1]     = radius - _size;
         _direction[1] = -_direction[1];
     }
     if (radius - _size < -_coord[1])
     {
+        _coord[1]     = -(radius - _size);
         _direction[1] = -_direction[1];
     }
     if (radius - _size < _coord[0])
     {
+        _coord[0]     = radius - _size;
         _direction[0] = -_direction[0];
     }
     if (-radius + _size > _coord[0])
     {
+        _coord[0]     = -radius + _size;
         _direction[0] = -_direction[0];
     }
 }
