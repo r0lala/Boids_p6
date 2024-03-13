@@ -1,5 +1,6 @@
 #include "swarm.hpp"
-
+#include <iostream> // TODO pour les tests
+#include "glm/fwd.hpp"
 // BOIDS ---
 // this.friction  = 0.999;
 
@@ -7,22 +8,57 @@
 // this.direction.mult(this.friction);
 
 // ---
-/*
-void Swarm::repulse(Boid pshit)
+
+void Swarm::repulse(const Boid& pshit)
 {
-    std::vector avoid;
-    for (Boid stranger : _swarm)
+    std::vector<Boid> avoid;
+    for (Boid& stranger : _swarm)
     {
         // TODO distance entre stranger-pshit
         float personalSpace = pshit.distanceBetweenBoids(stranger);
         if (personalSpace < _avoidRad) // && personalSpace > 0
         {
-            // float spray = pshit.coord() - stranger.coord();
-            // TODO
+            glm::vec2 spray = pshit.coord() - stranger.coord();
+
+            stranger.setDirection(glm::normalize(spray) * _avoidStr);
         }
     }
 }
-*/
+
+void Swarm::follow(Boid& sheperd, p6::Context& ctx)
+{
+    for (Boid& sheep : _swarm)
+    {
+        float zoneFollow = 0.5;
+        if (sheperd.distanceBetweenBoids(sheep) < zoneFollow)
+        {
+            // std::cout << "follow" << std::endl;
+            glm::vec2 change = sheperd.coord() - sheep.coord();
+            if (change.x != 0. || change.y != 0.)
+                sheep.setDirection(glm::normalize(change) * 0.001f);
+        }
+    }
+    // std::cout << "stop" << std::endl;
+}
+
+void Swarm::draw(p6::Context& ctx) const
+{
+    for (const Boid& b : _swarm)
+    {
+        b.draw(ctx);
+    }
+}
+
+void Swarm::animate(p6::Context& ctx)
+{
+    for (Boid& b : _swarm)
+    {
+        b.move(ctx);
+        this->repulse(b);
+        this->follow(b, ctx);
+    }
+}
+
 /*
 function Swarm(swarmCount)
 {

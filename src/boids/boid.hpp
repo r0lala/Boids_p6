@@ -1,4 +1,5 @@
 #pragma once
+#include <iostream> // TODO test
 #include "glm/fwd.hpp"
 #include "p6/p6.h"
 
@@ -25,15 +26,15 @@ public:
 private:
     void bounceBorder(p6::Context& ctx);
 
-    //  //Behaviour
-    // Cohesion
-
-    // Separation
-
-    // Alignment
-
 public:
-    float     distanceBetweenBoids(Boid stranger);
+    float distanceBetweenBoids(const Boid& stranger) const;
+    void  setDirection(const glm::vec2& direction)
+    {
+        // std::cout << _direction.x + " " + direction.y << std::endl;
+        _direction = direction;
+        // std::cout << _direction.x + " " + direction.y << std::endl;
+    }
+    glm::vec2 direction() const { return _direction; }
     glm::vec2 coord() const
     {
         return _coord;

@@ -10,6 +10,7 @@ bool Boid::operator==(const Boid& other) const
     return other._coord == _coord && other._direction == _direction;
 }
 
+// TODO changer pour que ce soit le swarm qui s'en occupe ?
 void Boid::move(p6::Context& ctx)
 {
     _coord += _direction;
@@ -63,7 +64,7 @@ void Boid::draw(p6::Context& ctx) const
     );
 }
 
-float Boid::distanceBetweenBoids(Boid stranger)
+float Boid::distanceBetweenBoids(const Boid& stranger) const
 {
     float distance = glm::sqrt(glm::pow(this->_coord[0] - stranger._coord[0], 2) + glm::pow(this->_coord[1] - stranger._coord[1], 2));
 
