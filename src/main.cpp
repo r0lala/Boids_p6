@@ -11,7 +11,7 @@
 int main()
 {
     // TODO : changer la direction pour qu'elle soit aléatoire
-    Boid comparaison{glm::vec2(0, 0), glm::vec2(0.001, 0.001)};
+    Boid comparaison{glm::vec2(0, 0), glm::vec2(genDirection(), genDirection())};
 
     Swarm groupe;
     // int               pos = (int)rand01();
