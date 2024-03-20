@@ -24,6 +24,6 @@ double loiExpo(double lambda)
 
 double genDirection()
 {
-    double speed = loiExpo(100.);
+    double speed = loiExpo(100.) + 0.5;
     return pileFace(0.5) ? speed : -1 * speed;
 }

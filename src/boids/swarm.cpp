@@ -46,18 +46,18 @@
 //     }
 // }
 
-// void Swarm::follow(const Boid& sheperd, const float zoneFollow, const float coeffFollow)
-// {
-//     for (Boid& sheep : _swarm)
-//     {
-//         if (sheperd.distanceBetweenBoids(sheep) < zoneFollow)
-//         {
-//             glm::vec2 change = sheperd.position() - sheep.position();
-//             if (change.x != 0. || change.y != 0.)
-//                 sheep.setvelocity(glm::normalize(change) * coeffFollow); // 0.001
-//         }
-//     }
-// }
+void Swarm::follow(const Boid& sheperd, const float zoneFollow, const float coeffFollow)
+{
+    for (Boid& sheep : _swarm)
+    {
+        if (sheperd.distanceBetweenBoids(sheep) < zoneFollow)
+        {
+            glm::vec2 change = sheperd.position() - sheep.position();
+            if (change.x != 0. || change.y != 0.)
+                sheep.setvelocity(glm::normalize(change) * coeffFollow); // 0.001
+        }
+    }
+}
 
 void Swarm::draw(p6::Context& ctx) const
 {
@@ -67,17 +67,17 @@ void Swarm::draw(p6::Context& ctx) const
     }
 }
 
-void Swarm::animate(p6::Context& ctx, float zoneFollow, float zoneSeparate, float zoneCohesion, float coeffFollow, float coeffSeparate, float coeffCohesion)
+void Swarm::animate(p6::Context& ctx, float zoneFollow, float zoneSeparate, float zoneCohesion, float coeffFollow, float coeffSeparate, float coeffCohesion, float deltatime)
 {
     for (Boid& b : _swarm)
     {
         glm::vec2 acceleration{0.f};
         // this->follow(b, zoneFollow, coeffFollow);
         // this->repulse(b, zoneSeparate, coeffSeparate);
-        acceleration += b.separation(_swarm, coeffSeparate);
-        acceleration += b.cohesion(_swarm, coeffCohesion);
-        acceleration += b.alignement(_swarm, coeffFollow);
-        b.move(acceleration);
+        // acceleration += b.separation(_swarm, zoneSeparate, coeffSeparate);
+        // acceleration += b.cohesion(_swarm, zoneCohesion, coeffCohesion);
+        acceleration += b.alignement(_swarm, zoneFollow, coeffFollow);
+        b.move(acceleration, deltatime);
         b.bounceBorder(ctx);
     }
 }

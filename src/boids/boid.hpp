@@ -3,7 +3,6 @@
 #include <vector>
 #include "glm/fwd.hpp"
 #include "p6/p6.h"
-
 class Boid {
 private:
     glm::vec2 _position = {0, 0}; // m_z
@@ -12,7 +11,7 @@ private:
     // bool _predator;
     glm::vec2 _velocity;
     // glm::vec2 _acceleration;
-    float     _size = 0.05f;
+    float     _size = 0.02f;
     glm::vec2 seek(const glm::vec2& v);
 
 public:
@@ -21,7 +20,7 @@ public:
     {}
 
     // Methods
-    void move(glm::vec2 acceleration);
+    void move(glm::vec2 acceleration, float delta_time);
     void draw(p6::Context& ctx) const;
     // void collide(const Boid& other);
 
@@ -38,7 +37,7 @@ public:
     glm::vec2 velocity() const { return _velocity; }
     glm::vec2 position() const { return _position; }
 
-    glm::vec2 separation(const std::vector<Boid>& boids, float coeffSeparation);
-    glm::vec2 cohesion(const std::vector<Boid>& boids, float coeffCohesion);
-    glm::vec2 alignement(const std::vector<Boid>& boids, float coeffAlignement);
+    glm::vec2 separation(const std::vector<Boid>& boids, float zoneSeparation, float coeffSeparation);
+    glm::vec2 cohesion(const std::vector<Boid>& boids, float zoneCohesion, float coeffCohesion);
+    glm::vec2 alignement(const std::vector<Boid>& boids, float zoneAlignement, float coeffAlignement);
 };

@@ -17,13 +17,13 @@ public:
         for (int i = 1; i <= n; i++)
         {
             // TODO réajuster "l'aléatoire"
-            glm::vec2 direction = glm::vec2(genDirection(), genDirection());
+            glm::vec2 direction = glm::vec2(0.001, 0.001);
             glm::vec2 coord     = glm::vec2(rand() % 5 / 10., rand() % 5 / 10.); // TODO faire une fonciton rand(min, max)
             _swarm.push_back(Boid(coord, direction));
         }
     }
     void draw(p6::Context& ctx) const;
-    void animate(p6::Context& ctx, float zoneFollow, float zoneSeparate, float zoneCohesion, float coeffFollow, float coeffSeparate, float coeffCohesion); // faire bouger
+    void animate(p6::Context& ctx, float zoneFollow, float zoneSeparate, float zoneCohesion, float coeffFollow, float coeffSeparate, float coeffCohesion, float delta_time); // faire bouger
 
 private:
     // Méthodes

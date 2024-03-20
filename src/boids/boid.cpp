@@ -14,13 +14,13 @@ bool Boid::operator==(const Boid& other) const
 }
 
 // TODO changer pour que ce soit le swarm qui s'en occupe ?
-void Boid::move(glm::vec2 acceleration)
+void Boid::move(glm::vec2 acceleration, float delta_time)
 {
-    _velocity += acceleration;
-    _position += _velocity;
+    _velocity += acceleration * delta_time;
+    _position += _velocity * delta_time;
 }
 
-glm::vec2 Boid::separation(const std::vector<Boid>& boids, float coeffSeparation)
+glm::vec2 Boid::separation(const std::vector<Boid>& boids, float zoneSeparation, float coeffSeparation)
 {
     glm::vec2 direct(0, 0);
     int       count = 0;
@@ -29,7 +29,7 @@ glm::vec2 Boid::separation(const std::vector<Boid>& boids, float coeffSeparation
     { // TODO boids => others
         double distance = this->distanceBetweenBoids(boids[i]);
 
-        if (distance > 0 && distance < coeffSeparation)
+        if (distance > 0 && distance < zoneSeparation)
         {
             glm::vec2 diff(0., 0.);
             diff = _position - boids[i]._position;
@@ -52,10 +52,10 @@ glm::vec2 Boid::separation(const std::vector<Boid>& boids, float coeffSeparation
         // direct[0] *=
         direct -= _velocity;
     }
-    return direct;
+    return direct * coeffSeparation;
 }
 
-glm::vec2 Boid::cohesion(const std::vector<Boid>& boids, float coeffCohesion)
+glm::vec2 Boid::cohesion(const std::vector<Boid>& boids, float zoneCohesion, float coeffCohesion)
 {
     // float     neighbor = 20;
     glm::vec2 sum(0, 0);
@@ -64,9 +64,9 @@ glm::vec2 Boid::cohesion(const std::vector<Boid>& boids, float coeffCohesion)
     {
         float d = this->distanceBetweenBoids(boids[i]);
 
-        if ((d > 0) && (d < coeffCohesion))
+        if ((d > 0) && (d < zoneCohesion))
         {
-            sum += boids[i]._velocity;
+            sum += boids[i]._position;
             count++;
         }
     }
@@ -74,7 +74,7 @@ glm::vec2 Boid::cohesion(const std::vector<Boid>& boids, float coeffCohesion)
     if (count > 0)
     {
         sum /= count;
-        return seek(sum);
+        return seek(sum) * coeffCohesion;
     }
     else
     {
@@ -97,14 +97,14 @@ glm::vec2 Boid::seek(const glm::vec2& v)
     return acceleration;
 }
 
-glm::vec2 Boid::alignement(const std::vector<Boid>& boids, float coeffAlignement)
+glm::vec2 Boid::alignement(const std::vector<Boid>& boids, float zoneAlignement, float coeffAlignement)
 {
-    glm::vec2 sum(0, 0);
+    glm::vec2 sum(0., 0.);
     int       count = 0;
     for (int i = 0; i < boids.size(); i++)
     {
         float d = this->distanceBetweenBoids(boids[i]);
-        if ((d > 0) && (d < coeffAlignement))
+        if ((d > 0) && (d < zoneAlignement))
         {
             sum += boids[i]._velocity;
             count++;
@@ -112,14 +112,14 @@ glm::vec2 Boid::alignement(const std::vector<Boid>& boids, float coeffAlignement
     }
     if (count > 0)
     {
-        sum /= count;
+        sum /= (float)count;
         glm::normalize(sum);
         // sum *= maxSpeed
 
         glm::vec2 steer;
         steer = sum - _velocity;
         // steer.limit(maxForce);
-        return steer;
+        return steer * coeffAlignement;
     }
     else
     {
@@ -150,32 +150,31 @@ void Boid::bounceBorder(p6::Context& ctx) // TODO remove ctx param
     if (radius - _size < _position[1])
     {
         _position[1] = radius - _size;
-        _velocity[1] = -_velocity[1];
+        _velocity *= -1.;
     }
     if (radius - _size < -_position[1])
     {
         _position[1] = -(radius - _size);
-        _velocity[1] = -_velocity[1];
+        _velocity *= -1.;
     }
     if (radius - _size < _position[0])
     {
         _position[0] = radius - _size;
-        _velocity[0] = -_velocity[0];
+        _velocity *= -1.;
     }
     if (-radius + _size > _position[0])
     {
         _position[0] = -radius + _size;
-        _velocity[0] = -_velocity[0];
+        _velocity *= -1.;
     }
 }
 
 void Boid::draw(p6::Context& ctx) const
 {
     // TODO size
-    constexpr float size = 0.05f;
     ctx.circle(
         p6::Center{_position}, // center = _position de mon boid
-        p6::Radius{size}
+        p6::Radius{_size}
     );
 }
 

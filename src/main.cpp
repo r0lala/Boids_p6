@@ -11,9 +11,9 @@
 int main()
 {
     // TODO : changer la direction pour qu'elle soit aléatoire
-    Boid comparaison{glm::vec2(0, 0), glm::vec2(genDirection(), genDirection())};
+    // Boid comparaison{glm::vec2(0, 0), glm::vec2(genDirection(), genDirection())};
 
-    Swarm groupe;
+    Swarm groupe(50);
     // int               pos = (int)rand01();
 
     srand(time(NULL));
@@ -55,11 +55,11 @@ int main()
         );
 
         groupe.draw(ctx);
-        groupe.animate(ctx, align, separate, cohesion, coeffAlignement, coeffRepulsion, coeffCohesion);
+        groupe.animate(ctx, align, separate, cohesion, coeffAlignement, coeffRepulsion, coeffCohesion, ctx.delta_time());
 
-        comparaison.draw(ctx);
+        // comparaison.draw(ctx);
         // comparaison.move();
-        comparaison.bounceBorder(ctx);
+        // comparaison.bounceBorder(ctx);
     };
 
     // Should be done last. It starts the infinite loop.
