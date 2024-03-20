@@ -9,9 +9,21 @@ double rand01()
     return distrib(gen);
 }
 
-bool pileFace(double p)
+bool pileFace(double p) // TODO : à renommer
 {
     // constexpr float epsilon = 0.5;
     // assert(p > 0. && p < 1. && "p not in the good interval");
     return rand01() < p;
+}
+
+double loiExpo(double lambda)
+{
+    double u = rand01();
+    return -1. / lambda * std::log(1. - u); // = Z
+}
+
+double genDirection()
+{
+    double speed = loiExpo(100.);
+    return pileFace(0.5) ? speed : -1 * speed;
 }

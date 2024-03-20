@@ -17,8 +17,7 @@ public:
         for (int i = 1; i <= n; i++)
         {
             // TODO réajuster "l'aléatoire"
-            double    sign      = pileFace(0.5f) ? 1. : -1.;
-            glm::vec2 direction = glm::vec2(0.001 * sign * ((double)(i % 5) + 0.001), 0.001 * ((double)(i) + 0.001));
+            glm::vec2 direction = glm::vec2(genDirection(), genDirection());
             glm::vec2 coord     = glm::vec2(rand() % 5 / 10., rand() % 5 / 10.); // TODO faire une fonciton rand(min, max)
             _swarm.push_back(Boid(coord, direction));
         }
