@@ -58,7 +58,7 @@ int main()
         groupe.animate(ctx, align, separate, cohesion, coeffAlignement, coeffRepulsion, coeffCohesion);
 
         comparaison.draw(ctx);
-        comparaison.move();
+        // comparaison.move();
         comparaison.bounceBorder(ctx);
     };
 
