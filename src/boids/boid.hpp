@@ -26,7 +26,7 @@ public:
 
     bool operator==(const Boid& other) const;
 
-    void bounceBorder(p6::Context& ctx);
+    void teleport(p6::Context& ctx);
 
 public:
     float distanceBetweenBoids(const Boid& stranger) const;

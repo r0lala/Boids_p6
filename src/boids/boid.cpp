@@ -16,18 +16,9 @@ bool Boid::operator==(const Boid& other) const
 
 glm::vec2 Boid::limitAcceleration(glm::vec2 acceleration, float maxAcceleration)
 {
-    if (glm::length(acceleration) > 0.001)
+    if (glm::length(acceleration) > maxAcceleration)
     {
-        return glm::normalize(acceleration) * 0.001f;
-    }
-    return acceleration;
-}
-
-glm::vec2 Boid::limitAcceleration(glm::vec2 acceleration, float maxAcceleration)
-{
-    if (glm::length(acceleration) > 0.001)
-    {
-        return glm::normalize(acceleration) * 0.001f;
+        return glm::normalize(acceleration) * maxAcceleration;
     }
     return acceleration;
 }
@@ -70,7 +61,7 @@ glm::vec2 Boid::separation(const std::vector<Boid>& others, float zoneSeparation
         // direct[0] *=
         direct -= _velocity;
     }
-    direct = this->limitAcceleration(direct, 100.);
+    direct = this->limitAcceleration(direct, 1.f);
     return direct * coeffSeparation;
 }
 
@@ -98,7 +89,7 @@ glm::vec2 Boid::cohesion(const std::vector<Boid>& boids, float zone, float coeff
     if (closest != std::numeric_limits<float>::infinity())
     {
         glm::vec2 difference = glm::normalize(closestBoid.position() - this->position());
-        return glm::normalize(this->_velocity - difference) * coeff;
+        return this->limitAcceleration(glm::normalize(this->_velocity - difference) * coeff, 0.5f);
     }
     return glm::vec2(0., 0.);
 }
@@ -121,7 +112,7 @@ glm::vec2 Boid::alignement(const std::vector<Boid>& boids, float zoneAlignement,
     {
         // faire la moyenne
         sum = glm::normalize((sum / count) * coeffAlignement);
-        sum = this->limitAcceleration(sum, 100.);
+        sum = this->limitAcceleration(sum, 1.f);
         return sum;
     }
     else
@@ -145,30 +136,26 @@ glm::vec2 Boid::alignement(const std::vector<Boid>& boids, float zoneAlignement,
 
 // TODO change direction aléatoire
 
-void Boid::bounceBorder(p6::Context& ctx) // TODO remove ctx param
+void Boid::teleport(p6::Context& ctx) // TODO remove ctx param
 {
     // constexpr float eps    = 0.02; // TODO comparaison de float
     constexpr float radius = 0.8; // TODO param ?
 
-    if (radius - _size < _position[1])
+    if (_position.x + _size > radius)
     {
-        _position[1] = radius - _size;
-        _velocity *= -1.;
+        _position.x = -radius + _size;
     }
-    if (radius - _size < -_position[1])
+    if (_position.x - _size < -radius)
     {
-        _position[1] = -(radius - _size);
-        _velocity *= -1.;
+        _position.x = radius - _size;
     }
-    if (radius - _size < _position[0])
+    if (_position.y + _size > radius)
     {
-        _position[0] = radius - _size;
-        _velocity *= -1.;
+        _position.y = -radius + _size;
     }
-    if (-radius + _size > _position[0])
+    if (_position.y - _size < -radius)
     {
-        _position[0] = -radius + _size;
-        _velocity *= -1.;
+        _position.y = radius - _size;
     }
 }
 

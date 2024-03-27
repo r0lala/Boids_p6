@@ -74,11 +74,12 @@ void Swarm::animate(p6::Context& ctx, float zoneFollow, float zoneSeparate, floa
         glm::vec2 acceleration{0.f};
         // this->follow(b, zoneFollow, coeffFollow);
         // this->repulse(b, zoneSeparate, coeffSeparate);
-        acceleration += b.separation(_swarm, zoneSeparate, coeffSeparate);
-        // acceleration += b.cohesion(_swarm, zoneCohesion, coeffCohesion);
+        // acceleration += b.separation(_swarm, zoneSeparate, coeffSeparate);
+        acceleration += b.cohesion(_swarm, zoneCohesion, coeffCohesion);
         acceleration += b.alignement(_swarm, zoneFollow, coeffFollow);
-        // acceleration = b.limitAcceleration(acceleration, 100.);
+        acceleration = b.limitAcceleration(acceleration, 1.);
+        b.setvelocity(b.limitAcceleration(b.velocity(), 1.));
         b.move(acceleration, deltatime);
-        b.bounceBorder(ctx);
+        b.teleport(ctx);
     }
 }
