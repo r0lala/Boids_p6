@@ -13,6 +13,15 @@ bool Boid::operator==(const Boid& other) const
     return other._position == _position && other._velocity == _velocity;
 }
 
+glm::vec2 Boid::limitAcceleration(glm::vec2 acceleration, float maxAcceleration)
+{
+    if (glm::length(acceleration) > 0.001)
+    {
+        return glm::normalize(acceleration) * 0.001f;
+    }
+    return acceleration;
+}
+
 // TODO changer pour que ce soit le swarm qui s'en occupe ?
 void Boid::move(glm::vec2 acceleration, float delta_time)
 {
@@ -20,19 +29,19 @@ void Boid::move(glm::vec2 acceleration, float delta_time)
     _position += _velocity * delta_time;
 }
 
-glm::vec2 Boid::separation(const std::vector<Boid>& boids, float zoneSeparation, float coeffSeparation)
+glm::vec2 Boid::separation(const std::vector<Boid>& others, float zoneSeparation, float coeffSeparation)
 {
     glm::vec2 direct(0, 0);
     int       count = 0;
 
-    for (int i = 0; i < boids.size(); i++)
+    for (int i = 0; i < others.size(); i++)
     { // TODO boids => others
-        double distance = glm::distance(this->_position, boids[i]._position);
+        double distance = glm::distance(this->_position, others[i]._position);
 
         if (distance > 0 && distance < zoneSeparation)
         {
             glm::vec2 diff(0., 0.);
-            diff = _position - boids[i]._position;
+            diff = _position - others[i]._position;
             glm::normalize(diff);
             diff /= distance; // Weight by distance
             direct += diff;
@@ -52,6 +61,7 @@ glm::vec2 Boid::separation(const std::vector<Boid>& boids, float zoneSeparation,
         // direct[0] *=
         direct -= _velocity;
     }
+    direct = this->limitAcceleration(direct, 100.);
     return direct * coeffSeparation;
 }
 
@@ -115,6 +125,7 @@ glm::vec2 Boid::alignement(const std::vector<Boid>& boids, float zoneAlignement,
     {
         // faire la moyenne
         sum = glm::normalize((sum / count) * coeffAlignement);
+        sum = this->limitAcceleration(sum, 100.);
         return sum;
     }
     else
@@ -141,7 +152,7 @@ glm::vec2 Boid::alignement(const std::vector<Boid>& boids, float zoneAlignement,
 void Boid::bounceBorder(p6::Context& ctx) // TODO remove ctx param
 {
     // constexpr float eps    = 0.02; // TODO comparaison de float
-    constexpr float radius = 0.5; // TODO param ?
+    constexpr float radius = 0.8; // TODO param ?
 
     if (radius - _size < _position[1])
     {
@@ -173,10 +184,3 @@ void Boid::draw(p6::Context& ctx) const
         p6::Radius{_size}
     );
 }
-
-// float Boid::distanceBetweenBoids(const Boid& stranger) const
-// {
-//     float distance = glm::sqrt(glm::pow(this->_position[0] - stranger._position[0], 2) + glm::pow(this->_position[1] - stranger._position[1], 2));
-
-//     return distance;
-// }

@@ -47,7 +47,7 @@ int main()
     // Declare your infinite update loop.
     ctx.update = [&]() {
         ctx.background(p6::NamedColor::VermilionPlochere);
-        ctx.square(p6::Center{0., 0.}, p6::Radius{0.5f}, p6::Rotation{0.0_turn});
+        ctx.square(p6::Center{0., 0.}, p6::Radius{0.8f}, p6::Rotation{0.0_turn});
 
         ctx.circle(
             p6::Center{ctx.mouse()},

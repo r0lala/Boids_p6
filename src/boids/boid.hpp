@@ -34,6 +34,7 @@ public:
     {
         _velocity = velocity;
     }
+    glm::vec2 limitAcceleration(glm::vec2 acceleration, float maxAcceleration);
     glm::vec2 velocity() const { return _velocity; }
     glm::vec2 position() const { return _position; }
 

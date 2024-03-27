@@ -2,6 +2,7 @@
 
 #include <vector>
 #include "boids/boid.hpp"
+#include "glm/fwd.hpp"
 #include "random/rand.hpp"
 
 class Swarm {
