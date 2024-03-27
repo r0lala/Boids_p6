@@ -7,13 +7,13 @@
 #include "glm/geometric.hpp"
 // #include "random/rand.hpp"
 #include <cmath>
+#include <limits>
 
 bool Boid::operator==(const Boid& other) const
 {
     return other._position == _position && other._velocity == _velocity;
 }
 
-// TODO changer pour que ce soit le swarm qui s'en occupe ?
 void Boid::move(glm::vec2 acceleration, float delta_time)
 {
     _velocity += acceleration * delta_time;
@@ -59,12 +59,16 @@ glm::vec2 Boid::cohesion(const std::vector<Boid>& boids, float zone, float coeff
 {
     // search the closest friend
     Boid  closestBoid = boids[0];
-    float closest     = glm::distance(this->_position, closestBoid._position);
+    float closest     = std::numeric_limits<float>::infinity();
 
-    for (const Boid myFriend : boids)
+    for (const Boid& myFriend : boids)
     {
+        if (*this == myFriend)
+            continue;
+
         float friendDistance = glm::distance(this->_position, myFriend._position);
-        if (closest > friendDistance && friendDistance > 0.)
+
+        if (closest > friendDistance && friendDistance <= zone)
         {
             closest     = friendDistance;
             closestBoid = myFriend;
@@ -72,29 +76,12 @@ glm::vec2 Boid::cohesion(const std::vector<Boid>& boids, float zone, float coeff
     }
 
     // go to him
-    if (closest <= zone)
+    if (closest != std::numeric_limits<float>::infinity())
     {
-        glm::vec2 difference = glm::normalize(this->position() - closestBoid.position());
-        return glm::normalize(this->_velocity - difference);
+        glm::vec2 difference = glm::normalize(closestBoid.position() - this->position());
+        return glm::normalize(this->_velocity - difference) * coeff;
     }
-    else
-    {
-        return glm::vec2(0., 0.);
-    }
-}
-
-glm::vec2 Boid::seek(const glm::vec2& v)
-{
-    glm::vec2 desired;
-
-    desired -= v; // A vector pointing from the location to the target
-    // Normalize desired and scale to maximum speed
-    glm::normalize(desired);
-    // desired *= maxSpeed;
-    // Steering = Desired minus Velocity
-    glm::vec2 acceleration = desired - _velocity;
-    // acceleration.limit(maxForce); // Limit to maximum steering force
-    return acceleration;
+    return glm::vec2(0., 0.);
 }
 
 glm::vec2 Boid::alignement(const std::vector<Boid>& boids, float zoneAlignement, float coeffAlignement)
