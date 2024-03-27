@@ -27,7 +27,7 @@ glm::vec2 Boid::separation(const std::vector<Boid>& boids, float zoneSeparation,
 
     for (int i = 0; i < boids.size(); i++)
     { // TODO boids => others
-        double distance = this->distanceBetweenBoids(boids[i]);
+        double distance = glm::distance(this->_position, boids[i]._position);
 
         if (distance > 0 && distance < zoneSeparation)
         {
@@ -55,38 +55,38 @@ glm::vec2 Boid::separation(const std::vector<Boid>& boids, float zoneSeparation,
     return direct * coeffSeparation;
 }
 
-glm::vec2 Boid::cohesion(const std::vector<Boid>& boids, float zoneCohesion, float coeffCohesion)
+glm::vec2 Boid::cohesion(const std::vector<Boid>& boids, float zone, float coeff)
 {
-    // float     neighbor = 20;
-    glm::vec2 sum(0, 0);
-    int       count = 0;
-    for (int i = 0; i < boids.size(); i++)
-    {
-        float d = this->distanceBetweenBoids(boids[i]);
+    // search the closest friend
+    Boid  closestBoid = boids[0];
+    float closest     = glm::distance(this->_position, closestBoid._position);
 
-        if ((d > 0) && (d < zoneCohesion))
+    for (const Boid myFriend : boids)
+    {
+        float friendDistance = glm::distance(this->_position, myFriend._position);
+        if (closest > friendDistance && friendDistance > 0.)
         {
-            sum += boids[i]._position;
-            count++;
+            closest     = friendDistance;
+            closestBoid = myFriend;
         }
     }
 
-    if (count > 0)
+    // go to him
+    if (closest <= zone)
     {
-        sum /= count;
-        return seek(sum) * coeffCohesion;
+        glm::vec2 difference = glm::normalize(this->position() - closestBoid.position());
+        return glm::normalize(this->_velocity - difference);
     }
     else
     {
-        glm::vec2 lonely(0, 0);
-        return lonely;
+        return glm::vec2(0., 0.);
     }
 }
 
 glm::vec2 Boid::seek(const glm::vec2& v)
 {
     glm::vec2 desired;
-    ;
+
     desired -= v; // A vector pointing from the location to the target
     // Normalize desired and scale to maximum speed
     glm::normalize(desired);
@@ -103,7 +103,7 @@ glm::vec2 Boid::alignement(const std::vector<Boid>& boids, float zoneAlignement,
     int       count = 0;
     for (int i = 0; i < boids.size(); i++)
     {
-        float d = this->distanceBetweenBoids(boids[i]);
+        float d = glm::distance(this->_position, boids[i]._position);
         if ((d > 0) && (d < zoneAlignement))
         {
             sum += boids[i]._velocity;
@@ -178,9 +178,9 @@ void Boid::draw(p6::Context& ctx) const
     );
 }
 
-float Boid::distanceBetweenBoids(const Boid& stranger) const
-{
-    float distance = glm::sqrt(glm::pow(this->_position[0] - stranger._position[0], 2) + glm::pow(this->_position[1] - stranger._position[1], 2));
+// float Boid::distanceBetweenBoids(const Boid& stranger) const
+// {
+//     float distance = glm::sqrt(glm::pow(this->_position[0] - stranger._position[0], 2) + glm::pow(this->_position[1] - stranger._position[1], 2));
 
-    return distance;
-}
+//     return distance;
+// }

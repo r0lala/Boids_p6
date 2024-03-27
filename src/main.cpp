@@ -25,9 +25,9 @@ int main()
     // Actual application code
     auto ctx = p6::Context{{.title = "Simple-p6-Setup"}};
     ctx.maximize_window();
-    auto align    = 0.5f;
-    auto separate = 0.5f;
-    auto cohesion = 0.5f;
+    auto align    = 0.3f;
+    auto separate = 0.1f;
+    auto cohesion = 0.6f;
 
     auto coeffAlignement = 0.001f;
     auto coeffRepulsion  = 1.f;
@@ -35,10 +35,10 @@ int main()
 
     ctx.imgui = [&]() {
         ImGui::Begin("Parameters");
-        ImGui::SliderFloat("Alignment", &align, 0.f, 1.f);
-        ImGui::SliderFloat("Separation", &separate, 1.f, 2.f);
-        ImGui::SliderFloat("Cohesion", &cohesion, 0.f, 1.f);
-        ImGui::SliderFloat("Coefficient d'alignment", &coeffAlignement, 0.f, 50.f);
+        // ImGui::SliderFloat("Alignment", &align, 0.f, 1.f);
+        // ImGui::SliderFloat("Separation", &separate, 1.f, 2.f);
+        ImGui::SliderFloat("Cohesion", &cohesion, 0.f, 100.f);
+        ImGui::SliderFloat("Coefficient d'alignement", &coeffAlignement, 0.f, 50.f);
         ImGui::SliderFloat("Coefficient de repulsion", &coeffRepulsion, 0.f, 50.f);
         ImGui::SliderFloat("Coefficient de cohesion", &coeffCohesion, 0.f, 50.f);
         ImGui::End();
