@@ -39,6 +39,6 @@ public:
     glm::vec2 position() const { return _position; }
 
     glm::vec2 separation(const std::vector<Boid>& boids, float zoneSeparation, float coeffSeparation);
-    glm::vec2 cohesion(const std::vector<Boid>& boids, float zoneCohesion, float coeffCohesion);
+    glm::vec2 cohesion(const std::vector<Boid>& boids, float zone, float coeff);
     glm::vec2 alignement(const std::vector<Boid>& boids, float zoneAlignement, float coeffAlignement);
 };
