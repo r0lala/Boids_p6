@@ -75,8 +75,8 @@ void Swarm::animate(p6::Context& ctx, float zoneFollow, float zoneSeparate, floa
         // this->follow(b, zoneFollow, coeffFollow);
         // this->repulse(b, zoneSeparate, coeffSeparate);
         // acceleration += b.separation(_swarm, zoneSeparate, coeffSeparate);
-        acceleration += b.cohesion(_swarm, zoneCohesion, coeffCohesion);
-        // acceleration += b.alignement(_swarm, zoneFollow, coeffFollow);
+        // acceleration += b.cohesion(_swarm, zoneCohesion, coeffCohesion);
+        acceleration += b.alignement(_swarm, zoneFollow, coeffFollow);
         b.move(acceleration, deltatime);
         b.bounceBorder(ctx);
     }

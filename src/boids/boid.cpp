@@ -99,8 +99,9 @@ glm::vec2 Boid::seek(const glm::vec2& v)
 
 glm::vec2 Boid::alignement(const std::vector<Boid>& boids, float zoneAlignement, float coeffAlignement)
 {
-    glm::vec2 sum(0., 0.);
-    int       count = 0;
+    glm::vec2 sum   = this->_position;
+    float     count = 0;
+
     for (int i = 0; i < boids.size(); i++)
     {
         float d = glm::distance(this->_position, boids[i]._position);
@@ -112,14 +113,9 @@ glm::vec2 Boid::alignement(const std::vector<Boid>& boids, float zoneAlignement,
     }
     if (count > 0)
     {
-        sum /= (float)count;
-        glm::normalize(sum);
-        // sum *= maxSpeed
-
-        glm::vec2 steer;
-        steer = sum - _velocity;
-        // steer.limit(maxForce);
-        return steer * coeffAlignement;
+        // faire la moyenne
+        sum = glm::normalize((sum / count) * coeffAlignement);
+        return sum;
     }
     else
     {
