@@ -1,4 +1,5 @@
-#include "glimac/default_shader.hpp"
+#include <glm/glm.hpp>
+#include "GLIMAC/default_shader.hpp"
 
 class VBO {
 private:

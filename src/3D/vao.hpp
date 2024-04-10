@@ -1,4 +1,5 @@
-#include "glimac/default_shader.hpp"
+#include <glm/glm.hpp>
+#include "GLIMAC/default_shader.hpp"
 
 class VAO {
 private:
@@ -34,7 +35,7 @@ public:
 
     void bind() const
     {
-        glBindVertexArray(&_id);
+        glBindVertexArray(_id);
     }
 
     void unbind() const

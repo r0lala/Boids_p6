@@ -1,15 +1,16 @@
-#include <cstdlib>
-#include "boids/boid.hpp"
+// #include <cstdlib>
+// #include "boids/boid.hpp"
 #define DOCTEST_CONFIG_IMPLEMENT
 #include <time.h>
 #include <vector>
-#include "3D/GLIMAC/default_shader.hpp"
+// #include "3D/default_shader.hpp"
 #include "3D/vao.hpp"
 #include "3D/vbo.hpp"
 #include "boids/swarm.hpp"
 #include "doctest/doctest.h"
-#include "p6/p6.h"
-#include "random/rand.hpp"
+// // #include "p6/p6.h"
+// #include <glm/glm.hpp>
+// #include "random/rand.hpp"
 
 int main()
 {

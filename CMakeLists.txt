@@ -42,10 +42,11 @@ FetchContent_MakeAvailable(doctest)
 target_link_libraries(${PROJECT_NAME} PRIVATE doctest::doctest)
 
 # ---Add p6 library---
+set(P6_RAW_OPENGL_MODE ON CACHE BOOL "")
 FetchContent_Declare(
     p6
     GIT_REPOSITORY https://github.com/julesfouchy/p6
-    GIT_TAG 7a9d1ca49db2694ef05030921b65f0adfe9d69e4
+    GIT_TAG c962f8c5f3bf8324482facaf2ec178ef4c9aefaa
 )
 FetchContent_MakeAvailable(p6)
 target_link_libraries(${PROJECT_NAME} PRIVATE p6::p6)
