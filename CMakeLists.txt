@@ -2,8 +2,13 @@
 cmake_minimum_required(VERSION 3.20)
 
 # ---Choose project name---
-project(Simple-p6-Setup)
+project(Boids_p6)
 # TODO renommmer le projet ?
+
+# ---Declare source files---
+file(GLOB_RECURSE SOURCE_FILES CONFIGURE_DEPENDS src/*)
+add_executable(${PROJECT_NAME} ${SOURCE_FILES})
+target_include_directories(${PROJECT_NAME} PRIVATE src)
 
 # ---Choose C++ version---
 target_compile_features(${PROJECT_NAME} PRIVATE cxx_std_20)
@@ -14,11 +19,6 @@ if(MSVC)
 else()
     target_compile_options(${PROJECT_NAME} PRIVATE -Wall -Wextra -Wpedantic -pedantic-errors -Wimplicit-fallthrough)
 endif()
-
-# ---Declare source files---
-file(GLOB_RECURSE SOURCE_FILES CONFIGURE_DEPENDS src/*)
-add_executable(${PROJECT_NAME} ${SOURCE_FILES})
-target_include_directories(${PROJECT_NAME} PRIVATE src)
 
 # ---Maybe enable warnings as errors---
 set(WARNINGS_AS_ERRORS OFF CACHE BOOL "ON iff you want to treat warnings as errors")
