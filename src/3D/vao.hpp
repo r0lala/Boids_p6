@@ -1,5 +1,6 @@
-#include <glm/glm.hpp>
-#include "GLIMAC/default_shader.hpp"
+#include "glm/glm.hpp"
+#include "p6/p6.h"
+
 
 class VAO {
 private:

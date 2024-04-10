@@ -2,7 +2,7 @@
 cmake_minimum_required(VERSION 3.20)
 
 # ---Choose project name---
-project(Boids_p6)
+project(Simple-p6-Setup)
 # TODO renommmer le projet ?
 
 # ---Declare source files---
@@ -46,15 +46,14 @@ set(P6_RAW_OPENGL_MODE ON CACHE BOOL "")
 FetchContent_Declare(
     p6
     GIT_REPOSITORY https://github.com/julesfouchy/p6
-    GIT_TAG c962f8c5f3bf8324482facaf2ec178ef4c9aefaa
+    GIT_TAG 7a9d1ca49db2694ef05030921b65f0adfe9d69e4
 )
 FetchContent_MakeAvailable(p6)
 target_link_libraries(${PROJECT_NAME} PRIVATE p6::p6)
 
 # ---Set the output folder---
-set_target_properties(${PROJECT_NAME} PROPERTIES
-    RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/bin/)
-
+# set_target_properties(${PROJECT_NAME} PROPERTIES
+#    RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/bin/)
 # ---Copy the assets and the shaders to the output folder (where the executable is created)---
-Cool__target_copy_folder(${PROJECT_NAME} assets)
-Cool__target_copy_folder(${PROJECT_NAME} /shaders shaders)
+# Cool__target_copy_folder(${PROJECT_NAME} assets)
+# Cool__target_copy_folder(${PROJECT_NAME} /shaders shaders)
