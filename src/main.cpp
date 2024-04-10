@@ -3,6 +3,9 @@
 #define DOCTEST_CONFIG_IMPLEMENT
 #include <time.h>
 #include <vector>
+#include "3D/GLIMAC/default_shader.hpp"
+#include "3D/vao.hpp"
+#include "3D/vbo.hpp"
 #include "boids/swarm.hpp"
 #include "doctest/doctest.h"
 #include "p6/p6.h"
@@ -11,20 +14,20 @@
 int main()
 {
     // TODO : changer la direction pour qu'elle soit aléatoire
-    // Boid comparaison{glm::vec2(0, 0), glm::vec2(genDirection(), genDirection())};
-
     Swarm groupe(50);
-    // int               pos = (int)rand01();
-
-    srand(time(NULL));
+    srand(time(NULL)); // TODO à déplacer ?
 
     // Run the tests
     if (doctest::Context{}.run() != 0)
         return EXIT_FAILURE;
 
     // Actual application code
-    auto ctx = p6::Context{{.title = "Simple-p6-Setup"}};
+    auto ctx = p6::Context{{.title = "Simple-p6-Setup"}}; // TODO Bee Boids
     ctx.maximize_window();
+
+    // Param UI
+    // TODO regrouper var et coeff ?
+    // TODO regrouper dans un nouveau fichier ?
     auto align    = 0.3f;
     auto separate = 0.1f;
     auto cohesion = 0.6f;
@@ -44,6 +47,41 @@ int main()
         ImGui::End();
     };
 
+    // --- 3D ---
+    VBO vbo;
+    vbo.bind();
+
+    // Fill buffer
+    //  Creation tab of float containing coordinates of my points
+    GLfloat vertices[] = {
+        -0.5f, -0.5f, 1.f, 0.f, 0.f,
+        0.5f, -0.5f, 0.f, 1.f, 0.f,
+        0.0f, 0.5f, 0.f, 0.f, 1.f
+    };
+
+    // Sending the data
+    glBufferData(GL_ARRAY_BUFFER, 15 * sizeof(GLfloat), vertices, GL_STATIC_DRAW);
+
+    vbo.unbind();
+
+    // VAO
+    VAO vao;
+    vao.bind();
+
+    // Activation vertex
+    static constexpr GLuint aVertexPosition = 0;
+    glEnableVertexAttribArray(aVertexPosition);
+    static constexpr GLuint aVertexColor = 1;
+    glEnableVertexAttribArray(aVertexColor);
+
+    vbo.bind();
+    glVertexAttribPointer(aVertexPosition, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat), (const GLvoid*)(0 * sizeof(GLfloat)));
+    glVertexAttribPointer(aVertexColor, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat), (const GLvoid*)(2 * sizeof(GLfloat)));
+    vbo.unbind();
+    vao.unbind();
+
+    // ---
+
     // Declare your infinite update loop.
     ctx.update = [&]() {
         ctx.background(p6::NamedColor::VermilionPlochere);
@@ -57,9 +95,21 @@ int main()
         groupe.draw(ctx);
         groupe.animate(ctx, align, separate, cohesion, coeffAlignement, coeffRepulsion, coeffCohesion, ctx.delta_time());
 
-        // comparaison.draw(ctx);
-        // comparaison.move();
-        // comparaison.bounceBorder(ctx);
+        // Clear the window
+        glClear(GL_COLOR_BUFFER_BIT);
+
+        // Bind VAO
+        vao.bind();
+
+        // Shader
+        // glimac::bind_default_shader();
+        // shader.use();
+
+        // Draw triangle
+        glDrawArrays(GL_TRIANGLES, 0, 3);
+
+        // Unbind vao
+        vao.unbind();
     };
 
     // Should be done last. It starts the infinite loop.
