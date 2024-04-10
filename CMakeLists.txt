@@ -3,11 +3,7 @@ cmake_minimum_required(VERSION 3.20)
 
 # ---Choose project name---
 project(Simple-p6-Setup)
-
-# ---Declare source files---
-file(GLOB_RECURSE SOURCE_FILES CONFIGURE_DEPENDS src/*)
-add_executable(${PROJECT_NAME} ${SOURCE_FILES})
-target_include_directories(${PROJECT_NAME} PRIVATE src)
+# TODO renommmer le projet ?
 
 # ---Choose C++ version---
 target_compile_features(${PROJECT_NAME} PRIVATE cxx_std_20)
@@ -18,6 +14,11 @@ if(MSVC)
 else()
     target_compile_options(${PROJECT_NAME} PRIVATE -Wall -Wextra -Wpedantic -pedantic-errors -Wimplicit-fallthrough)
 endif()
+
+# ---Declare source files---
+file(GLOB_RECURSE SOURCE_FILES CONFIGURE_DEPENDS src/*)
+add_executable(${PROJECT_NAME} ${SOURCE_FILES})
+target_include_directories(${PROJECT_NAME} PRIVATE src)
 
 # ---Maybe enable warnings as errors---
 set(WARNINGS_AS_ERRORS OFF CACHE BOOL "ON iff you want to treat warnings as errors")
@@ -48,3 +49,11 @@ FetchContent_Declare(
 )
 FetchContent_MakeAvailable(p6)
 target_link_libraries(${PROJECT_NAME} PRIVATE p6::p6)
+
+# ---Set the output folder---
+set_target_properties(${PROJECT_NAME} PROPERTIES
+    RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/bin/)
+
+# ---Copy the assets and the shaders to the output folder (where the executable is created)---
+Cool__target_copy_folder(${PROJECT_NAME} assets)
+Cool__target_copy_folder(${PROJECT_NAME} /shaders shaders)
