@@ -1,6 +1,5 @@
 // TODO faire le tri des includes ...
 #include <cstdlib>
-#include "boids/boid.hpp"
 #include "glm/ext/matrix_clip_space.hpp"
 #include "glm/ext/matrix_transform.hpp"
 #include "glm/fwd.hpp"
@@ -12,7 +11,6 @@
 #include <glm/glm.hpp>
 #include <vector>
 #include "3D/glimac/common.hpp"
-#include "3D/glimac/default_shader.hpp"
 #include "3D/glimac/sphere_vertices.hpp"
 #include "3D/vao.hpp"
 #include "3D/vbo.hpp"
@@ -60,7 +58,6 @@ int main()
     // --- 3D ---
 
     // Creation Shader
-    // TODO verif path
     const p6::Shader shader = p6::load_shader(
         "../src/3D/shaders/3D.vs.glsl",
         "../src/3D/shaders/normals.fs.glsl"
@@ -75,7 +72,7 @@ int main()
     // Sending the data
     glBufferData(
         GL_ARRAY_BUFFER,
-        vertices.size() * sizeof(vertices),
+        vertices.size() * sizeof(glimac::ShapeVertex),
         vertices.data(),
         GL_STATIC_DRAW
     );
@@ -137,7 +134,6 @@ int main()
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         // Shader
-        // TODO glimac::bind_default_shader();
         shader.use();
 
         // Bind VAO
