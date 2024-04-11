@@ -17,6 +17,7 @@
 #include "boids/swarm.hpp"
 #include "doctest/doctest.h"
 #include "p6/p6.h"
+#include "param/options.hpp"
 #include "random/rand.hpp"
 
 int main()
@@ -34,26 +35,7 @@ int main()
     ctx.maximize_window();
 
     // Param UI
-    // TODO regrouper var et coeff ?
-    // TODO regrouper UI dans un nouveau fichier ?
-    auto align    = 0.3f;
-    auto separate = 0.1f;
-    auto cohesion = 0.6f;
-
-    auto coeffAlignement = 0.001f;
-    auto coeffRepulsion  = 1.f;
-    auto coeffCohesion   = 1.f;
-
-    ctx.imgui = [&]() {
-        ImGui::Begin("Parameters");
-        // ImGui::SliderFloat("Alignment", &align, 0.f, 1.f);
-        // ImGui::SliderFloat("Separation", &separate, 1.f, 2.f);
-        ImGui::SliderFloat("Cohesion", &cohesion, 0.f, 100.f);
-        ImGui::SliderFloat("Coefficient d'alignement", &coeffAlignement, 0.f, 50.f);
-        ImGui::SliderFloat("Coefficient de repulsion", &coeffRepulsion, 0.f, 50.f);
-        ImGui::SliderFloat("Coefficient de cohesion", &coeffCohesion, 0.f, 50.f);
-        ImGui::End();
-    };
+    Options options(ctx);
 
     // --- 3D ---
 
