@@ -31,7 +31,7 @@ int main()
         return EXIT_FAILURE;
 
     // Actual application code
-    auto ctx = p6::Context{{.title = "Simple-p6-Setup"}}; // TODO Bee Boids
+    auto ctx = p6::Context{{.title = "Bee Boids"}};
     ctx.maximize_window();
 
     // Param UI
