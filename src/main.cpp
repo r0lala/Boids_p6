@@ -158,6 +158,38 @@ int main()
         vao.unbind();
 
         // TODO autres spheres / parties de l'abeille
+        vao.bind();
+            MVMatrix = glm::scale(
+                        glm::translate(
+                            MVMatrix, 
+                            {-1.f, 0.f, 0.f}), 
+                        glm::vec3{0.2f}
+                    );
+            NormalMatrix = glm::transpose(glm::inverse(MVMatrix));
+
+            glUniformMatrix4fv(uMVPMatrixLocation, 1, GL_FALSE, glm::value_ptr(ProjMatrix * MVMatrix));
+            glUniformMatrix4fv(uMVMatrixLocation, 1, GL_FALSE, glm::value_ptr(MVMatrix));
+            glUniformMatrix4fv(uNormalMatrixLocation, 1, GL_FALSE, glm::value_ptr(NormalMatrix));
+
+            glDrawArrays(GL_TRIANGLES, 0, vertices.size());
+        vao.unbind();
+
+        vao.bind();
+            MVMatrix = glm::scale(
+                        glm::translate(
+                            glm::mat4(1), 
+                            {0.f, 1.f, -5.f}), 
+                        glm::vec3{0.5f}
+                    );
+            NormalMatrix = glm::transpose(glm::inverse(MVMatrix));
+
+            // TODO => une fonction
+            glUniformMatrix4fv(uMVPMatrixLocation, 1, GL_FALSE, glm::value_ptr(ProjMatrix * MVMatrix));
+            glUniformMatrix4fv(uMVMatrixLocation, 1, GL_FALSE, glm::value_ptr(MVMatrix));
+            glUniformMatrix4fv(uNormalMatrixLocation, 1, GL_FALSE, glm::value_ptr(NormalMatrix));
+
+            glDrawArrays(GL_TRIANGLES, 0, vertices.size());
+        vao.unbind();
     };
 
     // Should be done last. It starts the infinite loop.
