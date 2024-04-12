@@ -156,6 +156,8 @@ int main()
 
         // Unbind vao
         vao.unbind();
+
+        // TODO autres spheres / parties de l'abeille
     };
 
     // Should be done last. It starts the infinite loop.
