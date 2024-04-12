@@ -63,8 +63,17 @@ int main()
     // TODO verif path
     const p6::Shader shader = p6::load_shader(
         "../src/3D/shaders/3D.vs.glsl",
-        "../src/3D/shaders/normals.fs.glsl"
+        "../src/3D/shaders/bee/body.fs.glsl"
     );
+    const p6::Shader eyes = p6::load_shader(
+        "../src/3D/shaders/3D.vs.glsl",
+        "../src/3D/shaders/bee/eyes.fs.glsl"
+    );
+    const p6::Shader wings = p6::load_shader(
+        "../src/3D/shaders/3D.vs.glsl",
+        "../src/3D/shaders/bee/wings.fs.glsl"
+    );
+
 
     VBO vbo;
     vbo.bind();
@@ -142,6 +151,9 @@ int main()
 
         // Bind VAO
         vao.bind();
+        // uMVPMatrixLocation    = glGetUniformLocation(shader.id(), "uMVPMatrix");
+        // uMVMatrixLocation     = glGetUniformLocation(shader.id(), "uMVMatrix");
+        // uNormalMatrixLocation = glGetUniformLocation(shader.id(), "uNormalMatrix");
 
         glm::mat4 ProjMatrix   = glm::perspective(glm::radians(70.f), ctx.aspect_ratio(), 0.1f, 100.f);
         glm::mat4 MVMatrix     = glm::translate(glm::mat4(1), glm::vec3(0, 0, -5));
@@ -159,6 +171,12 @@ int main()
 
         // TODO autres spheres / parties de l'abeille
         vao.bind();
+
+            // uMVPMatrixLocation    = glGetUniformLocation(eyes.id(), "uMVPMatrix");
+            // uMVMatrixLocation     = glGetUniformLocation(eyes.id(), "uMVMatrix");
+            // uNormalMatrixLocation = glGetUniformLocation(eyes.id(), "uNormalMatrix");
+            eyes.use();
+
             MVMatrix = glm::scale(
                         glm::translate(
                             MVMatrix, 
@@ -175,6 +193,7 @@ int main()
         vao.unbind();
 
         vao.bind();
+            wings.use();
             MVMatrix = glm::scale(
                         glm::translate(
                             glm::mat4(1), 
