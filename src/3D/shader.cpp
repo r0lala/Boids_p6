@@ -27,6 +27,6 @@ void Shader::giveMatrix(glm::mat4 ProjMatrix, glm::mat4 MVMatrix, glm::mat4 Norm
     glUniformMatrix4fv(_uNormalMatrix, 1, GL_FALSE, glm::value_ptr(NormalMatrix));
 }
 
-void Shader::bindTexture(){
-    glUniform1i(_uTexture, 0);
+void Shader::bindTexture(int textUnit){
+    glUniform1i(_uTexture, textUnit);
 }

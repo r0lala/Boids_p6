@@ -147,8 +147,7 @@ int main()
 
         // Draw triangle
         glBindTexture(GL_TEXTURE_2D, textures);
-        body.bindTexture(); // TODO à renommer ?
-        // glUniform1i(uTexture, 0);
+        body.bindTexture(0);
         glDrawArrays(GL_TRIANGLES, 0, vertices.size());
         glBindTexture(GL_TEXTURE_2D, 0);
         vao.unbind();
