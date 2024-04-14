@@ -19,6 +19,7 @@
 #include "p6/p6.h"
 #include "param/options.hpp"
 #include "random/rand.hpp"
+#include "3D/texture.hpp"
 
 int main()
 {
@@ -40,19 +41,9 @@ int main()
     // --- 3D ---
 
     // Creation Shader
-    const p6::Shader shader = p6::load_shader(
-        "../src/3D/shaders/3D.vs.glsl",
-        "../src/3D/shaders/bee/body.fs.glsl"
-    );
-    const p6::Shader eyes = p6::load_shader(
-        "../src/3D/shaders/3D.vs.glsl",
-        "../src/3D/shaders/bee/eyes.fs.glsl"
-    );
-    const p6::Shader wings = p6::load_shader(
-        "../src/3D/shaders/3D.vs.glsl",
-        "../src/3D/shaders/bee/wings.fs.glsl"
-        // "../src/3D/shaders/normals.fs.glsl"
-    );
+    Texture body("3D", "bee/body");
+    Texture eyes("3D", "bee/eyes");
+    Texture wings("3D", "bee/wings");
 
      // Chargement des textures
      // TODO rename triforce
@@ -110,12 +101,6 @@ int main()
 
     glEnable(GL_DEPTH_TEST); // active le test de profondeur du GPU
 
-    // Variables uniformes
-    GLint uMVPMatrixLocation    = glGetUniformLocation(shader.id(), "uMVPMatrix");
-    GLint uMVMatrixLocation     = glGetUniformLocation(shader.id(), "uMVMatrix");
-    GLint uNormalMatrixLocation = glGetUniformLocation(shader.id(), "uNormalMatrix");
-    GLuint uTexture = glGetUniformLocation(shader.id(), "uTexture");
-
     // Texture  
     GLuint textures;
     glGenTextures(1, &textures);
@@ -145,13 +130,10 @@ int main()
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         // Shader
-        shader.use();
+        body.use();
 
         // Bind VAO
         vao.bind();
-        // uMVPMatrixLocation    = glGetUniformLocation(shader.id(), "uMVPMatrix");
-        // uMVMatrixLocation     = glGetUniformLocation(shader.id(), "uMVMatrix");
-        // uNormalMatrixLocation = glGetUniformLocation(shader.id(), "uNormalMatrix");
 
         glm::mat4 ProjMatrix   = glm::perspective(glm::radians(70.f), ctx.aspect_ratio(), 0.1f, 100.f);
         glm::mat4 MVMatrix     = glm::translate(glm::mat4(1), glm::vec3(0, 0, -5));
@@ -160,14 +142,13 @@ int main()
         MVMatrix = glm::scale(MVMatrix, glm::vec3{0.6, 0.5f, 0.5});
         glm::mat4 NormalMatrix = glm::transpose(glm::inverse(MVMatrix));
 
-        glUniformMatrix4fv(uMVPMatrixLocation, 1, GL_FALSE, glm::value_ptr(ProjMatrix * MVMatrix));
-        glUniformMatrix4fv(uMVMatrixLocation, 1, GL_FALSE, glm::value_ptr(MVMatrix));
-        glUniformMatrix4fv(uNormalMatrixLocation, 1, GL_FALSE, glm::value_ptr(NormalMatrix));
+        body.giveMatrix(ProjMatrix, MVMatrix, NormalMatrix);
 
         // Draw triangle
         // glUniform3fv(uColorLocation, 1, glm::value_ptr(glm::vec3(i / 2., (i + j) / 4., 0.5)));
         glBindTexture(GL_TEXTURE_2D, textures);
-        glUniform1i(uTexture, 0);
+        body.bind(); // TODO à renommer ?
+        // glUniform1i(uTexture, 0);
         glDrawArrays(GL_TRIANGLES, 0, vertices.size());
         glBindTexture(GL_TEXTURE_2D, 0);
         // Unbind vao
@@ -175,10 +156,6 @@ int main()
 
         // TODO autres spheres / parties de l'abeille
         vao.bind();
-
-            // uMVPMatrixLocation    = glGetUniformLocation(eyes.id(), "uMVPMatrix");
-            // uMVMatrixLocation     = glGetUniformLocation(eyes.id(), "uMVMatrix");
-            // uNormalMatrixLocation = glGetUniformLocation(eyes.id(), "uNormalMatrix");
             eyes.use();
 
             MVMatrix     = glm::translate(glm::mat4(1), glm::vec3(0, 0, -5));
@@ -192,9 +169,7 @@ int main()
                     );
             NormalMatrix = glm::transpose(glm::inverse(MVMatrix));
 
-            glUniformMatrix4fv(uMVPMatrixLocation, 1, GL_FALSE, glm::value_ptr(ProjMatrix * MVMatrix));
-            glUniformMatrix4fv(uMVMatrixLocation, 1, GL_FALSE, glm::value_ptr(MVMatrix));
-            // glUniformMatrix4fv(uNormalMatrixLocation, 1, GL_FALSE, glm::value_ptr(NormalMatrix));
+            body.giveMatrix(ProjMatrix, MVMatrix, NormalMatrix);
 
             glDrawArrays(GL_TRIANGLES, 0, vertices.size());
         vao.unbind();
@@ -206,8 +181,7 @@ int main()
                             {0.f, 0.f, -4.5f});
             NormalMatrix = glm::transpose(glm::inverse(MVMatrix));
 
-            glUniformMatrix4fv(uMVPMatrixLocation, 1, GL_FALSE, glm::value_ptr(ProjMatrix * MVMatrix));
-            glUniformMatrix4fv(uMVMatrixLocation, 1, GL_FALSE, glm::value_ptr(MVMatrix));
+        body.giveMatrix(ProjMatrix, MVMatrix, NormalMatrix);
 
             glDrawArrays(GL_TRIANGLES, 0, vertices.size());
         vao.unbind();
@@ -228,10 +202,7 @@ int main()
             MVMatrix = glm::rotate(MVMatrix, ctx.time(), glm::vec3{1.f, 0.f, 0.f});
             NormalMatrix = glm::transpose(glm::inverse(MVMatrix));
 
-            // TODO => une fonction
-            glUniformMatrix4fv(uMVPMatrixLocation, 1, GL_FALSE, glm::value_ptr(ProjMatrix * MVMatrix));
-            glUniformMatrix4fv(uMVMatrixLocation, 1, GL_FALSE, glm::value_ptr(MVMatrix));
-            // glUniformMatrix4fv(uNormalMatrixLocation, 1, GL_FALSE, glm::value_ptr(NormalMatrix));
+            body.giveMatrix(ProjMatrix, MVMatrix, NormalMatrix);
 
             glDrawArrays(GL_TRIANGLES, 0, vertices.size());
         vao.unbind();
