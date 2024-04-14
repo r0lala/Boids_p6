@@ -51,8 +51,15 @@ int main()
     const p6::Shader wings = p6::load_shader(
         "../src/3D/shaders/3D.vs.glsl",
         "../src/3D/shaders/bee/wings.fs.glsl"
+        // "../src/3D/shaders/normals.fs.glsl"
     );
 
+     // Chargement des textures
+     // TODO rename triforce
+     // TODO bug : c'est chargé à l'envers ???
+    img::Image triforce = p6::load_image_buffer("../assets/textures/MoonMap.jpg");
+    // std::unique_ptr<Image> triforce = loadImage("~/IMAC2/S4/GLImac-Template/assets/textures/triforce.png");
+    // assert(triforce != NULL && "error loading triforce.png");
 
     VBO vbo;
     vbo.bind();
@@ -107,6 +114,19 @@ int main()
     GLint uMVPMatrixLocation    = glGetUniformLocation(shader.id(), "uMVPMatrix");
     GLint uMVMatrixLocation     = glGetUniformLocation(shader.id(), "uMVMatrix");
     GLint uNormalMatrixLocation = glGetUniformLocation(shader.id(), "uNormalMatrix");
+    GLuint uTexture = glGetUniformLocation(shader.id(), "uTexture");
+
+    // Texture  
+    GLuint textures;
+    glGenTextures(1, &textures);
+    glBindTexture(GL_TEXTURE_2D, textures);
+    glTexImage2D(
+        GL_TEXTURE_2D, 0, GL_RGBA, 
+        triforce.width(), triforce.height(), 
+        0, GL_RGBA, GL_UNSIGNED_BYTE, triforce.data());
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glBindTexture(GL_TEXTURE_2D, 0);
 
     // Declare your infinite update loop.
     ctx.update = [&]() {
@@ -135,6 +155,9 @@ int main()
 
         glm::mat4 ProjMatrix   = glm::perspective(glm::radians(70.f), ctx.aspect_ratio(), 0.1f, 100.f);
         glm::mat4 MVMatrix     = glm::translate(glm::mat4(1), glm::vec3(0, 0, -5));
+        // MVMatrix = glm::rotate(MVMatrix, 90.f, {0.f, 0.f, 0.f});
+        MVMatrix = glm::rotate(MVMatrix, ctx.time(), {0.f, 1.f, 0.f});
+        MVMatrix = glm::scale(MVMatrix, glm::vec3{0.6, 0.5f, 0.5});
         glm::mat4 NormalMatrix = glm::transpose(glm::inverse(MVMatrix));
 
         glUniformMatrix4fv(uMVPMatrixLocation, 1, GL_FALSE, glm::value_ptr(ProjMatrix * MVMatrix));
@@ -142,8 +165,11 @@ int main()
         glUniformMatrix4fv(uNormalMatrixLocation, 1, GL_FALSE, glm::value_ptr(NormalMatrix));
 
         // Draw triangle
+        // glUniform3fv(uColorLocation, 1, glm::value_ptr(glm::vec3(i / 2., (i + j) / 4., 0.5)));
+        glBindTexture(GL_TEXTURE_2D, textures);
+        glUniform1i(uTexture, 0);
         glDrawArrays(GL_TRIANGLES, 0, vertices.size());
-
+        glBindTexture(GL_TEXTURE_2D, 0);
         // Unbind vao
         vao.unbind();
 
@@ -155,35 +181,57 @@ int main()
             // uNormalMatrixLocation = glGetUniformLocation(eyes.id(), "uNormalMatrix");
             eyes.use();
 
+            MVMatrix     = glm::translate(glm::mat4(1), glm::vec3(0, 0, -5));
+            MVMatrix = glm::rotate(MVMatrix, ctx.time(), {0.f, 1.f, 0.f});
+
             MVMatrix = glm::scale(
                         glm::translate(
                             MVMatrix, 
-                            {-1.f, 0.f, 0.f}), 
-                        glm::vec3{0.2f}
+                            {-0.5f, 0.f, 0.25f}), 
+                        glm::vec3{0.1f}
                     );
             NormalMatrix = glm::transpose(glm::inverse(MVMatrix));
 
             glUniformMatrix4fv(uMVPMatrixLocation, 1, GL_FALSE, glm::value_ptr(ProjMatrix * MVMatrix));
             glUniformMatrix4fv(uMVMatrixLocation, 1, GL_FALSE, glm::value_ptr(MVMatrix));
-            glUniformMatrix4fv(uNormalMatrixLocation, 1, GL_FALSE, glm::value_ptr(NormalMatrix));
+            // glUniformMatrix4fv(uNormalMatrixLocation, 1, GL_FALSE, glm::value_ptr(NormalMatrix));
+
+            glDrawArrays(GL_TRIANGLES, 0, vertices.size());
+        vao.unbind();
+        vao.bind();
+            eyes.use();
+
+            MVMatrix = glm::translate(
+                            MVMatrix, 
+                            {0.f, 0.f, -4.5f});
+            NormalMatrix = glm::transpose(glm::inverse(MVMatrix));
+
+            glUniformMatrix4fv(uMVPMatrixLocation, 1, GL_FALSE, glm::value_ptr(ProjMatrix * MVMatrix));
+            glUniformMatrix4fv(uMVMatrixLocation, 1, GL_FALSE, glm::value_ptr(MVMatrix));
 
             glDrawArrays(GL_TRIANGLES, 0, vertices.size());
         vao.unbind();
 
         vao.bind();
+        // TODO à revoir pour l'inclinaison de l'aile
+        // TODO faire la 2e aile
             wings.use();
             MVMatrix = glm::scale(
-                        glm::translate(
-                            glm::mat4(1), 
-                            {0.f, 1.f, -5.f}), 
-                        glm::vec3{0.5f}
-                    );
+                            glm::translate(
+                                glm::mat4(1), 
+                                {0.f, 0.8f, -5.f}), 
+                    glm::vec3{0.5f, 0.75, 0.5}
+                );
+            MVMatrix = glm::scale(
+                MVMatrix, glm::vec3{0.5f}
+            );
+            MVMatrix = glm::rotate(MVMatrix, ctx.time(), glm::vec3{1.f, 0.f, 0.f});
             NormalMatrix = glm::transpose(glm::inverse(MVMatrix));
 
             // TODO => une fonction
             glUniformMatrix4fv(uMVPMatrixLocation, 1, GL_FALSE, glm::value_ptr(ProjMatrix * MVMatrix));
             glUniformMatrix4fv(uMVMatrixLocation, 1, GL_FALSE, glm::value_ptr(MVMatrix));
-            glUniformMatrix4fv(uNormalMatrixLocation, 1, GL_FALSE, glm::value_ptr(NormalMatrix));
+            // glUniformMatrix4fv(uNormalMatrixLocation, 1, GL_FALSE, glm::value_ptr(NormalMatrix));
 
             glDrawArrays(GL_TRIANGLES, 0, vertices.size());
         vao.unbind();
@@ -191,4 +239,6 @@ int main()
 
     // Should be done last. It starts the infinite loop.
     ctx.start();
+    glDeleteTextures(1, &textures);
+    return EXIT_SUCCESS;
 }
