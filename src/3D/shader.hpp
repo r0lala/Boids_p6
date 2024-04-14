@@ -17,5 +17,5 @@ public:
     ~Shader();
     void use();
     void giveMatrix(glm::mat4 ProjMatrix, glm::mat4 MVMatrix, glm::mat4 NormalMatrix);
-    void bind();
+    void bindTexture();
 };
