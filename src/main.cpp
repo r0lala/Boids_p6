@@ -19,7 +19,7 @@
 #include "p6/p6.h"
 #include "param/options.hpp"
 #include "random/rand.hpp"
-#include "3D/texture.hpp"
+#include "3D/shader.hpp"
 
 int main()
 {
@@ -41,9 +41,9 @@ int main()
     // --- 3D ---
 
     // Creation Shader
-    Texture body("3D", "bee/body");
-    Texture eyes("3D", "bee/eyes");
-    Texture wings("3D", "bee/wings");
+    Shader body("3D", "bee/body");
+    Shader eyes("3D", "bee/eyes");
+    Shader wings("3D", "bee/wings");
 
      // Chargement des textures
      // TODO rename triforce
