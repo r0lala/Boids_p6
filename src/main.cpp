@@ -102,6 +102,7 @@ int main()
     glEnable(GL_DEPTH_TEST); // active le test de profondeur du GPU
 
     // Texture  
+    // TODO dans un fichier
     GLuint textures;
     glGenTextures(1, &textures);
     glBindTexture(GL_TEXTURE_2D, textures);
@@ -145,20 +146,18 @@ int main()
         body.giveMatrix(ProjMatrix, MVMatrix, NormalMatrix);
 
         // Draw triangle
-        // glUniform3fv(uColorLocation, 1, glm::value_ptr(glm::vec3(i / 2., (i + j) / 4., 0.5)));
         glBindTexture(GL_TEXTURE_2D, textures);
         body.bind(); // TODO à renommer ?
         // glUniform1i(uTexture, 0);
         glDrawArrays(GL_TRIANGLES, 0, vertices.size());
         glBindTexture(GL_TEXTURE_2D, 0);
-        // Unbind vao
         vao.unbind();
 
         // TODO autres spheres / parties de l'abeille
         vao.bind();
             eyes.use();
 
-            MVMatrix     = glm::translate(glm::mat4(1), glm::vec3(0, 0, -5));
+            MVMatrix = glm::translate(glm::mat4(1), glm::vec3(0, 0, -5));
             MVMatrix = glm::rotate(MVMatrix, ctx.time(), {0.f, 1.f, 0.f});
 
             MVMatrix = glm::scale(
