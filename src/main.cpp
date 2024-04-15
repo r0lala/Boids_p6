@@ -38,18 +38,16 @@ int main()
     ctx.maximize_window();
 
     ctx.mouse_scrolled = [&](p6::MouseScroll scroll) {
+        // TODO
         std::cout << "dy = " << scroll.dy << std::endl;
         std::cout << "dx = " << scroll.dx << std::endl;
 
-        camera.moveFront(scroll.dy);
+        camera.moveFront(scroll.dy / 10.);
     };
 
     ctx.mouse_dragged = [&](p6::MouseDrag mouse) {
-        float x = mouse.delta[0];
-        float y = mouse.delta[1];
-        // std::cout << "x = " << mouse.delta[0] << std::endl;
-        // std::cout << "y = " << mouse.delta[1] << std::endl;
-        // std::cout << std::endl;
+        float y = mouse.delta[0];
+        float x = mouse.delta[1];
         camera.rotateLeft(x);
         camera.rotateUp(y);
     };
@@ -163,8 +161,8 @@ int main()
         vao.bind();
 
         glm::mat4 ViewMatrix   = camera.getViewMatrix();
-        glm::mat4 ProjMatrix   = glm::perspective(glm::radians(70.f), ctx.aspect_ratio(), 0.1f, 100.f) * ViewMatrix;
-        glm::mat4 MVMatrix     = glm::translate(glm::mat4(1), glm::vec3(0, 0, -5)) * ViewMatrix;
+        glm::mat4 ProjMatrix   = ViewMatrix * glm::perspective(glm::radians(70.f), ctx.aspect_ratio(), 0.1f, 100.f);
+        glm::mat4 MVMatrix     = ViewMatrix * glm::translate(glm::mat4(1), glm::vec3(0, 0, -5));
         glm::mat4 NormalMatrix = glm::transpose(glm::inverse(MVMatrix));
 
         glUniformMatrix4fv(uMVPMatrixLocation, 1, GL_FALSE, glm::value_ptr(ProjMatrix * MVMatrix));

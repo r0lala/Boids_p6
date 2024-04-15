@@ -10,14 +10,7 @@ private:
 public:
     void moveFront(float delta)
     {
-        if (delta > 0)
-        {
-            m_Distance += delta;
-        }
-        else
-        {
-            m_Distance -= delta;
-        }
+        m_Distance += delta;
     }
 
     void rotateLeft(float degrees)
