@@ -12,6 +12,7 @@
 #include <vector>
 #include "3D/glimac/common.hpp"
 #include "3D/glimac/sphere_vertices.hpp"
+#include "3D/shader.hpp"
 #include "3D/vao.hpp"
 #include "3D/vbo.hpp"
 #include "boids/swarm.hpp"
@@ -19,7 +20,7 @@
 #include "p6/p6.h"
 #include "param/options.hpp"
 #include "random/rand.hpp"
-#include "3D/shader.hpp"
+
 
 int main()
 {
@@ -45,10 +46,10 @@ int main()
     Shader eyes("3D", "bee/eyes");
     Shader wings("3D", "bee/wings");
 
-     // Chargement des textures
-     // TODO rename triforce
-     // TODO bug : c'est chargé à l'envers ???
-    img::Image triforce = p6::load_image_buffer("../assets/textures/MoonMap.jpg");
+    // Chargement des textures
+    // TODO rename triforce
+    // TODO bug : c'est chargé à l'envers ???
+    img::Image triforce = p6::load_image_buffer("../assets/textures/bodyTexture.png");
     // std::unique_ptr<Image> triforce = loadImage("~/IMAC2/S4/GLImac-Template/assets/textures/triforce.png");
     // assert(triforce != NULL && "error loading triforce.png");
 
@@ -101,15 +102,16 @@ int main()
 
     glEnable(GL_DEPTH_TEST); // active le test de profondeur du GPU
 
-    // Texture  
+    // Texture
     // TODO dans un fichier
     GLuint textures;
     glGenTextures(1, &textures);
     glBindTexture(GL_TEXTURE_2D, textures);
     glTexImage2D(
-        GL_TEXTURE_2D, 0, GL_RGBA, 
-        triforce.width(), triforce.height(), 
-        0, GL_RGBA, GL_UNSIGNED_BYTE, triforce.data());
+        GL_TEXTURE_2D, 0, GL_RGBA,
+        triforce.width(), triforce.height(),
+        0, GL_RGBA, GL_UNSIGNED_BYTE, triforce.data()
+    );
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     glBindTexture(GL_TEXTURE_2D, 0);
@@ -136,11 +138,11 @@ int main()
         // Bind VAO
         vao.bind();
 
-        glm::mat4 ProjMatrix   = glm::perspective(glm::radians(70.f), ctx.aspect_ratio(), 0.1f, 100.f);
-        glm::mat4 MVMatrix     = glm::translate(glm::mat4(1), glm::vec3(0, 0, -5));
+        glm::mat4 ProjMatrix = glm::perspective(glm::radians(70.f), ctx.aspect_ratio(), 0.1f, 100.f);
+        glm::mat4 MVMatrix   = glm::translate(glm::mat4(1), glm::vec3(0, 0, -5));
         // MVMatrix = glm::rotate(MVMatrix, 90.f, {0.f, 0.f, 0.f});
-        MVMatrix = glm::rotate(MVMatrix, ctx.time(), {0.f, 1.f, 0.f});
-        MVMatrix = glm::scale(MVMatrix, glm::vec3{0.6, 0.5f, 0.5});
+        MVMatrix               = glm::rotate(MVMatrix, ctx.time(), {0.f, 1.f, 0.f});
+        MVMatrix               = glm::scale(MVMatrix, glm::vec3{0.6, 0.5f, 0.5});
         glm::mat4 NormalMatrix = glm::transpose(glm::inverse(MVMatrix));
 
         body.giveMatrix(ProjMatrix, MVMatrix, NormalMatrix);
@@ -154,55 +156,58 @@ int main()
 
         // TODO autres spheres / parties de l'abeille
         vao.bind();
-            eyes.use();
+        eyes.use();
 
-            MVMatrix = glm::translate(glm::mat4(1), glm::vec3(0, 0, -5));
-            MVMatrix = glm::rotate(MVMatrix, ctx.time(), {0.f, 1.f, 0.f});
+        MVMatrix = glm::translate(glm::mat4(1), glm::vec3(0, 0, -5));
+        MVMatrix = glm::rotate(MVMatrix, ctx.time(), {0.f, 1.f, 0.f});
 
-            MVMatrix = glm::scale(
-                        glm::translate(
-                            MVMatrix, 
-                            {-0.5f, 0.f, 0.25f}), 
-                        glm::vec3{0.1f}
-                    );
-            NormalMatrix = glm::transpose(glm::inverse(MVMatrix));
-
-            body.giveMatrix(ProjMatrix, MVMatrix, NormalMatrix);
-
-            glDrawArrays(GL_TRIANGLES, 0, vertices.size());
-        vao.unbind();
-        vao.bind();
-            eyes.use();
-
-            MVMatrix = glm::translate(
-                            MVMatrix, 
-                            {0.f, 0.f, -4.5f});
-            NormalMatrix = glm::transpose(glm::inverse(MVMatrix));
+        MVMatrix = glm::scale(
+            glm::translate(
+                MVMatrix,
+                {-0.5f, 0.f, 0.25f}
+            ),
+            glm::vec3{0.1f}
+        );
+        NormalMatrix = glm::transpose(glm::inverse(MVMatrix));
 
         body.giveMatrix(ProjMatrix, MVMatrix, NormalMatrix);
 
-            glDrawArrays(GL_TRIANGLES, 0, vertices.size());
+        glDrawArrays(GL_TRIANGLES, 0, vertices.size());
+        vao.unbind();
+        vao.bind();
+        eyes.use();
+
+        MVMatrix = glm::translate(
+            MVMatrix,
+            {0.f, 0.f, -4.5f}
+        );
+        NormalMatrix = glm::transpose(glm::inverse(MVMatrix));
+
+        body.giveMatrix(ProjMatrix, MVMatrix, NormalMatrix);
+
+        glDrawArrays(GL_TRIANGLES, 0, vertices.size());
         vao.unbind();
 
         vao.bind();
         // TODO à revoir pour l'inclinaison de l'aile
         // TODO faire la 2e aile
-            wings.use();
-            MVMatrix = glm::scale(
-                            glm::translate(
-                                glm::mat4(1), 
-                                {0.f, 0.8f, -5.f}), 
-                    glm::vec3{0.5f, 0.75, 0.5}
-                );
-            MVMatrix = glm::scale(
-                MVMatrix, glm::vec3{0.5f}
-            );
-            MVMatrix = glm::rotate(MVMatrix, ctx.time(), glm::vec3{1.f, 0.f, 0.f});
-            NormalMatrix = glm::transpose(glm::inverse(MVMatrix));
+        wings.use();
+        MVMatrix = glm::scale(
+            glm::translate(
+                glm::mat4(1),
+                {0.f, 0.8f, -5.f}
+            ),
+            glm::vec3{0.5f, 0.75, 0.5}
+        );
+        MVMatrix = glm::scale(
+            MVMatrix, glm::vec3{0.5f}
+        );
+        MVMatrix     = glm::rotate(MVMatrix, ctx.time(), glm::vec3{1.f, 0.f, 0.f});
+        NormalMatrix = glm::transpose(glm::inverse(MVMatrix));
 
-            body.giveMatrix(ProjMatrix, MVMatrix, NormalMatrix);
+        body.giveMatrix(ProjMatrix, MVMatrix, NormalMatrix);
 
-            glDrawArrays(GL_TRIANGLES, 0, vertices.size());
+        glDrawArrays(GL_TRIANGLES, 0, vertices.size());
         vao.unbind();
     };
 
