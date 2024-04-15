@@ -3,14 +3,12 @@
 #include "glm/ext/matrix_clip_space.hpp"
 #include "glm/ext/matrix_transform.hpp"
 #include "glm/fwd.hpp"
-#include "glm/gtc/type_ptr.hpp"
 #include "glm/matrix.hpp"
 #include "glm/trigonometric.hpp"
 #define DOCTEST_CONFIG_IMPLEMENT
 #include <ctime>
 #include <glm/glm.hpp>
 #include <vector>
-#include "3D/bee.cpp"
 #include "3D/bee.hpp"
 #include "3D/glimac/common.hpp"
 #include "3D/glimac/sphere_vertices.hpp"
@@ -75,31 +73,31 @@ int main()
     VAO vao;
     vao.bind();
 
-    beez.initBee(vbo, vao);
+    // beez.initBee(vbo, vao);
     // // Activation vertex
-    // vbo.bind();
-    // static constexpr GLuint aVertexPosition = 0;
-    // glEnableVertexAttribArray(aVertexPosition);
-    // glVertexAttribPointer(
-    //     aVertexPosition, 3, GL_FLOAT, GL_FALSE,
-    //     sizeof(glimac::ShapeVertex), (const GLvoid*)(offsetof(glimac::ShapeVertex, position))
-    // );
+    vbo.bind();
+    static constexpr GLuint aVertexPosition = 0;
+    glEnableVertexAttribArray(aVertexPosition);
+    glVertexAttribPointer(
+        aVertexPosition, 3, GL_FLOAT, GL_FALSE,
+        sizeof(glimac::ShapeVertex), (const GLvoid*)(offsetof(glimac::ShapeVertex, position))
+    );
 
-    // static constexpr GLuint aVertexNormal = 1;
-    // glEnableVertexAttribArray(aVertexNormal);
-    // glVertexAttribPointer(
-    //     aVertexNormal, 3, GL_FLOAT, GL_FALSE,
-    //     sizeof(glimac::ShapeVertex), (const GLvoid*)(offsetof(glimac::ShapeVertex, normal))
-    // );
+    static constexpr GLuint aVertexNormal = 1;
+    glEnableVertexAttribArray(aVertexNormal);
+    glVertexAttribPointer(
+        aVertexNormal, 3, GL_FLOAT, GL_FALSE,
+        sizeof(glimac::ShapeVertex), (const GLvoid*)(offsetof(glimac::ShapeVertex, normal))
+    );
 
-    // static constexpr GLuint aVertexTexCoords = 2;
-    // glEnableVertexAttribArray(aVertexTexCoords);
-    // glVertexAttribPointer(
-    //     aVertexTexCoords, 2, GL_FLOAT, GL_FALSE,
-    //     sizeof(glimac::ShapeVertex), (const GLvoid*)(offsetof(glimac::ShapeVertex, texCoords))
-    // );
-    // vbo.unbind();
-    // vao.unbind();
+    static constexpr GLuint aVertexTexCoords = 2;
+    glEnableVertexAttribArray(aVertexTexCoords);
+    glVertexAttribPointer(
+        aVertexTexCoords, 2, GL_FLOAT, GL_FALSE,
+        sizeof(glimac::ShapeVertex), (const GLvoid*)(offsetof(glimac::ShapeVertex, texCoords))
+    );
+    vbo.unbind();
+    vao.unbind();
 
     // ---
 
@@ -191,41 +189,10 @@ int main()
         glDrawArrays(GL_TRIANGLES, 0, vertices.size());
         vao.unbind();
 
-        vao.bind();
-        // TODO à revoir pour l'inclinaison de l'aile
-        // TODO faire la 2e aile
-        wings.use();
-        MVMatrix = glm::translate(bodyMatrix, {0.1f, 1.4f, 0.5f});
-        // MVMatrix = glm::translate(glm::mat4(1), {0.2f, 0.f, 0.f});
-        // MVMatrix = glm::rotate(MVMatrix, ctx.time(), {0.f, 1.f, 0.f});
-        MVMatrix = glm::rotate(MVMatrix, 35.f, glm::vec3{1.f, 0.f, 0.f});
-
-        MVMatrix = glm::scale(MVMatrix, glm::vec3{0.8f});
-        MVMatrix = glm::scale(MVMatrix, glm::vec3{0.5f, 1.f, 0.1f});
-
-        NormalMatrix = glm::transpose(glm::inverse(MVMatrix));
-
-        wings.giveMatrix(ProjMatrix, MVMatrix, NormalMatrix);
-
-        glDrawArrays(GL_TRIANGLES, 0, vertices.size());
-        vao.unbind();
-        // beez.drawWing(35.f, )
-
-        vao.bind();
-        // TODO à revoir pour l'inclinaison de l'aile - ok
-        wings.use();
-        MVMatrix = glm::translate(bodyMatrix, {0.1f, 1.4f, -0.5f});
-        MVMatrix = glm::rotate(MVMatrix, -35.f, glm::vec3{1.f, 0.f, 0.f});
-
-        MVMatrix = glm::scale(MVMatrix, glm::vec3{0.8f});
-        MVMatrix = glm::scale(MVMatrix, glm::vec3{0.5f, 1.f, 0.1f});
-
-        NormalMatrix = glm::transpose(glm::inverse(MVMatrix));
-
-        wings.giveMatrix(ProjMatrix, MVMatrix, NormalMatrix);
-
-        glDrawArrays(GL_TRIANGLES, 0, vertices.size());
-        vao.unbind();
+        //---
+        // TODO regrouper en drawWings ?
+        beez.drawWing(ctx, 35.f, vao, bodyMatrix, wings, vertices);
+        beez.drawWing(ctx, -35.f, vao, bodyMatrix, wings, vertices);
     };
 
     // Should be done last. It starts the infinite loop.
