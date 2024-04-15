@@ -41,22 +41,19 @@ int main()
     // --- 3D ---
 
     // Creation Shader
-    Shader body("3D", "bee/body");
-    Shader eyes("3D", "bee/eyes");
-    Shader wings("3D", "bee/wings");
+    Shader tree("3D", "tree/leaf");
 
     // Chargement des textures
     // TODO rename triforce
     // TODO bug : c'est chargé à l'envers ???
-    img::Image triforce = p6::load_image_buffer("../assets/textures/bodyTexture.png");
-    // std::unique_ptr<Image> triforce = loadImage("~/IMAC2/S4/GLImac-Template/assets/textures/triforce.png");
+    // img::Image triforce = p6::load_image_buffer("../assets/textures/bodyTexture.png");
     // assert(triforce != NULL && "error loading triforce.png");
 
     VBO vbo;
     vbo.bind();
 
     // Fill buffer
-    const std::vector<glimac::ShapeVertex> vertices = glimac::sphere_vertices(1.f, 32, 16);
+    const std::vector<glimac::ShapeVertex> vertices = glimac::sphere_vertices(1.f, 32, 16); // TODO rendre ça variable
 
     // Sending the data
     glBufferData(
@@ -72,7 +69,7 @@ int main()
     VAO vao;
     vao.bind();
 
-    // Activation vertex
+    // Activation vertex 3D
     vbo.bind();
     static constexpr GLuint aVertexPosition = 0;
     glEnableVertexAttribArray(aVertexPosition);
@@ -103,17 +100,17 @@ int main()
 
     // Texture
     // TODO dans un fichier
-    GLuint textures;
-    glGenTextures(1, &textures);
-    glBindTexture(GL_TEXTURE_2D, textures);
-    glTexImage2D(
-        GL_TEXTURE_2D, 0, GL_RGBA,
-        triforce.width(), triforce.height(),
-        0, GL_RGBA, GL_UNSIGNED_BYTE, triforce.data()
-    );
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    glBindTexture(GL_TEXTURE_2D, 0);
+    // GLuint textures;
+    // glGenTextures(1, &textures);
+    // glBindTexture(GL_TEXTURE_2D, textures);
+    // glTexImage2D(
+    //     GL_TEXTURE_2D, 0, GL_RGBA,
+    //     triforce.width(), triforce.height(),
+    //     0, GL_RGBA, GL_UNSIGNED_BYTE, triforce.data()
+    // );
+    // glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    // glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    // glBindTexture(GL_TEXTURE_2D, 0);
 
     // Declare your infinite update loop.
     ctx.update = [&]() {
@@ -132,7 +129,7 @@ int main()
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         // Shader
-        body.use();
+        tree.use();
 
         // Bind VAO
         vao.bind();
@@ -141,91 +138,21 @@ int main()
         glm::mat4 MVMatrix   = glm::translate(glm::mat4(1), glm::vec3(0, 0, -5));
         // MVMatrix = glm::rotate(MVMatrix, 90.f, {0.f, 0.f, 0.f});
         MVMatrix               = glm::rotate(MVMatrix, ctx.time(), {0.f, 1.f, 0.f});
-        MVMatrix               = glm::scale(MVMatrix, glm::vec3{0.6, 0.5f, 0.5});
+        MVMatrix               = glm::scale(MVMatrix, glm::vec3{0.5f});
         glm::mat4 NormalMatrix = glm::transpose(glm::inverse(MVMatrix));
 
-        body.giveMatrix(ProjMatrix, MVMatrix, NormalMatrix);
+        tree.giveMatrix(ProjMatrix, MVMatrix, NormalMatrix);
 
         // Draw triangle
-        glBindTexture(GL_TEXTURE_2D, textures);
-        body.bindTexture(0);
+        // glBindTexture(GL_TEXTURE_2D, textures);
+        // body.bindTexture(0);
         glDrawArrays(GL_TRIANGLES, 0, vertices.size());
-        glBindTexture(GL_TEXTURE_2D, 0);
+        // glBindTexture(GL_TEXTURE_2D, 0);
         vao.unbind();
-
-        // TODO autres spheres / parties de l'abeille
-        vao.bind();
-        eyes.use();
-
-        MVMatrix = glm::translate(glm::mat4(1), glm::vec3(0, 0, -5));
-        MVMatrix = glm::rotate(MVMatrix, ctx.time(), {0.f, 1.f, 0.f});
-
-        MVMatrix = glm::scale(
-            glm::translate(
-                MVMatrix,
-                {-0.5f, 0.f, 0.25f}
-            ),
-            glm::vec3{0.1f}
-        );
-        NormalMatrix = glm::transpose(glm::inverse(MVMatrix));
-
-        eyes.giveMatrix(ProjMatrix, MVMatrix, NormalMatrix);
-
-        glDrawArrays(GL_TRIANGLES, 0, vertices.size());
-        vao.unbind();
-        vao.bind();
-        eyes.use();
-
-        MVMatrix = glm::translate(
-            MVMatrix,
-            {0.f, 0.f, -4.5f}
-        );
-        NormalMatrix = glm::transpose(glm::inverse(MVMatrix));
-
-        eyes.giveMatrix(ProjMatrix, MVMatrix, NormalMatrix);
-
-        glDrawArrays(GL_TRIANGLES, 0, vertices.size());
-        vao.unbind();
-
-        vao.bind();
-        // TODO à revoir pour l'inclinaison de l'aile
-        // TODO faire la 2e aile
-        wings.use();
-        MVMatrix = glm::translate(glm::mat4(1), {0.f, 0.8f, -5.f});
-        // MVMatrix = glm::translate(glm::mat4(1), {0.2f, 0.f, 0.f});
-        MVMatrix = glm::rotate(MVMatrix, ctx.time(), {0.f, 1.f, 0.f});
-        MVMatrix = glm::rotate(MVMatrix, 35.f, glm::vec3{1.f, 0.f, 0.f});
-
-        MVMatrix = glm::scale(MVMatrix, glm::vec3{0.5f});
-        MVMatrix = glm::scale(MVMatrix, glm::vec3{0.5f, 1.f, 0.1f});
-
-        NormalMatrix = glm::transpose(glm::inverse(MVMatrix));
-
-        wings.giveMatrix(ProjMatrix, MVMatrix, NormalMatrix);
-
-        glDrawArrays(GL_TRIANGLES, 0, vertices.size());
-        vao.unbind();
-
-        // vao.bind();
-        // // TODO à revoir pour l'inclinaison de l'aile
-        // wings.use();
-        // MVMatrix = glm::translate(
-        //     MVMatrix,
-        //     {0.f, 0.f, -2.f}
-        // );
-        // // float angle  = glm::radians(90.);
-        // // MVMatrix     = glm::rotate(MVMatrix, angle, glm::vec3{0.f, 1.f, 0.f});
-        // MVMatrix     = glm::rotate(MVMatrix, ctx.time(), glm::vec3{0.f, 1.f, 0.f});
-        // NormalMatrix = glm::transpose(glm::inverse(MVMatrix));
-
-        // wings.giveMatrix(ProjMatrix, MVMatrix, NormalMatrix);
-
-        // glDrawArrays(GL_TRIANGLES, 0, vertices.size());
-        // vao.unbind();
     };
 
     // Should be done last. It starts the infinite loop.
     ctx.start();
-    glDeleteTextures(1, &textures);
+    // glDeleteTextures(1, &textures);
     return EXIT_SUCCESS;
 }
