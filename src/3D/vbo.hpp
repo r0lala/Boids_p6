@@ -1,6 +1,8 @@
+#ifndef __VBO_H__
+#define __VBO_H__
+
 #include "glm/glm.hpp"
 #include "p6/p6.h"
-
 
 class VBO {
 private:
@@ -44,3 +46,5 @@ public:
         glBindBuffer(GL_ARRAY_BUFFER, 0);
     }
 };
+
+#endif
