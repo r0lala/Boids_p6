@@ -133,70 +133,26 @@ int main()
         // Clear the window
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        // Shader
-        body.use();
-
-        // Bind VAO
-        vao.bind();
-
-        glm::mat4 ProjMatrix = glm::perspective(glm::radians(70.f), ctx.aspect_ratio(), 0.1f, 100.f);
+        // TODO regrouper dans une sous fonction de drawBody
         glm::mat4 MVMatrix   = glm::translate(glm::mat4(1), glm::vec3(0, 0, -5));
-        // MVMatrix = glm::rotate(MVMatrix, 90.f, {0.f, 0.f, 0.f});
-        MVMatrix               = glm::rotate(MVMatrix, ctx.time(), {0.f, 1.f, 0.f});
-        MVMatrix               = glm::scale(MVMatrix, glm::vec3{0.6, 0.5f, 0.5});
-        glm::mat4 NormalMatrix = glm::transpose(glm::inverse(MVMatrix));
-        glm::mat4 bodyMatrix   = MVMatrix;
-        body.giveMatrix(ProjMatrix, MVMatrix, NormalMatrix);
+        MVMatrix             = glm::rotate(MVMatrix, ctx.time(), {0.f, 1.f, 0.f});
+        MVMatrix             = glm::scale(MVMatrix, glm::vec3{0.6, 0.5f, 0.5});
+        glm::mat4 bodyMatrix = MVMatrix;
 
-        // Draw triangle
-        glBindTexture(GL_TEXTURE_2D, textures);
-        body.bindTexture(0);
-        glDrawArrays(GL_TRIANGLES, 0, vertices.size());
-        glBindTexture(GL_TEXTURE_2D, 0);
-        vao.unbind();
+        beez.drawBody(body, vao, ctx, vertices, textures);
 
-        // TODO autres spheres / parties de l'abeille
-        vao.bind();
-        eyes.use();
+        // TODO regrouper ctx et vao ?
+        beez.drawFace(ctx, vao, eyes, vertices);
 
-        MVMatrix = glm::translate(glm::mat4(1), glm::vec3(0, 0, -5));
-        MVMatrix = glm::rotate(MVMatrix, ctx.time(), {0.f, 1.f, 0.f});
-
-        MVMatrix = glm::scale(
-            glm::translate(
-                MVMatrix,
-                {-0.5f, 0.f, 0.25f}
-            ),
-            glm::vec3{0.1f}
-        );
-        NormalMatrix = glm::transpose(glm::inverse(MVMatrix));
-
-        eyes.giveMatrix(ProjMatrix, MVMatrix, NormalMatrix);
-
-        glDrawArrays(GL_TRIANGLES, 0, vertices.size());
-        vao.unbind();
-        vao.bind();
-        eyes.use();
-
-        MVMatrix = glm::translate(
-            MVMatrix,
-            {0.f, 0.f, -5.f}
-        );
-        NormalMatrix = glm::transpose(glm::inverse(MVMatrix));
-
-        eyes.giveMatrix(ProjMatrix, MVMatrix, NormalMatrix);
-
-        glDrawArrays(GL_TRIANGLES, 0, vertices.size());
-        vao.unbind();
-
-        //---
-        // TODO regrouper en drawWings ?
+        // TODO regrouper en drawWings ? => boucle for ?
+        // TODO supp bodymatrix
         beez.drawWing(ctx, 35.f, vao, bodyMatrix, wings, vertices);
         beez.drawWing(ctx, -35.f, vao, bodyMatrix, wings, vertices);
     };
 
     // Should be done last. It starts the infinite loop.
     ctx.start();
+    // TODO dans un fichier
     glDeleteTextures(1, &textures);
     return EXIT_SUCCESS;
 }

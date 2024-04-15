@@ -35,8 +35,12 @@ public:
         VAO& vao, glm::mat4& bodyMatrix, Shader& wings,
         const std::vector<glimac::ShapeVertex>& vertices
     );
-    // void drawFace();
-    // void drawBody();
+    void drawFace(
+        p6::Context& ctx, VAO& vao, Shader& eyes,
+        const std::vector<glimac::ShapeVertex>& vertices
+    );
+    void drawBody(Shader& body, VAO& vao, p6::Context& ctx, const std::vector<glimac::ShapeVertex>& vertices, GLuint textures);
+
     // void drawBee(p6::Context& ctx) const;
 };
 #endif
