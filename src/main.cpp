@@ -10,6 +10,8 @@
 #include <ctime>
 #include <glm/glm.hpp>
 #include <vector>
+#include "3D/bee.cpp"
+#include "3D/bee.hpp"
 #include "3D/glimac/common.hpp"
 #include "3D/glimac/sphere_vertices.hpp"
 #include "3D/shader.hpp"
@@ -26,6 +28,7 @@ int main()
     // TODO : changer la direction pour qu'elle soit aléatoire
     Swarm groupe(50);
     srand(time(NULL)); // TODO à déplacer ?
+    Bee beez;
 
     // Run the tests
     if (doctest::Context{}.run() != 0)
@@ -72,30 +75,31 @@ int main()
     VAO vao;
     vao.bind();
 
-    // Activation vertex
-    vbo.bind();
-    static constexpr GLuint aVertexPosition = 0;
-    glEnableVertexAttribArray(aVertexPosition);
-    glVertexAttribPointer(
-        aVertexPosition, 3, GL_FLOAT, GL_FALSE,
-        sizeof(glimac::ShapeVertex), (const GLvoid*)(offsetof(glimac::ShapeVertex, position))
-    );
+    beez.initBee(vbo, vao);
+    // // Activation vertex
+    // vbo.bind();
+    // static constexpr GLuint aVertexPosition = 0;
+    // glEnableVertexAttribArray(aVertexPosition);
+    // glVertexAttribPointer(
+    //     aVertexPosition, 3, GL_FLOAT, GL_FALSE,
+    //     sizeof(glimac::ShapeVertex), (const GLvoid*)(offsetof(glimac::ShapeVertex, position))
+    // );
 
-    static constexpr GLuint aVertexNormal = 1;
-    glEnableVertexAttribArray(aVertexNormal);
-    glVertexAttribPointer(
-        aVertexNormal, 3, GL_FLOAT, GL_FALSE,
-        sizeof(glimac::ShapeVertex), (const GLvoid*)(offsetof(glimac::ShapeVertex, normal))
-    );
+    // static constexpr GLuint aVertexNormal = 1;
+    // glEnableVertexAttribArray(aVertexNormal);
+    // glVertexAttribPointer(
+    //     aVertexNormal, 3, GL_FLOAT, GL_FALSE,
+    //     sizeof(glimac::ShapeVertex), (const GLvoid*)(offsetof(glimac::ShapeVertex, normal))
+    // );
 
-    static constexpr GLuint aVertexTexCoords = 2;
-    glEnableVertexAttribArray(aVertexTexCoords);
-    glVertexAttribPointer(
-        aVertexTexCoords, 2, GL_FLOAT, GL_FALSE,
-        sizeof(glimac::ShapeVertex), (const GLvoid*)(offsetof(glimac::ShapeVertex, texCoords))
-    );
-    vbo.unbind();
-    vao.unbind();
+    // static constexpr GLuint aVertexTexCoords = 2;
+    // glEnableVertexAttribArray(aVertexTexCoords);
+    // glVertexAttribPointer(
+    //     aVertexTexCoords, 2, GL_FLOAT, GL_FALSE,
+    //     sizeof(glimac::ShapeVertex), (const GLvoid*)(offsetof(glimac::ShapeVertex, texCoords))
+    // );
+    // vbo.unbind();
+    // vao.unbind();
 
     // ---
 
@@ -143,7 +147,7 @@ int main()
         MVMatrix               = glm::rotate(MVMatrix, ctx.time(), {0.f, 1.f, 0.f});
         MVMatrix               = glm::scale(MVMatrix, glm::vec3{0.6, 0.5f, 0.5});
         glm::mat4 NormalMatrix = glm::transpose(glm::inverse(MVMatrix));
-
+        glm::mat4 bodyMatrix   = MVMatrix;
         body.giveMatrix(ProjMatrix, MVMatrix, NormalMatrix);
 
         // Draw triangle
@@ -178,7 +182,7 @@ int main()
 
         MVMatrix = glm::translate(
             MVMatrix,
-            {0.f, 0.f, -4.5f}
+            {0.f, 0.f, -5.f}
         );
         NormalMatrix = glm::transpose(glm::inverse(MVMatrix));
 
@@ -191,12 +195,12 @@ int main()
         // TODO à revoir pour l'inclinaison de l'aile
         // TODO faire la 2e aile
         wings.use();
-        MVMatrix = glm::translate(glm::mat4(1), {0.f, 0.8f, -5.f});
+        MVMatrix = glm::translate(bodyMatrix, {0.1f, 1.4f, 0.5f});
         // MVMatrix = glm::translate(glm::mat4(1), {0.2f, 0.f, 0.f});
-        MVMatrix = glm::rotate(MVMatrix, ctx.time(), {0.f, 1.f, 0.f});
+        // MVMatrix = glm::rotate(MVMatrix, ctx.time(), {0.f, 1.f, 0.f});
         MVMatrix = glm::rotate(MVMatrix, 35.f, glm::vec3{1.f, 0.f, 0.f});
 
-        MVMatrix = glm::scale(MVMatrix, glm::vec3{0.5f});
+        MVMatrix = glm::scale(MVMatrix, glm::vec3{0.8f});
         MVMatrix = glm::scale(MVMatrix, glm::vec3{0.5f, 1.f, 0.1f});
 
         NormalMatrix = glm::transpose(glm::inverse(MVMatrix));
@@ -205,23 +209,23 @@ int main()
 
         glDrawArrays(GL_TRIANGLES, 0, vertices.size());
         vao.unbind();
+        // beez.drawWing(35.f, )
 
-        // vao.bind();
-        // // TODO à revoir pour l'inclinaison de l'aile
-        // wings.use();
-        // MVMatrix = glm::translate(
-        //     MVMatrix,
-        //     {0.f, 0.f, -2.f}
-        // );
-        // // float angle  = glm::radians(90.);
-        // // MVMatrix     = glm::rotate(MVMatrix, angle, glm::vec3{0.f, 1.f, 0.f});
-        // MVMatrix     = glm::rotate(MVMatrix, ctx.time(), glm::vec3{0.f, 1.f, 0.f});
-        // NormalMatrix = glm::transpose(glm::inverse(MVMatrix));
+        vao.bind();
+        // TODO à revoir pour l'inclinaison de l'aile - ok
+        wings.use();
+        MVMatrix = glm::translate(bodyMatrix, {0.1f, 1.4f, -0.5f});
+        MVMatrix = glm::rotate(MVMatrix, -35.f, glm::vec3{1.f, 0.f, 0.f});
 
-        // wings.giveMatrix(ProjMatrix, MVMatrix, NormalMatrix);
+        MVMatrix = glm::scale(MVMatrix, glm::vec3{0.8f});
+        MVMatrix = glm::scale(MVMatrix, glm::vec3{0.5f, 1.f, 0.1f});
 
-        // glDrawArrays(GL_TRIANGLES, 0, vertices.size());
-        // vao.unbind();
+        NormalMatrix = glm::transpose(glm::inverse(MVMatrix));
+
+        wings.giveMatrix(ProjMatrix, MVMatrix, NormalMatrix);
+
+        glDrawArrays(GL_TRIANGLES, 0, vertices.size());
+        vao.unbind();
     };
 
     // Should be done last. It starts the infinite loop.
