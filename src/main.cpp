@@ -11,6 +11,7 @@
 #include <ctime>
 #include <glm/glm.hpp>
 #include <vector>
+#include "3D/GLIMAC/camera.hpp"
 #include "3D/glimac/common.hpp"
 #include "3D/glimac/default_shader.hpp"
 #include "3D/glimac/sphere_vertices.hpp"
@@ -26,6 +27,7 @@ int main()
     // TODO : changer la direction pour qu'elle soit aléatoire
     Swarm groupe(50);
     srand(time(NULL)); // TODO à déplacer ?
+    Camera camera;
 
     // Run the tests
     if (doctest::Context{}.run() != 0)
@@ -34,6 +36,10 @@ int main()
     // Actual application code
     auto ctx = p6::Context{{.title = "Simple-p6-Setup"}}; // TODO Bee Boids
     ctx.maximize_window();
+
+    ctx.scroll_callback = [&]() {
+        camera.moveFront(1.f);
+    };
 
     // Param UI
     // TODO regrouper var et coeff ?
@@ -75,7 +81,7 @@ int main()
     // Sending the data
     glBufferData(
         GL_ARRAY_BUFFER,
-        vertices.size() * sizeof(vertices),
+        vertices.size() * sizeof(glimac::ShapeVertex),
         vertices.data(),
         GL_STATIC_DRAW
     );
@@ -143,8 +149,9 @@ int main()
         // Bind VAO
         vao.bind();
 
-        glm::mat4 ProjMatrix   = glm::perspective(glm::radians(70.f), ctx.aspect_ratio(), 0.1f, 100.f);
-        glm::mat4 MVMatrix     = glm::translate(glm::mat4(1), glm::vec3(0, 0, -5));
+        glm::mat4 ViewMatrix   = camera.getViewMatrix();
+        glm::mat4 ProjMatrix   = glm::perspective(glm::radians(70.f), ctx.aspect_ratio(), 0.1f, 100.f) * ViewMatrix;
+        glm::mat4 MVMatrix     = glm::translate(glm::mat4(1), glm::vec3(0, 0, -5)) * ViewMatrix;
         glm::mat4 NormalMatrix = glm::transpose(glm::inverse(MVMatrix));
 
         glUniformMatrix4fv(uMVPMatrixLocation, 1, GL_FALSE, glm::value_ptr(ProjMatrix * MVMatrix));
