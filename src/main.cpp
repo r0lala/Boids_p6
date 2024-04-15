@@ -37,8 +37,21 @@ int main()
     auto ctx = p6::Context{{.title = "Simple-p6-Setup"}}; // TODO Bee Boids
     ctx.maximize_window();
 
-    ctx.scroll_callback = [&]() {
-        camera.moveFront(1.f);
+    ctx.mouse_scrolled = [&](p6::MouseScroll scroll) {
+        std::cout << "dy = " << scroll.dy << std::endl;
+        std::cout << "dx = " << scroll.dx << std::endl;
+
+        camera.moveFront(scroll.dy);
+    };
+
+    ctx.mouse_dragged = [&](p6::MouseDrag mouse) {
+        float x = mouse.delta[0];
+        float y = mouse.delta[1];
+        // std::cout << "x = " << mouse.delta[0] << std::endl;
+        // std::cout << "y = " << mouse.delta[1] << std::endl;
+        // std::cout << std::endl;
+        camera.rotateLeft(x);
+        camera.rotateUp(y);
     };
 
     // Param UI
