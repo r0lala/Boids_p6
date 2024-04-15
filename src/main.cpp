@@ -21,7 +21,6 @@
 #include "param/options.hpp"
 #include "random/rand.hpp"
 
-
 int main()
 {
     // TODO : changer la direction pour qu'elle soit aléatoire
@@ -170,7 +169,7 @@ int main()
         );
         NormalMatrix = glm::transpose(glm::inverse(MVMatrix));
 
-        body.giveMatrix(ProjMatrix, MVMatrix, NormalMatrix);
+        eyes.giveMatrix(ProjMatrix, MVMatrix, NormalMatrix);
 
         glDrawArrays(GL_TRIANGLES, 0, vertices.size());
         vao.unbind();
@@ -183,7 +182,7 @@ int main()
         );
         NormalMatrix = glm::transpose(glm::inverse(MVMatrix));
 
-        body.giveMatrix(ProjMatrix, MVMatrix, NormalMatrix);
+        eyes.giveMatrix(ProjMatrix, MVMatrix, NormalMatrix);
 
         glDrawArrays(GL_TRIANGLES, 0, vertices.size());
         vao.unbind();
@@ -192,23 +191,37 @@ int main()
         // TODO à revoir pour l'inclinaison de l'aile
         // TODO faire la 2e aile
         wings.use();
-        MVMatrix = glm::scale(
-            glm::translate(
-                glm::mat4(1),
-                {0.f, 0.8f, -5.f}
-            ),
-            glm::vec3{0.5f, 0.75, 0.5}
-        );
-        MVMatrix = glm::scale(
-            MVMatrix, glm::vec3{0.5f}
-        );
-        MVMatrix     = glm::rotate(MVMatrix, ctx.time(), glm::vec3{1.f, 0.f, 0.f});
+        MVMatrix = glm::translate(glm::mat4(1), {0.f, 0.8f, -5.f});
+        // MVMatrix = glm::translate(glm::mat4(1), {0.2f, 0.f, 0.f});
+        MVMatrix = glm::rotate(MVMatrix, ctx.time(), {0.f, 1.f, 0.f});
+        MVMatrix = glm::rotate(MVMatrix, 35.f, glm::vec3{1.f, 0.f, 0.f});
+
+        MVMatrix = glm::scale(MVMatrix, glm::vec3{0.5f});
+        MVMatrix = glm::scale(MVMatrix, glm::vec3{0.5f, 1.f, 0.1f});
+
         NormalMatrix = glm::transpose(glm::inverse(MVMatrix));
 
-        body.giveMatrix(ProjMatrix, MVMatrix, NormalMatrix);
+        wings.giveMatrix(ProjMatrix, MVMatrix, NormalMatrix);
 
         glDrawArrays(GL_TRIANGLES, 0, vertices.size());
         vao.unbind();
+
+        // vao.bind();
+        // // TODO à revoir pour l'inclinaison de l'aile
+        // wings.use();
+        // MVMatrix = glm::translate(
+        //     MVMatrix,
+        //     {0.f, 0.f, -2.f}
+        // );
+        // // float angle  = glm::radians(90.);
+        // // MVMatrix     = glm::rotate(MVMatrix, angle, glm::vec3{0.f, 1.f, 0.f});
+        // MVMatrix     = glm::rotate(MVMatrix, ctx.time(), glm::vec3{0.f, 1.f, 0.f});
+        // NormalMatrix = glm::transpose(glm::inverse(MVMatrix));
+
+        // wings.giveMatrix(ProjMatrix, MVMatrix, NormalMatrix);
+
+        // glDrawArrays(GL_TRIANGLES, 0, vertices.size());
+        // vao.unbind();
     };
 
     // Should be done last. It starts the infinite loop.
