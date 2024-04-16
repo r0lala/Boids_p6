@@ -32,16 +32,16 @@ private:
     // Methods
     // void move(glm::vec3 acceleration, float delta_time);
     // void initBee(VBO& vbo, VAO& vao);
+    // TODO return une matrice ?
     void giveWing(
         p6::Context& ctx, float angle,
-        VAO& vao, glm::mat4& bodyMatrix, Shader& wings,
-        const std::vector<glimac::ShapeVertex>& vertices
+        glm::mat4& bodyMatrix, Shader& wings
     );
     void giveFace(
         p6::Context& ctx, VAO& vao, Shader& eyes,
         const std::vector<glimac::ShapeVertex>& vertices
     );
-    void giveBody(Shader& body, VAO& vao, p6::Context& ctx, const std::vector<glimac::ShapeVertex>& vertices, GLuint textures);
+    void giveBody(p6::Context& ctx, Shader& body);
 
 private:
     // TODO à mettre dans une autre classe ?

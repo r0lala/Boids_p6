@@ -10,9 +10,10 @@
 // void move(glm::vec3 acceleration, float delta_time);
 
 void Bee::giveWing(
-    p6::Context& ctx, float angle,
-    VAO& vao, glm::mat4& bodyMatrix, Shader& wings,
-    const std::vector<glimac::ShapeVertex>& vertices
+    p6::Context& ctx,
+    float        angle,
+    glm::mat4&   bodyMatrix,
+    Shader&      wings
 )
 {
     glm::mat4 ProjMatrix = glm::perspective(glm::radians(70.f), ctx.aspect_ratio(), 0.1f, 100.f);
@@ -27,10 +28,9 @@ void Bee::giveWing(
 
     glm::mat4 NormalMatrix = glm::transpose(glm::inverse(MVMatrix));
 
-    // TODO objectif de séparation
+    // TODO objectif de séparation ---
     wings.use();
     wings.giveMatrix(ProjMatrix, MVMatrix, NormalMatrix);
-    // this->draw(vao, vertices, wings);
 }
 
 // TODO donner un angle ?
@@ -67,6 +67,21 @@ void Bee::giveFace(
     this->draw(vao, vertices, eyes);
 };
 
+void Bee::giveBody(p6::Context& ctx, Shader& body)
+{
+    glm::mat4 ProjMatrix = glm::perspective(glm::radians(70.f), ctx.aspect_ratio(), 0.1f, 100.f);
+
+    glm::mat4 MVMatrix = glm::translate(glm::mat4(1), glm::vec3(0, 0, -5));
+    MVMatrix           = glm::rotate(MVMatrix, ctx.time(), {0.f, 1.f, 0.f});
+    MVMatrix           = glm::scale(MVMatrix, glm::vec3{0.6, 0.5f, 0.5});
+
+    glm::mat4 NormalMatrix = glm::transpose(glm::inverse(MVMatrix));
+
+    body.use();
+    body.giveMatrix(ProjMatrix, MVMatrix, NormalMatrix); // TODO réduire le nombre de param ?
+}
+
+// TODO rename => render ?
 void Bee::draw(VAO& vao, const std::vector<glimac::ShapeVertex>& vertices, Shader& shader, GLuint textures, int textUnit)
 {
     vao.bind();
@@ -84,25 +99,6 @@ void Bee::draw(VAO& vao, const std::vector<glimac::ShapeVertex>& vertices, Shade
     vao.unbind();
 }
 
-void Bee::giveBody(
-    Shader& body, VAO& vao, p6::Context& ctx,
-    const std::vector<glimac::ShapeVertex>& vertices, GLuint textures
-)
-{
-    // Shader
-    body.use();
-
-    glm::mat4 ProjMatrix = glm::perspective(glm::radians(70.f), ctx.aspect_ratio(), 0.1f, 100.f);
-    glm::mat4 MVMatrix   = glm::translate(glm::mat4(1), glm::vec3(0, 0, -5));
-    // MVMatrix = glm::rotate(MVMatrix, 90.f, {0.f, 0.f, 0.f});
-    MVMatrix               = glm::rotate(MVMatrix, ctx.time(), {0.f, 1.f, 0.f});
-    MVMatrix               = glm::scale(MVMatrix, glm::vec3{0.6, 0.5f, 0.5});
-    glm::mat4 NormalMatrix = glm::transpose(glm::inverse(MVMatrix));
-
-    body.giveMatrix(ProjMatrix, MVMatrix, NormalMatrix); // TODO réduire le nombre de param
-    this->draw(vao, vertices, body, textures, 0);
-}
-
 // TODO trouver un meilleur nom
 void Bee::drawBee(
     p6::Context& ctx, VAO& vao,
@@ -115,16 +111,18 @@ void Bee::drawBee(
     MVMatrix           = glm::rotate(MVMatrix, ctx.time(), {0.f, 1.f, 0.f});
     MVMatrix           = glm::scale(MVMatrix, glm::vec3{0.6, 0.5f, 0.5});
 
-    this->giveBody(body, vao, ctx, vertices, textures);
+    this->giveBody(ctx, body);
+    this->draw(vao, vertices, body, textures, 0);
 
-    // // TODO regrouper ctx et vao ?
+    // TODO regrouper ctx et vao ?
+    // TODO dépendance avec le body
     this->giveFace(ctx, vao, eyes, vertices);
 
     // TODO regrouper en drawWings ? => boucle for ?
-    this->giveWing(ctx, 35.f, vao, MVMatrix, wings, vertices); // TODO supp param vao ?
+    this->giveWing(ctx, 35.f, MVMatrix, wings);
     this->draw(vao, vertices, wings);
 
-    this->giveWing(ctx, -35.f, vao, MVMatrix, wings, vertices);
+    this->giveWing(ctx, -35.f, MVMatrix, wings);
     this->draw(vao, vertices, wings);
 }
 
