@@ -84,7 +84,10 @@ void Bee::draw(VAO& vao, const std::vector<glimac::ShapeVertex>& vertices, Shade
     vao.unbind();
 }
 
-void Bee::giveBody(Shader& body, VAO& vao, p6::Context& ctx, const std::vector<glimac::ShapeVertex>& vertices, GLuint textures)
+void Bee::giveBody(
+    Shader& body, VAO& vao, p6::Context& ctx,
+    const std::vector<glimac::ShapeVertex>& vertices, GLuint textures
+)
 {
     // Shader
     body.use();
@@ -101,18 +104,21 @@ void Bee::giveBody(Shader& body, VAO& vao, p6::Context& ctx, const std::vector<g
 }
 
 // TODO trouver un meilleur nom
-// TODO supp param shader
-void Bee::drawBee(p6::Context& ctx, VAO& vao, const std::vector<glimac::ShapeVertex>& vertices, Shader& wings)
+void Bee::drawBee(
+    p6::Context& ctx, VAO& vao,
+    const std::vector<glimac::ShapeVertex>& vertices,
+    Shader& wings, Shader& eyes, Shader& body, GLuint textures // TODO supp param shader + texture
+)
 {
     // TODO regrouper dans une sous fonction de drawBody
     glm::mat4 MVMatrix = glm::translate(glm::mat4(1), glm::vec3(0, 0, -5));
     MVMatrix           = glm::rotate(MVMatrix, ctx.time(), {0.f, 1.f, 0.f});
     MVMatrix           = glm::scale(MVMatrix, glm::vec3{0.6, 0.5f, 0.5});
 
-    // this.giveBody(body, vao, ctx, vertices, textures);
+    this->giveBody(body, vao, ctx, vertices, textures);
 
     // // TODO regrouper ctx et vao ?
-    // this.giveFace(ctx, vao, eyes, vertices);
+    this->giveFace(ctx, vao, eyes, vertices);
 
     // TODO regrouper en drawWings ? => boucle for ?
     this->giveWing(ctx, 35.f, vao, MVMatrix, wings, vertices); // TODO supp param vao ?

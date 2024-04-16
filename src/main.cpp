@@ -133,13 +133,8 @@ int main()
         // Clear the window
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        // -----
-        beez.giveBody(body, vao, ctx, vertices, textures);
-
-        // TODO regrouper ctx et vao ?
-        beez.giveFace(ctx, vao, eyes, vertices);
-
-        beez.drawBee(ctx, vao, vertices, wings);
+        // TODO adapter le nb de vertices en fonction de la taille qu'elle représente ?
+        beez.drawBee(ctx, vao, vertices, wings, eyes, body, textures);
     };
 
     // Should be done last. It starts the infinite loop.

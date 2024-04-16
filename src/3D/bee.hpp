@@ -12,6 +12,7 @@
 
 class Bee {
     // Attributs
+    // TODO faire tri private / public
 private:
     // Shader body("3D", "bee/body");
     // Shader eyes("3D", "bee/eyes");
@@ -27,6 +28,7 @@ public:
     // {}
     Bee(){};
 
+private:
     // Methods
     // void move(glm::vec3 acceleration, float delta_time);
     // void initBee(VBO& vbo, VAO& vao);
@@ -50,6 +52,10 @@ private:
     );
 
 public:
-    void drawBee(p6::Context& ctx, VAO& vao, const std::vector<glimac::ShapeVertex>& vertices, Shader& wings);
+    void drawBee(
+        p6::Context& ctx, VAO& vao,
+        const std::vector<glimac::ShapeVertex>& vertices,
+        Shader& wings, Shader& eyes, Shader& body, GLuint textures
+    );
 };
 #endif
