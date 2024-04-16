@@ -65,7 +65,7 @@ void Bee::drawFace(
     vao.unbind();
 };
 
-void draw(VAO& vao, const std::vector<glimac::ShapeVertex>& vertices, Shader& body, GLuint textures, int textUnit = -1)
+void Bee::draw(VAO& vao, const std::vector<glimac::ShapeVertex>& vertices, Shader& body, GLuint textures, int textUnit)
 {
     vao.bind();
     if (textUnit >= 0)
@@ -96,7 +96,7 @@ void Bee::drawBody(Shader& body, VAO& vao, p6::Context& ctx, const std::vector<g
     glm::mat4 bodyMatrix   = MVMatrix;
     body.giveMatrix(ProjMatrix, MVMatrix, NormalMatrix); // TODO réduire le nombre de param
 
-    draw(vao, vertices, body, textures, 0);
+    this->draw(vao, vertices, body, textures, 0);
 }
 
 // void initBee(VBO& vbo, VAO& vao)
