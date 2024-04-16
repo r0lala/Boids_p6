@@ -36,6 +36,8 @@ void Bee::drawFace(
     p6::Context& ctx, VAO& vao, Shader& eyes, const std::vector<glimac::ShapeVertex>& vertices
 )
 {
+    eyes.use();
+
     glm::mat4 ProjMatrix = glm::perspective(glm::radians(70.f), ctx.aspect_ratio(), 0.1f, 100.f);
     glm::mat4 MVMatrix   = glm::translate(glm::mat4(1), glm::vec3(0, 0, -5));
     MVMatrix             = glm::rotate(MVMatrix, ctx.time(), {0.f, 1.f, 0.f});
@@ -49,24 +51,23 @@ void Bee::drawFace(
 
     glm::mat4 NormalMatrix = glm::transpose(glm::inverse(MVMatrix));
 
-    vao.bind();
-    eyes.use();
     eyes.giveMatrix(ProjMatrix, MVMatrix, NormalMatrix);
-    glDrawArrays(GL_TRIANGLES, 0, vertices.size());
+    this->draw(vao, vertices, eyes);
 
+    // Second eye
     MVMatrix = glm::translate(
         MVMatrix,
         {0.f, 0.f, -5.f}
     );
     NormalMatrix = glm::transpose(glm::inverse(MVMatrix));
-    eyes.giveMatrix(ProjMatrix, MVMatrix, NormalMatrix);
-    glDrawArrays(GL_TRIANGLES, 0, vertices.size());
 
-    vao.unbind();
+    eyes.giveMatrix(ProjMatrix, MVMatrix, NormalMatrix);
+    this->draw(vao, vertices, eyes);
 };
 
 void Bee::draw(VAO& vao, const std::vector<glimac::ShapeVertex>& vertices, Shader& body, GLuint textures, int textUnit)
 {
+    // TODO renamme body => shader
     vao.bind();
     if (textUnit >= 0)
     {
@@ -85,7 +86,7 @@ void Bee::draw(VAO& vao, const std::vector<glimac::ShapeVertex>& vertices, Shade
 void Bee::drawBody(Shader& body, VAO& vao, p6::Context& ctx, const std::vector<glimac::ShapeVertex>& vertices, GLuint textures)
 {
     // Shader
-    body.use();
+    body.use(); // TODO drectement dans draw ?
 
     glm::mat4 ProjMatrix = glm::perspective(glm::radians(70.f), ctx.aspect_ratio(), 0.1f, 100.f);
     glm::mat4 MVMatrix   = glm::translate(glm::mat4(1), glm::vec3(0, 0, -5));
@@ -93,9 +94,8 @@ void Bee::drawBody(Shader& body, VAO& vao, p6::Context& ctx, const std::vector<g
     MVMatrix               = glm::rotate(MVMatrix, ctx.time(), {0.f, 1.f, 0.f});
     MVMatrix               = glm::scale(MVMatrix, glm::vec3{0.6, 0.5f, 0.5});
     glm::mat4 NormalMatrix = glm::transpose(glm::inverse(MVMatrix));
-    glm::mat4 bodyMatrix   = MVMatrix;
-    body.giveMatrix(ProjMatrix, MVMatrix, NormalMatrix); // TODO réduire le nombre de param
 
+    body.giveMatrix(ProjMatrix, MVMatrix, NormalMatrix); // TODO réduire le nombre de param
     this->draw(vao, vertices, body, textures, 0);
 }
 

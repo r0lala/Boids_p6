@@ -46,7 +46,7 @@ private:
     void draw(
         VAO&                                    vao,
         const std::vector<glimac::ShapeVertex>& vertices,
-        Shader& body, GLuint textures, int textUnit = -1
+        Shader& body, GLuint textures = -1, int textUnit = -1
     );
 
     // void drawBee(p6::Context& ctx) const;
