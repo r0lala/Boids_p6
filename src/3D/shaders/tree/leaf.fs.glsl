@@ -2,10 +2,12 @@
 
 // in vec3 vPosition_vs; // Position du sommet transformée dans l'espace View (vs)
 // in vec3 vNormal_vs; // Normale du sommet transformée dans l'espace View (vs)
-// in vec2 vTexCoords; // Coordonnées de texture du sommet
+ in vec2 vTexCoords; // Coordonnées de texture du sommet
 
 out vec4 fFragColor;
 
+uniform sampler2D uTexture;
+
 void main() {
-  fFragColor = vec4(0., 0.7, 0.5, 1.);
+  fFragColor = texture(uTexture, vTexCoords);
 };
