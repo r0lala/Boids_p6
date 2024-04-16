@@ -2,6 +2,7 @@
 
 // TODO => créer nos propres fct de matrice ?
 #include "3D/shader.hpp"
+#include "3D/vao.hpp"
 #include "glm/ext/matrix_clip_space.hpp"
 #include "glm/gtx/transform.hpp"
 
@@ -26,9 +27,10 @@ void Bee::giveWing(
 
     glm::mat4 NormalMatrix = glm::transpose(glm::inverse(MVMatrix));
 
+    // TODO objectif de séparation
     wings.use();
     wings.giveMatrix(ProjMatrix, MVMatrix, NormalMatrix);
-    this->draw(vao, vertices, wings);
+    // this->draw(vao, vertices, wings);
 }
 
 // TODO donner un angle ?
@@ -99,10 +101,26 @@ void Bee::giveBody(Shader& body, VAO& vao, p6::Context& ctx, const std::vector<g
 }
 
 // TODO trouver un meilleur nom
-// void Bee::drawBee()
-// {
+// TODO supp param shader
+void Bee::drawBee(p6::Context& ctx, VAO& vao, const std::vector<glimac::ShapeVertex>& vertices, Shader& wings)
+{
+    // TODO regrouper dans une sous fonction de drawBody
+    glm::mat4 MVMatrix = glm::translate(glm::mat4(1), glm::vec3(0, 0, -5));
+    MVMatrix           = glm::rotate(MVMatrix, ctx.time(), {0.f, 1.f, 0.f});
+    MVMatrix           = glm::scale(MVMatrix, glm::vec3{0.6, 0.5f, 0.5});
 
-// }
+    // this.giveBody(body, vao, ctx, vertices, textures);
+
+    // // TODO regrouper ctx et vao ?
+    // this.giveFace(ctx, vao, eyes, vertices);
+
+    // TODO regrouper en drawWings ? => boucle for ?
+    this->giveWing(ctx, 35.f, vao, MVMatrix, wings, vertices); // TODO supp param vao ?
+    this->draw(vao, vertices, wings);
+
+    this->giveWing(ctx, -35.f, vao, MVMatrix, wings, vertices);
+    this->draw(vao, vertices, wings);
+}
 
 // void initBee(VBO& vbo, VAO& vao)
 // {

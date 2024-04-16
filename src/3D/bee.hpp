@@ -49,6 +49,7 @@ private:
         Shader& body, GLuint textures = -1, int textUnit = -1
     );
 
-    // void drawBee(p6::Context& ctx) const;
+public:
+    void drawBee(p6::Context& ctx, VAO& vao, const std::vector<glimac::ShapeVertex>& vertices, Shader& wings);
 };
 #endif
