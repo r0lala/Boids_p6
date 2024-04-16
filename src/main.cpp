@@ -27,6 +27,7 @@ int main()
     Swarm groupe(50);
     srand(time(NULL)); // TODO à déplacer ?
     Bee beez;
+    Bee flower;
 
     // Run the tests
     if (doctest::Context{}.run() != 0)
@@ -148,6 +149,8 @@ int main()
         // TODO supp bodymatrix
         beez.drawWing(ctx, 35.f, vao, bodyMatrix, wings, vertices);
         beez.drawWing(ctx, -35.f, vao, bodyMatrix, wings, vertices);
+
+        // flower.drawBody(body, vao, ctx, vertices, textures);
     };
 
     // Should be done last. It starts the infinite loop.
