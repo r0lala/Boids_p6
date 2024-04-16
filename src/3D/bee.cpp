@@ -7,7 +7,8 @@
 
 // #include "3D/glimac/sphere_vertices.hpp"
 // void move(glm::vec3 acceleration, float delta_time);
-void Bee::drawWing(
+
+void Bee::giveWing(
     p6::Context& ctx, float angle,
     VAO& vao, glm::mat4& bodyMatrix, Shader& wings,
     const std::vector<glimac::ShapeVertex>& vertices
@@ -25,14 +26,13 @@ void Bee::drawWing(
 
     glm::mat4 NormalMatrix = glm::transpose(glm::inverse(MVMatrix));
 
-    vao.bind();
     wings.use();
     wings.giveMatrix(ProjMatrix, MVMatrix, NormalMatrix);
-    glDrawArrays(GL_TRIANGLES, 0, vertices.size());
-    vao.unbind();
+    this->draw(vao, vertices, wings);
 }
 
-void Bee::drawFace(
+// TODO donner un angle ?
+void Bee::giveFace(
     p6::Context& ctx, VAO& vao, Shader& eyes, const std::vector<glimac::ShapeVertex>& vertices
 )
 {
@@ -65,14 +65,13 @@ void Bee::drawFace(
     this->draw(vao, vertices, eyes);
 };
 
-void Bee::draw(VAO& vao, const std::vector<glimac::ShapeVertex>& vertices, Shader& body, GLuint textures, int textUnit)
+void Bee::draw(VAO& vao, const std::vector<glimac::ShapeVertex>& vertices, Shader& shader, GLuint textures, int textUnit)
 {
-    // TODO renamme body => shader
     vao.bind();
     if (textUnit >= 0)
     {
         glBindTexture(GL_TEXTURE_2D, textures);
-        body.bindTexture(textUnit);
+        shader.bindTexture(textUnit);
     }
     glDrawArrays(GL_TRIANGLES, 0, vertices.size());
 
@@ -83,10 +82,10 @@ void Bee::draw(VAO& vao, const std::vector<glimac::ShapeVertex>& vertices, Shade
     vao.unbind();
 }
 
-void Bee::drawBody(Shader& body, VAO& vao, p6::Context& ctx, const std::vector<glimac::ShapeVertex>& vertices, GLuint textures)
+void Bee::giveBody(Shader& body, VAO& vao, p6::Context& ctx, const std::vector<glimac::ShapeVertex>& vertices, GLuint textures)
 {
     // Shader
-    body.use(); // TODO drectement dans draw ?
+    body.use();
 
     glm::mat4 ProjMatrix = glm::perspective(glm::radians(70.f), ctx.aspect_ratio(), 0.1f, 100.f);
     glm::mat4 MVMatrix   = glm::translate(glm::mat4(1), glm::vec3(0, 0, -5));
@@ -98,6 +97,12 @@ void Bee::drawBody(Shader& body, VAO& vao, p6::Context& ctx, const std::vector<g
     body.giveMatrix(ProjMatrix, MVMatrix, NormalMatrix); // TODO réduire le nombre de param
     this->draw(vao, vertices, body, textures, 0);
 }
+
+// TODO trouver un meilleur nom
+// void Bee::drawBee()
+// {
+
+// }
 
 // void initBee(VBO& vbo, VAO& vao)
 // {

@@ -139,15 +139,15 @@ int main()
         MVMatrix             = glm::scale(MVMatrix, glm::vec3{0.6, 0.5f, 0.5});
         glm::mat4 bodyMatrix = MVMatrix;
 
-        beez.drawBody(body, vao, ctx, vertices, textures);
+        beez.giveBody(body, vao, ctx, vertices, textures);
 
         // TODO regrouper ctx et vao ?
-        beez.drawFace(ctx, vao, eyes, vertices);
+        beez.giveFace(ctx, vao, eyes, vertices);
 
         // TODO regrouper en drawWings ? => boucle for ?
         // TODO supp bodymatrix
-        beez.drawWing(ctx, 35.f, vao, bodyMatrix, wings, vertices);
-        beez.drawWing(ctx, -35.f, vao, bodyMatrix, wings, vertices);
+        beez.giveWing(ctx, 35.f, vao, bodyMatrix, wings, vertices);
+        beez.giveWing(ctx, -35.f, vao, bodyMatrix, wings, vertices);
     };
 
     // Should be done last. It starts the infinite loop.
