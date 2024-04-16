@@ -30,7 +30,7 @@ void Bee::giveWing(
 
     // TODO objectif de séparation ---
     wings.use();
-    wings.giveMatrix(ProjMatrix, MVMatrix, NormalMatrix);
+    wings.giveMatrix(ctx, MVMatrix);
 }
 
 // TODO donner un angle ?
@@ -40,10 +40,9 @@ void Bee::giveFace(
 {
     eyes.use();
 
-    glm::mat4 ProjMatrix = glm::perspective(glm::radians(70.f), ctx.aspect_ratio(), 0.1f, 100.f);
-    glm::mat4 MVMatrix   = glm::translate(glm::mat4(1), glm::vec3(0, 0, -5));
-    MVMatrix             = glm::rotate(MVMatrix, ctx.time(), {0.f, 1.f, 0.f});
-    MVMatrix             = glm::scale(
+    glm::mat4 MVMatrix = glm::translate(glm::mat4(1), glm::vec3(0, 0, -5));
+    MVMatrix           = glm::rotate(MVMatrix, ctx.time(), {0.f, 1.f, 0.f});
+    MVMatrix           = glm::scale(
         glm::translate(
             MVMatrix,
             {-0.5f, 0.f, 0.25f}
@@ -51,9 +50,7 @@ void Bee::giveFace(
         glm::vec3{0.1f}
     );
 
-    glm::mat4 NormalMatrix = glm::transpose(glm::inverse(MVMatrix));
-
-    eyes.giveMatrix(ProjMatrix, MVMatrix, NormalMatrix);
+    eyes.giveMatrix(ctx, MVMatrix);
     this->draw(vao, vertices, eyes);
 
     // Second eye
@@ -61,24 +58,19 @@ void Bee::giveFace(
         MVMatrix,
         {0.f, 0.f, -5.f}
     );
-    NormalMatrix = glm::transpose(glm::inverse(MVMatrix));
 
-    eyes.giveMatrix(ProjMatrix, MVMatrix, NormalMatrix);
+    eyes.giveMatrix(ctx, MVMatrix);
     this->draw(vao, vertices, eyes);
 };
 
 void Bee::giveBody(p6::Context& ctx, Shader& body)
 {
-    glm::mat4 ProjMatrix = glm::perspective(glm::radians(70.f), ctx.aspect_ratio(), 0.1f, 100.f);
-
     glm::mat4 MVMatrix = glm::translate(glm::mat4(1), glm::vec3(0, 0, -5));
     MVMatrix           = glm::rotate(MVMatrix, ctx.time(), {0.f, 1.f, 0.f});
     MVMatrix           = glm::scale(MVMatrix, glm::vec3{0.6, 0.5f, 0.5});
 
-    glm::mat4 NormalMatrix = glm::transpose(glm::inverse(MVMatrix));
-
     body.use();
-    body.giveMatrix(ProjMatrix, MVMatrix, NormalMatrix); // TODO réduire le nombre de param ?
+    body.giveMatrix(ctx, MVMatrix);
 }
 
 // TODO rename => render ?
