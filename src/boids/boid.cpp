@@ -166,4 +166,19 @@ void Boid::draw(p6::Context& ctx) const
         p6::Center{_position}, // center = _position de mon boid
         p6::Radius{_size}
     );
+
+    // TODO regrouper dans une sous fonction de drawBody
+    // glm::mat4 bodyMatrix = glm::translate(glm::mat4(1), glm::vec3(0, 0, -5));
+    // MVMatrix             = glm::rotate(MVMatrix, ctx.time(), {0.f, 1.f, 0.f});
+    // MVMatrix             = glm::scale(MVMatrix, glm::vec3{0.6, 0.5f, 0.5});
+
+    // beez.drawBody(body, vao, ctx, vertices, textures);
+
+    // // TODO regrouper ctx et vao ?
+    // beez.drawFace(ctx, vao, eyes, vertices);
+
+    // // TODO regrouper en drawWings ? => boucle for ?
+    // // TODO supp bodymatrix
+    // beez.drawWing(ctx, 35.f, vao, bodyMatrix, wings, vertices);
+    // beez.drawWing(ctx, -35.f, vao, bodyMatrix, wings, vertices);
 }

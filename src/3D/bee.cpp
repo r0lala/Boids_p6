@@ -65,13 +65,27 @@ void Bee::drawFace(
     vao.unbind();
 };
 
+void draw(VAO& vao, const std::vector<glimac::ShapeVertex>& vertices, Shader& body, GLuint textures, int textUnit = -1)
+{
+    vao.bind();
+    if (textUnit >= 0)
+    {
+        glBindTexture(GL_TEXTURE_2D, textures);
+        body.bindTexture(textUnit);
+    }
+    glDrawArrays(GL_TRIANGLES, 0, vertices.size());
+
+    if (textUnit >= 0)
+    {
+        glBindTexture(GL_TEXTURE_2D, 0);
+    }
+    vao.unbind();
+}
+
 void Bee::drawBody(Shader& body, VAO& vao, p6::Context& ctx, const std::vector<glimac::ShapeVertex>& vertices, GLuint textures)
 {
     // Shader
     body.use();
-
-    // Bind VAO
-    vao.bind();
 
     glm::mat4 ProjMatrix = glm::perspective(glm::radians(70.f), ctx.aspect_ratio(), 0.1f, 100.f);
     glm::mat4 MVMatrix   = glm::translate(glm::mat4(1), glm::vec3(0, 0, -5));
@@ -82,17 +96,8 @@ void Bee::drawBody(Shader& body, VAO& vao, p6::Context& ctx, const std::vector<g
     glm::mat4 bodyMatrix   = MVMatrix;
     body.giveMatrix(ProjMatrix, MVMatrix, NormalMatrix); // TODO réduire le nombre de param
 
-    // Draw triangle
-    glBindTexture(GL_TEXTURE_2D, textures);
-    body.bindTexture(0);
-    glDrawArrays(GL_TRIANGLES, 0, vertices.size());
-    glBindTexture(GL_TEXTURE_2D, 0);
-    vao.unbind();
+    draw(vao, vertices, body, textures, 0);
 }
-
-// void drawBee(p6::Context& ctx) const
-// {
-// }
 
 // void initBee(VBO& vbo, VAO& vao)
 // {
