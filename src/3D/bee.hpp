@@ -44,14 +44,14 @@ private:
 
 private:
     // TODO à mettre dans une autre classe ?
-    void draw(
+    void render(
         VAO&                                    vao,
         const std::vector<glimac::ShapeVertex>& vertices,
         Shader& body, GLuint textures = -1, int textUnit = -1
     );
 
 public:
-    void drawBee(
+    void draw(
         p6::Context& ctx, VAO& vao,
         const std::vector<glimac::ShapeVertex>& vertices,
         Shader& wings, Shader& eyes, Shader& body, GLuint textures

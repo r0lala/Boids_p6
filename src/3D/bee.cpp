@@ -43,7 +43,7 @@ void Bee::giveFace(
 
     eyes.use();
     eyes.giveMatrix(ctx, MVMatrix);
-    this->draw(vao, vertices, eyes);
+    this->render(vao, vertices, eyes);
 
     // Second eye
     MVMatrix = glm::translate(
@@ -52,7 +52,7 @@ void Bee::giveFace(
     );
 
     eyes.giveMatrix(ctx, MVMatrix);
-    this->draw(vao, vertices, eyes);
+    this->render(vao, vertices, eyes);
 };
 
 glm::mat4 Bee::giveBody(p6::Context& ctx)
@@ -65,7 +65,7 @@ glm::mat4 Bee::giveBody(p6::Context& ctx)
 }
 
 // TODO rename => render ?
-void Bee::draw(VAO& vao, const std::vector<glimac::ShapeVertex>& vertices, Shader& shader, GLuint textures, int textUnit)
+void Bee::render(VAO& vao, const std::vector<glimac::ShapeVertex>& vertices, Shader& shader, GLuint textures, int textUnit)
 {
     vao.bind();
     if (textUnit >= 0)
@@ -83,7 +83,7 @@ void Bee::draw(VAO& vao, const std::vector<glimac::ShapeVertex>& vertices, Shade
 }
 
 // TODO trouver un meilleur nom
-void Bee::drawBee(
+void Bee::draw(
     p6::Context& ctx, VAO& vao,
     const std::vector<glimac::ShapeVertex>& vertices,
     Shader& wings, Shader& eyes, Shader& body, GLuint textures // TODO supp param shader + texture
@@ -91,7 +91,7 @@ void Bee::drawBee(
 {
     body.use();
     body.giveMatrix(ctx, this->giveBody(ctx));
-    this->draw(vao, vertices, body, textures, 0);
+    this->render(vao, vertices, body, textures, 0);
 
     // TODO regrouper ctx et vao ?
     // TODO dépendance avec le body
@@ -100,10 +100,10 @@ void Bee::drawBee(
     // TODO regrouper en drawWings ? => boucle for ?
     wings.use();
     wings.giveMatrix(ctx, this->giveWing(ctx, 35.f));
-    this->draw(vao, vertices, wings);
+    this->render(vao, vertices, wings);
 
     wings.giveMatrix(ctx, this->giveWing(ctx, -35.f));
-    this->draw(vao, vertices, wings);
+    this->render(vao, vertices, wings);
 }
 
 // void initBee(VBO& vbo, VAO& vao)

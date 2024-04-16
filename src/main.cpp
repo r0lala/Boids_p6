@@ -134,7 +134,7 @@ int main()
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         // TODO adapter le nb de vertices en fonction de la taille qu'elle représente ?
-        beez.drawBee(ctx, vao, vertices, wings, eyes, body, textures);
+        beez.draw(ctx, vao, vertices, wings, eyes, body, textures);
     };
 
     // Should be done last. It starts the infinite loop.
