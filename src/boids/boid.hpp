@@ -34,7 +34,7 @@ public:
 
     bool operator==(const Boid& other) const;
 
-    void teleport(p6::Context& ctx);
+    void teleport();
 
 public:
     float distanceBetweenBoids(const Boid& stranger) const;

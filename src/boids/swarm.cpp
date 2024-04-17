@@ -89,6 +89,6 @@ void Swarm::animate(
         acceleration = b.limitAcceleration(acceleration, 1.);
         b.setvelocity(b.limitAcceleration(b.velocity(), 1.));
         b.move(acceleration, deltatime);
-        b.teleport(ctx);
+        b.teleport();
     }
 }

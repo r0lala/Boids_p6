@@ -138,7 +138,7 @@ glm::vec2 Boid::alignement(const std::vector<Boid>& boids, float zoneAlignement,
 
 // TODO change direction aléatoire
 
-void Boid::teleport(p6::Context& ctx) // TODO remove ctx param
+void Boid::teleport()
 {
     // constexpr float eps    = 0.02; // TODO comparaison de float
     constexpr float radius = 0.8; // TODO param ?
@@ -177,6 +177,7 @@ void Boid::draw(
 
     shader.giveMatrix(ctx, MVMatrix);
 
+    // TODO à sortir de la fct
     vao.bind();
     glDrawArrays(GL_TRIANGLES, 0, vertices.size());
     vao.unbind();
