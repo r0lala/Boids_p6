@@ -42,7 +42,7 @@ int main()
     // --- 3D ---
 
     // Creation Shader
-    Shader body("3D", "bee/body");
+    Shader body("3D", "normals");
     Shader eyes("3D", "bee/eyes");
     Shader wings("3D", "bee/wings");
 
@@ -119,22 +119,28 @@ int main()
 
     // Declare your infinite update loop.
     ctx.update = [&]() {
+        // Clear the window
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         ctx.background(p6::NamedColor::VermilionPlochere);
+
         // ctx.square(p6::Center{0., 0.}, p6::Radius{0.8f}, p6::Rotation{0.0_turn});
 
-        // ctx.circle(
-        //     p6::Center{ctx.mouse()},
-        //     p6::Radius{0.05f}
-        // );
+        body.use();
+
+        // TODO mul mouse en fct de la taille de la sphere : 0.5f => size actuel
+        glm::mat4 MVMatrix = glm::translate(glm::mat4(1), glm::vec3(ctx.mouse() * ctx.aspect_ratio() * (1.5f + 0.5f / 2.f), -5));
+        MVMatrix           = glm::scale(MVMatrix, glm::vec3{0.6, 0.5f, 0.5});
+
+        body.giveMatrix(ctx, MVMatrix);
+        vao.bind();
+        glDrawArrays(GL_TRIANGLES, 0, vertices.size());
+        vao.unbind();
 
         // groupe.draw(ctx);
         // groupe.animate(ctx, align, separate, cohesion, coeffAlignement, coeffRepulsion, coeffCohesion, ctx.delta_time());
 
-        // Clear the window
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
         // TODO adapter le nb de vertices en fonction de la taille qu'elle représente ?
-        beez.draw(ctx, vao, vertices, wings, eyes, body, textures);
+        // beez.draw(ctx, vao, vertices, wings, eyes, body, textures);
     };
 
     // Should be done last. It starts the infinite loop.
