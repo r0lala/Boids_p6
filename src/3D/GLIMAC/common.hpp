@@ -12,4 +12,17 @@ struct ShapeVertex {
     glm::vec2 texCoords;
 };
 
+struct Vertex3D {
+    glm::vec3 position;
+    glm::vec2 texture;
+
+    Vertex3D(){};
+
+    Vertex3D(glm::vec3 pos, glm::vec2 col)
+    {
+        position = pos;
+        texture  = col;
+    }
+};
+
 } // namespace glimac

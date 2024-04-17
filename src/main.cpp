@@ -59,6 +59,15 @@ int main()
     // Fill buffer
     const std::vector<glimac::ShapeVertex> vertices = glimac::sphere_vertices(1.f, 32, 16);
 
+    glimac::Vertex3D vertices[] = {
+        Vertex2DColor{{0.5f, -0.5f, -5.f}, {1.f, 0.f}},
+        Vertex2DColor{{-0.5f, 0.5f, -5.f}, {0.f, 1.f}},
+        Vertex2DColor{{-0.5f, -0.5f, -5.f}, {0.f, 0.f}},
+        Vertex2DColor{{0.5f, -0.5f, -5.f}, {1.f, 0.f}},
+        Vertex2DColor{{0.5f, 0.5f, -5.f}, {1.f, 1.f}},
+        Vertex2DColor{{-0.5f, 0.5f, -5.f}, {0.f, 1.f}}
+    };
+
     // Sending the data
     glBufferData(
         GL_ARRAY_BUFFER,
@@ -119,17 +128,7 @@ int main()
 
     // Declare your infinite update loop.
     ctx.update = [&]() {
-        ctx.background(p6::NamedColor::VermilionPlochere);
-        // ctx.square(p6::Center{0., 0.}, p6::Radius{0.8f}, p6::Rotation{0.0_turn});
-
-        // ctx.circle(
-        //     p6::Center{ctx.mouse()},
-        //     p6::Radius{0.05f}
-        // );
-
-        // groupe.draw(ctx);
-        // groupe.animate(ctx, align, separate, cohesion, coeffAlignement, coeffRepulsion, coeffCohesion, ctx.delta_time());
-
+        ctx.background(p6::NamedColor::ParisGreen);
         // Clear the window
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
