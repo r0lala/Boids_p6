@@ -1,7 +1,7 @@
 #include "p6/p6.h"
 
 class Options {
-private:
+public: // TODO à mettre en pv
     // TODO regrouper var et coeff ?
     float align           = 0.3f;
     float coeffAlignement = 0.001f;

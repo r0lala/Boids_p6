@@ -141,12 +141,14 @@ int main()
         groupe.draw(
             ctx, vao, body, vertices
         );
-        // groupe.animate(
-        //     ctx,
-        //     align, separate, cohesion,
-        //     coeffAlignement, coeffRepulsion, coeffCohesion,
-        //     ctx.delta_time()
-        // );
+
+        groupe.animate(
+            ctx,
+            options.align,
+            options.separate, options.cohesion,
+            options.coeffAlignement, options.coeffRepulsion, options.coeffCohesion,
+            ctx.delta_time()
+        );
 
         // TODO adapter le nb de vertices en fonction de la taille qu'elle représente ?
         // beez.draw(ctx, vao, vertices, wings, eyes, body, textures);
