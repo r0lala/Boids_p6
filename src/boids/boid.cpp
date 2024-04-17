@@ -143,19 +143,19 @@ void Boid::teleport(p6::Context& ctx) // TODO remove ctx param
     // constexpr float eps    = 0.02; // TODO comparaison de float
     constexpr float radius = 0.8; // TODO param ?
 
-    if (_position.x + _size > radius)
+    if (_position.x > radius)
     {
         _position.x = -radius + _size;
     }
-    if (_position.x - _size < -radius)
+    if (_position.x < -radius)
     {
         _position.x = radius - _size;
     }
-    if (_position.y + _size > radius)
+    if (_position.y > radius)
     {
         _position.y = -radius + _size;
     }
-    if (_position.y - _size < -radius)
+    if (_position.y < -radius)
     {
         _position.y = radius - _size;
     }
@@ -169,9 +169,11 @@ void Boid::draw(
 {
     shader.use();
 
-    // TODO mul mouse en fct de la taille de la sphere : 0.5f => size actuel
-    glm::mat4 MVMatrix = glm::translate(glm::mat4(1), glm::vec3(_position * ctx.aspect_ratio() * (1.5f + 0.5f / 2.f), -5));
-    MVMatrix           = glm::scale(MVMatrix, glm::vec3{_size + 0.01, _size, _size});
+    glm::mat4 MVMatrix = glm::translate(
+        glm::mat4(1),
+        glm::vec3(_position * ctx.aspect_ratio() * (1.f + _size), -5)
+    );
+    MVMatrix = glm::scale(MVMatrix, glm::vec3{_size + 0.01, _size, _size});
 
     shader.giveMatrix(ctx, MVMatrix);
 
