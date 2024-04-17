@@ -1,5 +1,6 @@
 // TODO faire le tri des includes ...
 #include <cstdlib>
+#include "boids/boid.hpp"
 #include "glm/ext/matrix_clip_space.hpp"
 #include "glm/ext/matrix_transform.hpp"
 #include "glm/fwd.hpp"
@@ -25,6 +26,7 @@ int main()
 {
     // TODO : changer la direction pour qu'elle soit aléatoire
     Swarm groupe(50);
+    // Boid  test = groupe[0]; // TODO test
     srand(time(NULL)); // TODO à déplacer ?
     Bee beez;
 
@@ -136,8 +138,15 @@ int main()
         glDrawArrays(GL_TRIANGLES, 0, vertices.size());
         vao.unbind();
 
-        // groupe.draw(ctx);
-        // groupe.animate(ctx, align, separate, cohesion, coeffAlignement, coeffRepulsion, coeffCohesion, ctx.delta_time());
+        groupe.draw(
+            ctx, vao, body, vertices
+        );
+        // groupe.animate(
+        //     ctx,
+        //     align, separate, cohesion,
+        //     coeffAlignement, coeffRepulsion, coeffCohesion,
+        //     ctx.delta_time()
+        // );
 
         // TODO adapter le nb de vertices en fonction de la taille qu'elle représente ?
         // beez.draw(ctx, vao, vertices, wings, eyes, body, textures);

@@ -23,7 +23,11 @@ public:
             _swarm.push_back(Boid(coord, direction));
         }
     }
-    void draw(p6::Context& ctx) const;
+    void draw(
+        p6::Context& ctx,
+        VAO& vao, Shader& shader,
+        const std::vector<glimac::ShapeVertex>& vertices
+    ) const;
     void animate(p6::Context& ctx, float zoneFollow, float zoneSeparate, float zoneCohesion, float coeffFollow, float coeffSeparate, float coeffCohesion, float delta_time); // faire bouger
 
 private:

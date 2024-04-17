@@ -8,6 +8,8 @@
 // #include "random/rand.hpp"
 #include <cmath>
 #include <limits>
+#include "glm/ext/matrix_clip_space.hpp"
+#include "glm/gtx/transform.hpp"
 
 bool Boid::operator==(const Boid& other) const
 {
@@ -159,26 +161,21 @@ void Boid::teleport(p6::Context& ctx) // TODO remove ctx param
     }
 }
 
-void Boid::draw(p6::Context& ctx) const
+void Boid::draw(
+    p6::Context& ctx,
+    VAO& vao, Shader& shader,
+    const std::vector<glimac::ShapeVertex>& vertices
+) const
 {
-    // TODO size
-    ctx.circle(
-        p6::Center{_position}, // center = _position de mon boid
-        p6::Radius{_size}
-    );
+    shader.use();
 
-    // TODO regrouper dans une sous fonction de drawBody
-    // glm::mat4 bodyMatrix = glm::translate(glm::mat4(1), glm::vec3(0, 0, -5));
-    // MVMatrix             = glm::rotate(MVMatrix, ctx.time(), {0.f, 1.f, 0.f});
-    // MVMatrix             = glm::scale(MVMatrix, glm::vec3{0.6, 0.5f, 0.5});
+    // TODO mul mouse en fct de la taille de la sphere : 0.5f => size actuel
+    glm::mat4 MVMatrix = glm::translate(glm::mat4(1), glm::vec3(_position * ctx.aspect_ratio() * (1.5f + 0.5f / 2.f), -5));
+    MVMatrix           = glm::scale(MVMatrix, glm::vec3{0.6, 0.5f, 0.5});
 
-    // beez.drawBody(body, vao, ctx, vertices, textures);
+    shader.giveMatrix(ctx, MVMatrix);
 
-    // // TODO regrouper ctx et vao ?
-    // beez.drawFace(ctx, vao, eyes, vertices);
-
-    // // TODO regrouper en drawWings ? => boucle for ?
-    // // TODO supp bodymatrix
-    // beez.drawWing(ctx, 35.f, vao, bodyMatrix, wings, vertices);
-    // beez.drawWing(ctx, -35.f, vao, bodyMatrix, wings, vertices);
+    vao.bind();
+    glDrawArrays(GL_TRIANGLES, 0, vertices.size());
+    vao.unbind();
 }

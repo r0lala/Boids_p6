@@ -1,8 +1,12 @@
 #pragma once
 #include <iostream> // TODO test
 #include <vector>
+#include "3D/GLIMAC/common.hpp"
+#include "3D/shader.hpp"
+#include "3D/vao.hpp"
 #include "glm/fwd.hpp"
 #include "p6/p6.h"
+
 class Boid {
 private:
     glm::vec2 _position = {0, 0}; // m_z
@@ -21,7 +25,11 @@ public:
 
     // Methods
     void move(glm::vec2 acceleration, float delta_time);
-    void draw(p6::Context& ctx) const;
+    void draw(
+        p6::Context& ctx,
+        VAO& vao, Shader& shader,
+        const std::vector<glimac::ShapeVertex>& vertices
+    ) const;
     // void collide(const Boid& other);
 
     bool operator==(const Boid& other) const;

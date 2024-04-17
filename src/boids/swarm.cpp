@@ -59,15 +59,24 @@
 //     }
 // }
 
-void Swarm::draw(p6::Context& ctx) const
+void Swarm::draw(
+    p6::Context& ctx,
+    VAO& vao, Shader& shader,
+    const std::vector<glimac::ShapeVertex>& vertices
+) const
 {
     for (const Boid& b : _swarm)
     {
-        b.draw(ctx);
+        b.draw(ctx, vao, shader, vertices);
     }
 }
 
-void Swarm::animate(p6::Context& ctx, float zoneFollow, float zoneSeparate, float zoneCohesion, float coeffFollow, float coeffSeparate, float coeffCohesion, float deltatime)
+void Swarm::animate(
+    p6::Context& ctx,
+    float zoneFollow, float zoneSeparate, float zoneCohesion,
+    float coeffFollow, float coeffSeparate, float coeffCohesion,
+    float deltatime
+)
 {
     for (Boid& b : _swarm)
     {
