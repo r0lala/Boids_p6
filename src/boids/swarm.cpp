@@ -75,7 +75,7 @@ void Swarm::animate(
     p6::Context& ctx,
     float zoneFollow, float zoneSeparate, float zoneCohesion,
     float coeffFollow, float coeffSeparate, float coeffCohesion,
-    float deltatime
+    float deltatime // TODO déjà inclus dans le ctx
 )
 {
     for (Boid& b : _swarm)
