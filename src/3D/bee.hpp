@@ -37,9 +37,10 @@ private:
         p6::Context& ctx, float angle
     );
     // TODO return une matrice ?
-    void giveFace(
+    glm::mat4 giveFace(
         p6::Context& ctx, VAO& vao, Shader& eyes,
-        const std::vector<glimac::ShapeVertex>& vertices
+        const std::vector<glimac::ShapeVertex>& vertices,
+        float                                   angle
     );
     glm::mat4 giveBody(p6::Context& ctx);
 

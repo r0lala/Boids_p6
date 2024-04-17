@@ -21,26 +21,26 @@ glm::mat4 Bee::giveWing(
     MVMatrix           = glm::rotate(MVMatrix, angle, glm::vec3{1.f, 0.f, 0.f});
 
     // TODO moyen de regrouper les scales ?
-    MVMatrix = glm::scale(MVMatrix, glm::vec3{0.8f});
-    MVMatrix = glm::scale(MVMatrix, glm::vec3{0.5f, 1.f, 0.1f});
+    MVMatrix = glm::scale(MVMatrix, glm::vec3{0.5f, 1.f, 0.1f}); // 0.8f
+    // MVMatrix = glm::scale(MVMatrix, glm::vec3{0.5f, 1.f, 0.1f});
 
     return MVMatrix;
 }
 
 // TODO donner un angle ?
-void Bee::giveFace(
-    p6::Context& ctx, VAO& vao, Shader& eyes, const std::vector<glimac::ShapeVertex>& vertices
+glm::mat4 Bee::giveFace(
+    p6::Context& ctx, VAO& vao, Shader& eyes, const std::vector<glimac::ShapeVertex>& vertices,
+    float angle
 )
 {
-    glm::mat4 MVMatrix = glm::translate(glm::mat4(1), glm::vec3(0, 0, -5));
-    MVMatrix           = glm::rotate(MVMatrix, ctx.time(), {0.f, 1.f, 0.f});
-    MVMatrix           = glm::scale(
-        glm::translate(
-            MVMatrix,
-            {-0.5f, 0.f, 0.25f}
-        ),
-        glm::vec3{0.1f}
-    );
+    float z = angle > 0. ? 0.5 : -0.5;
+
+    glm::mat4 MVMatrix = glm::translate(glm::mat4(1), glm::vec3(-0.9, 0, z));
+    // MVMatrix           = glm::rotate(MVMatrix, ctx.time(), {0.f, 1.f, 0.f});
+    // MVMatrix = glm::translate(MVMatrix, {5.f, 0.f, 0.25f}); // TODO z à modifier
+    MVMatrix = glm::scale(MVMatrix, glm::vec3{0.15f});
+
+    return MVMatrix;
 
     eyes.use();
     eyes.giveMatrix(ctx, MVMatrix);
@@ -58,8 +58,9 @@ void Bee::giveFace(
 
 glm::mat4 Bee::giveBody(p6::Context& ctx)
 {
-    glm::mat4 MVMatrix = glm::translate(glm::mat4(1), glm::vec3(0, 0, -5));
-    MVMatrix           = glm::scale(MVMatrix, glm::vec3{0.6, 0.5f, 0.5});
+    glm::mat4 MVMatrix = glm::mat4(1);
+    MVMatrix           = glm::translate(MVMatrix, glm::vec3(0, 0, -5));
+    MVMatrix           = glm::scale(MVMatrix, glm::vec3{0.5f, 0.5f, 0.5f});
 
     return MVMatrix;
 }
@@ -91,17 +92,22 @@ void Bee::draw(
     glm::vec3 position
 )
 {
-    glm::mat4 MVMatrix = glm::translate(this->giveBody(ctx), position);
-    MVMatrix           = glm::rotate(MVMatrix, ctx.time(), {0.f, 1.f, 0.f});
-    // * scale
+    glm::mat4 MVMatrix = this->giveBody(ctx);
+    // MVMatrix           = glm::translate(MVMatrix, position);
+    MVMatrix = glm::rotate(MVMatrix, ctx.time(), {0.f, 1.f, 0.f}); // TODO debug
+    // TODO scale ?
 
     body.use();
     body.giveMatrix(ctx, MVMatrix);
     this->render(vao, vertices, body, textures, 0);
 
     // TODO regrouper ctx et vao ?
-    // TODO dépendance avec le body
-    this->giveFace(ctx, vao, eyes, vertices);
+    // TODO à quel point on fronce les yeux de l'abeille ?
+    eyes.use();
+    eyes.giveMatrix(ctx, MVMatrix * this->giveFace(ctx, vao, eyes, vertices, 1.f));
+    this->render(vao, vertices, eyes);
+    eyes.giveMatrix(ctx, MVMatrix * this->giveFace(ctx, vao, eyes, vertices, -1.f));
+    this->render(vao, vertices, eyes);
 
     // TODO regrouper en drawWings ? => boucle for ?
     wings.use();
