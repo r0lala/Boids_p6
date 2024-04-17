@@ -33,16 +33,9 @@ private:
     // Methods
     // void move(glm::vec3 acceleration, float delta_time);
     // void initBee(VBO& vbo, VAO& vao);
-    glm::mat4 giveWing(
-        p6::Context& ctx, float angle
-    );
-    // TODO return une matrice ?
-    glm::mat4 giveFace(
-        p6::Context& ctx, VAO& vao, Shader& eyes,
-        const std::vector<glimac::ShapeVertex>& vertices,
-        float                                   angle
-    );
-    glm::mat4 giveBody(p6::Context& ctx);
+    glm::mat4 giveWing(float angle);
+    glm::mat4 giveFace(float angle);
+    glm::mat4 giveBody();
 
 private:
     // TODO à mettre dans une autre classe ?
