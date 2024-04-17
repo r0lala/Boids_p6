@@ -79,6 +79,7 @@ If you want to rename the project (called "Simple-p6-Setup" by default), you nee
 - In the `src/main.cpp`, change the line `auto ctx = p6::Context{{.title = "Simple-p6-Setup"}};`
 
 ### Folder structure
+All of your assets (textures, 3D models, etc.) will go in the `assets` folder.
 
 All your source files (.cpp) and header files (.hpp) need to go in the `src` folder. It is recommended to have the corresponding .cpp and .hpp next to each other:
 
