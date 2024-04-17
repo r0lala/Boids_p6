@@ -4,6 +4,7 @@
 #include "3D/shader.hpp"
 #include "3D/vao.hpp"
 #include "glm/ext/matrix_clip_space.hpp"
+#include "glm/fwd.hpp"
 #include "glm/gtx/transform.hpp"
 
 // #include "3D/glimac/sphere_vertices.hpp"
@@ -16,7 +17,7 @@ glm::mat4 Bee::giveWing(
 {
     float z = angle > 0. ? 0.5 : -0.5;
     // TODO faire en sorte qu'il ne dépend pas d'une autre matrice ?
-    glm::mat4 MVMatrix = glm::translate(this->giveBody(ctx), {0.1f, 1.4f, z});
+    glm::mat4 MVMatrix = glm::translate(glm::mat4(1), {0.1f, 1.4f, z});
     MVMatrix           = glm::rotate(MVMatrix, angle, glm::vec3{1.f, 0.f, 0.f});
 
     // TODO moyen de regrouper les scales ?
@@ -58,7 +59,6 @@ void Bee::giveFace(
 glm::mat4 Bee::giveBody(p6::Context& ctx)
 {
     glm::mat4 MVMatrix = glm::translate(glm::mat4(1), glm::vec3(0, 0, -5));
-    MVMatrix           = glm::rotate(MVMatrix, ctx.time(), {0.f, 1.f, 0.f});
     MVMatrix           = glm::scale(MVMatrix, glm::vec3{0.6, 0.5f, 0.5});
 
     return MVMatrix;
@@ -86,11 +86,17 @@ void Bee::render(VAO& vao, const std::vector<glimac::ShapeVertex>& vertices, Sha
 void Bee::draw(
     p6::Context& ctx, VAO& vao,
     const std::vector<glimac::ShapeVertex>& vertices,
-    Shader& wings, Shader& eyes, Shader& body, GLuint textures // TODO supp param shader + texture
+    Shader& wings, Shader& eyes, Shader& body, GLuint textures, // TODO supp param shader + texture
+    // glm::mat4 scale
+    glm::vec3 position
 )
 {
+    glm::mat4 MVMatrix = glm::translate(this->giveBody(ctx), position);
+    MVMatrix           = glm::rotate(MVMatrix, ctx.time(), {0.f, 1.f, 0.f});
+    // * scale
+
     body.use();
-    body.giveMatrix(ctx, this->giveBody(ctx));
+    body.giveMatrix(ctx, MVMatrix);
     this->render(vao, vertices, body, textures, 0);
 
     // TODO regrouper ctx et vao ?
@@ -99,10 +105,10 @@ void Bee::draw(
 
     // TODO regrouper en drawWings ? => boucle for ?
     wings.use();
-    wings.giveMatrix(ctx, this->giveWing(ctx, 35.f));
+    wings.giveMatrix(ctx, MVMatrix * this->giveWing(ctx, 35.f));
     this->render(vao, vertices, wings);
 
-    wings.giveMatrix(ctx, this->giveWing(ctx, -35.f));
+    wings.giveMatrix(ctx, MVMatrix * this->giveWing(ctx, -35.f));
     this->render(vao, vertices, wings);
 }
 

@@ -4,6 +4,7 @@
 // #include <vector>
 // #include "glm/glm.hpp"
 #include "3D/glimac/common.hpp"
+#include "glm/fwd.hpp"
 #include "p6/p6.h"
 #include "shader.hpp"
 #include "vao.hpp"
@@ -54,7 +55,8 @@ public:
     void draw(
         p6::Context& ctx, VAO& vao,
         const std::vector<glimac::ShapeVertex>& vertices,
-        Shader& wings, Shader& eyes, Shader& body, GLuint textures
+        Shader& wings, Shader& eyes, Shader& body, GLuint textures,
+        glm::vec3 position
     );
 };
 #endif
