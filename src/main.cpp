@@ -49,30 +49,42 @@ int main()
     // Chargement des textures
     // TODO rename triforce
     // TODO bug : c'est chargé à l'envers ???
-    img::Image triforce = p6::load_image_buffer("../assets/textures/bodyTexture.png");
+    // img::Image triforce = p6::load_image_buffer("../assets/textures/bodyTexture.png");
+    img::Image sky = p6::load_image_buffer("../assets/textures/sky.jpg");
     // std::unique_ptr<Image> triforce = loadImage("~/IMAC2/S4/GLImac-Template/assets/textures/triforce.png");
     // assert(triforce != NULL && "error loading triforce.png");
+    const p6::Shader boxShader = p6::load_shader(
+        "../src/3D/shaders/box.vs.glsl",
+        "../src/3D/shaders/box.fs.glsl"
+    );
 
     VBO vbo;
     vbo.bind();
 
     // Fill buffer
-    const std::vector<glimac::ShapeVertex> vertices = glimac::sphere_vertices(1.f, 32, 16);
+    // const std::vector<glimac::ShapeVertex> vertices = glimac::sphere_vertices(1.f, 32, 16);
 
-    glimac::Vertex3D vertices[] = {
-        Vertex2DColor{{0.5f, -0.5f, -5.f}, {1.f, 0.f}},
-        Vertex2DColor{{-0.5f, 0.5f, -5.f}, {0.f, 1.f}},
-        Vertex2DColor{{-0.5f, -0.5f, -5.f}, {0.f, 0.f}},
-        Vertex2DColor{{0.5f, -0.5f, -5.f}, {1.f, 0.f}},
-        Vertex2DColor{{0.5f, 0.5f, -5.f}, {1.f, 1.f}},
-        Vertex2DColor{{-0.5f, 0.5f, -5.f}, {0.f, 1.f}}
+    Vertex3D verticesQuad[] = {
+        Vertex3D{{0.5f, -0.5f, -5.f}, {1.f, 0.f}},
+        Vertex3D{{-0.5f, 0.5f, -5.f}, {0.f, 1.f}},
+        Vertex3D{{-0.5f, -0.5f, -5.f}, {0.f, 0.f}},
+        Vertex3D{{0.5f, -0.5f, -5.f}, {1.f, 0.f}},
+        Vertex3D{{0.5f, 0.5f, -5.f}, {1.f, 1.f}},
+        Vertex3D{{-0.5f, 0.5f, -5.f}, {0.f, 1.f}}
     };
 
     // Sending the data
+    // glBufferData(
+    //     GL_ARRAY_BUFFER,
+    //     vertices.size() * sizeof(glimac::ShapeVertex),
+    //     vertices.data(),
+    //     GL_STATIC_DRAW
+    // );
+
     glBufferData(
         GL_ARRAY_BUFFER,
-        vertices.size() * sizeof(glimac::ShapeVertex),
-        vertices.data(),
+        6 * sizeof(Vertex3D),
+        verticesQuad,
         GL_STATIC_DRAW
     );
 
@@ -89,21 +101,21 @@ int main()
     glEnableVertexAttribArray(aVertexPosition);
     glVertexAttribPointer(
         aVertexPosition, 3, GL_FLOAT, GL_FALSE,
-        sizeof(glimac::ShapeVertex), (const GLvoid*)(offsetof(glimac::ShapeVertex, position))
+        sizeof(Vertex3D), (const GLvoid*)(offsetof(Vertex3D, position))
     );
 
-    static constexpr GLuint aVertexNormal = 1;
-    glEnableVertexAttribArray(aVertexNormal);
-    glVertexAttribPointer(
-        aVertexNormal, 3, GL_FLOAT, GL_FALSE,
-        sizeof(glimac::ShapeVertex), (const GLvoid*)(offsetof(glimac::ShapeVertex, normal))
-    );
+    // static constexpr GLuint aVertexNormal = 1;
+    // glEnableVertexAttribArray(aVertexNormal);
+    // glVertexAttribPointer(
+    //     aVertexNormal, 3, GL_FLOAT, GL_FALSE,
+    //     sizeof(glimac::ShapeVertex), (const GLvoid*)(offsetof(glimac::ShapeVertex, normal))
+    // );
 
-    static constexpr GLuint aVertexTexCoords = 2;
+    static constexpr GLuint aVertexTexCoords = 1;
     glEnableVertexAttribArray(aVertexTexCoords);
     glVertexAttribPointer(
         aVertexTexCoords, 2, GL_FLOAT, GL_FALSE,
-        sizeof(glimac::ShapeVertex), (const GLvoid*)(offsetof(glimac::ShapeVertex, texCoords))
+        sizeof(Vertex3D), (const GLvoid*)(offsetof(Vertex3D, texture))
     );
     vbo.unbind();
     vao.unbind();
@@ -119,8 +131,8 @@ int main()
     glBindTexture(GL_TEXTURE_2D, textures);
     glTexImage2D(
         GL_TEXTURE_2D, 0, GL_RGBA,
-        triforce.width(), triforce.height(),
-        0, GL_RGBA, GL_UNSIGNED_BYTE, triforce.data()
+        sky.width(), sky.height(),
+        0, GL_RGBA, GL_UNSIGNED_BYTE, sky.data()
     );
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
@@ -132,8 +144,25 @@ int main()
         // Clear the window
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+        boxShader.use();
+
+        GLuint uTexture = glGetUniformLocation(boxShader.id(), "uTexture");
+        glBindTexture(GL_TEXTURE_2D, textures);
+        glUniform1i(uTexture, 0);
+        // Bind VAO
+        vao.bind();
+
+        // Shader
+        // glimac::bind_default_shader();
+
+        //  Draw triangle
+        glDrawArrays(GL_TRIANGLES, 0, 6);
+
+        // Unbind vao
+        vao.unbind();
+
         // TODO adapter le nb de vertices en fonction de la taille qu'elle représente ?
-        beez.draw(ctx, vao, vertices, wings, eyes, body, textures);
+        // beez.draw(ctx, vao, vertices, wings, eyes, body, textures);
     };
 
     // Should be done last. It starts the infinite loop.
