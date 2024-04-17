@@ -15,7 +15,7 @@ private:
     // bool _predator;
     glm::vec2 _velocity;
     // glm::vec2 _acceleration;
-    float     _size = 0.02f;
+    float     _size = 0.09f;
     glm::vec2 seek(const glm::vec2& v);
 
 public:

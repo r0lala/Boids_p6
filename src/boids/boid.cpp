@@ -171,7 +171,7 @@ void Boid::draw(
 
     // TODO mul mouse en fct de la taille de la sphere : 0.5f => size actuel
     glm::mat4 MVMatrix = glm::translate(glm::mat4(1), glm::vec3(_position * ctx.aspect_ratio() * (1.5f + 0.5f / 2.f), -5));
-    MVMatrix           = glm::scale(MVMatrix, glm::vec3{0.6, 0.5f, 0.5});
+    MVMatrix           = glm::scale(MVMatrix, glm::vec3{_size + 0.01, _size, _size});
 
     shader.giveMatrix(ctx, MVMatrix);
 
