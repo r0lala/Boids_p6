@@ -28,7 +28,9 @@ public:
     void draw(
         p6::Context& ctx,
         VAO& vao, Shader& shader,
-        const std::vector<glimac::ShapeVertex>& vertices
+        const std::vector<glimac::ShapeVertex>& vertices,
+        // TODO à supp par Bee
+        Shader& wings, Shader& eyes, Shader& body, GLuint textures
     ) const;
     // void collide(const Boid& other);
 

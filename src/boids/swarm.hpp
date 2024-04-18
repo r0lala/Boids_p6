@@ -26,7 +26,8 @@ public:
     void draw(
         p6::Context& ctx,
         VAO& vao, Shader& shader,
-        const std::vector<glimac::ShapeVertex>& vertices
+        const std::vector<glimac::ShapeVertex>& vertices,
+        Shader& wings, Shader& eyes, Shader& body, GLuint textures
     ) const;
     void animate(p6::Context& ctx, float zoneFollow, float zoneSeparate, float zoneCohesion, float coeffFollow, float coeffSeparate, float coeffCohesion, float delta_time); // faire bouger
 

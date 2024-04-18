@@ -62,12 +62,14 @@
 void Swarm::draw(
     p6::Context& ctx,
     VAO& vao, Shader& shader,
-    const std::vector<glimac::ShapeVertex>& vertices
+    const std::vector<glimac::ShapeVertex>& vertices,
+    Shader& wings, Shader& eyes, Shader& body, GLuint textures
 ) const
 {
     for (const Boid& b : _swarm)
     {
-        b.draw(ctx, vao, shader, vertices);
+        // TODO => pas besoin d'utiliser une méthode draw dans Boid ?
+        b.draw(ctx, vao, shader, vertices, wings, eyes, body, textures);
     }
 }
 

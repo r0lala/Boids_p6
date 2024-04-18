@@ -1,6 +1,6 @@
 #include "boid.hpp"
 #include <cstdlib>
-#include <iostream>
+#include <iostream> // TODO debug
 #include "glm/exponential.hpp"
 #include "glm/ext/quaternion_exponential.hpp"
 #include "glm/fwd.hpp"
@@ -8,6 +8,7 @@
 // #include "random/rand.hpp"
 #include <cmath>
 #include <limits>
+#include "3D/bee.hpp" // TODO à supp
 #include "glm/ext/matrix_clip_space.hpp"
 #include "glm/gtx/transform.hpp"
 
@@ -164,21 +165,25 @@ void Boid::teleport()
 void Boid::draw(
     p6::Context& ctx,
     VAO& vao, Shader& shader,
-    const std::vector<glimac::ShapeVertex>& vertices
+    const std::vector<glimac::ShapeVertex>& vertices,
+    Shader& wings, Shader& eyes, Shader& body, GLuint textures
 ) const
 {
-    shader.use();
+    Bee boid;
 
-    glm::mat4 MVMatrix = glm::translate(
-        glm::mat4(1),
-        glm::vec3(_position * ctx.aspect_ratio() * (1.f + _size), -5)
-    );
-    MVMatrix = glm::scale(MVMatrix, glm::vec3{_size + 0.01, _size, _size});
+    boid.draw(ctx, vao, vertices, wings, eyes, body, textures, glm::vec3(_position, -5) * ctx.aspect_ratio() * (1.f + _size));
+    // shader.use();
 
-    shader.giveMatrix(ctx, MVMatrix);
+    // glm::mat4 MVMatrix = glm::translate(
+    //     glm::mat4(1),
+    //     glm::vec3(_position * ctx.aspect_ratio() * (1.f + _size), -5)
+    // );
+    // MVMatrix = glm::scale(MVMatrix, glm::vec3{_size + 0.01, _size, _size});
 
-    // TODO à sortir de la fct
-    vao.bind();
-    glDrawArrays(GL_TRIANGLES, 0, vertices.size());
-    vao.unbind();
+    // shader.giveMatrix(ctx, MVMatrix);
+
+    // // TODO à sortir de la fct
+    // vao.bind();
+    // glDrawArrays(GL_TRIANGLES, 0, vertices.size());
+    // vao.unbind();
 }
