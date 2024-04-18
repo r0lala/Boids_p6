@@ -1,6 +1,7 @@
 #include "swarm.hpp"
 #include <iostream> // TODO pour les tests
 #include <vector>
+#include "3D/bee.hpp" // TODO à supp
 #include "boids/boid.hpp"
 #include "glm/fwd.hpp"
 
@@ -66,10 +67,15 @@ void Swarm::draw(
     Shader& wings, Shader& eyes, Shader& body, GLuint textures
 ) const
 {
+    Bee boid;
+
     for (const Boid& b : _swarm)
     {
-        // TODO => pas besoin d'utiliser une méthode draw dans Boid ?
-        b.draw(ctx, vao, shader, vertices, wings, eyes, body, textures);
+        boid.draw(
+            ctx, vao, vertices, wings, eyes, body, textures,
+
+            glm::vec3(b.position(), -5) * ctx.aspect_ratio() * (1.f + b.size())
+        );
     }
 }
 
