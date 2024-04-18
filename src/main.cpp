@@ -139,7 +139,7 @@ int main()
         // vao.unbind();
 
         groupe.draw(
-            ctx, vao, wings, vertices,
+            ctx, vao, vertices,
             wings, eyes, body, textures
         );
 

@@ -24,8 +24,8 @@ public:
         }
     }
     void draw(
-        p6::Context& ctx,
-        VAO& vao, Shader& shader,
+        p6::Context&                            ctx,
+        VAO&                                    vao,
         const std::vector<glimac::ShapeVertex>& vertices,
         Shader& wings, Shader& eyes, Shader& body, GLuint textures
     ) const;
