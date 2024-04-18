@@ -15,7 +15,6 @@ private:
     // bool _predator;
     glm::vec2 _velocity;
     // glm::vec2 _acceleration;
-    float     _size = 0.09f;
     glm::vec2 seek(const glm::vec2& v);
 
 public:
@@ -47,7 +46,6 @@ public:
     glm::vec2 limitAcceleration(glm::vec2 acceleration, float maxAcceleration);
     glm::vec2 velocity() const { return _velocity; }
     glm::vec2 position() const { return _position; }
-    float     size() const { return _size; } // TODO pas nécessaire ?
 
     glm::vec2 separation(const std::vector<Boid>& boids, float zoneSeparation, float coeffSeparation);
     glm::vec2 cohesion(const std::vector<Boid>& boids, float zone, float coeff);

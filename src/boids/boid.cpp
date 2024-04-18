@@ -142,21 +142,21 @@ void Boid::teleport()
 {
     // constexpr float eps    = 0.02; // TODO comparaison de float
     constexpr float radius = 0.8; // TODO param ?
-
+    // TODO besoin de size ?
     if (_position.x > radius)
     {
-        _position.x = -radius + _size;
+        _position.x = -radius;
     }
     if (_position.x < -radius)
     {
-        _position.x = radius - _size;
+        _position.x = radius;
     }
     if (_position.y > radius)
     {
-        _position.y = -radius + _size;
+        _position.y = -radius;
     }
     if (_position.y < -radius)
     {
-        _position.y = radius - _size;
+        _position.y = radius;
     }
 }

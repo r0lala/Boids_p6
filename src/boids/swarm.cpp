@@ -67,14 +67,14 @@ void Swarm::draw(
     Shader& wings, Shader& eyes, Shader& body, GLuint textures
 ) const
 {
-    Bee boid;
+    Bee   boid;
+    float size = 0.09f;
 
     for (const Boid& b : _swarm)
     {
         boid.draw(
             ctx, vao, vertices, wings, eyes, body, textures,
-
-            glm::vec3(b.position(), -5) * ctx.aspect_ratio() * (1.f + b.size())
+            glm::vec3(b.position(), -5) * ctx.aspect_ratio() * (1.f + size)
         );
     }
 }
