@@ -16,6 +16,21 @@ bool pileFace(double p) // TODO : à renommer
     return rand01() < p;
 }
 
+float Esperance(float lambda)
+{
+    int n = 10000;
+
+    float moyenne = 0.;
+
+    for (int i = 0; i < n; i++)
+    {
+        moyenne += loi_Exp(lambda);
+    }
+    moyenne /= n;
+
+    return moyenne;
+}
+
 double loiExpo(double lambda)
 {
     double u = rand01();
