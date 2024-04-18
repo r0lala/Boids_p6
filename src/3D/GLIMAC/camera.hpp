@@ -25,9 +25,9 @@ public:
 
     glm::mat4 getViewMatrix() const
     {
-        glm::mat4 transform = glm::translate(glm::mat4{1.f}, {0.f, 0.f, -this->m_Distance});
-        transform           = glm::rotate(transform, glm::radians(-this->m_AngleX), {1.f, 0.f, 0.f});
-        transform           = glm::rotate(transform, glm::radians(-this->m_AngleY), {0.f, 1.f, 0.f});
+        glm::mat4 transform = glm::translate(glm::mat4{1.f}, {0.f, 0.f, this->m_Distance});
+        transform           = glm::rotate(transform, -this->m_AngleX, {1.f, 0.f, 0.f});
+        transform           = glm::rotate(transform, -this->m_AngleY, {0.f, 1.f, 0.f});
         return transform;
     }
 };
