@@ -139,10 +139,9 @@ glm::vec3 Boid::alignement(const std::vector<Boid>& boids, float zoneAlignement,
 
 void Boid::teleport()
 {
-    // TODO traiter position.z
     // constexpr float eps    = 0.02; // TODO comparaison de float
-    constexpr float radius = 0.8; // TODO param ?
-    // TODO besoin de size ?
+    constexpr float radius = 5.; // TODO param ?
+
     if (_position.x > radius)
     {
         _position.x = -radius;
@@ -158,5 +157,13 @@ void Boid::teleport()
     if (_position.y < -radius)
     {
         _position.y = radius;
+    }
+    if (_position.z < -radius)
+    {
+        _position.z = radius;
+    }
+    if (_position.z > radius)
+    {
+        _position.z = -radius;
     }
 }
