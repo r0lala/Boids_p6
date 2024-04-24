@@ -63,7 +63,8 @@ void Swarm::draw(
     p6::Context&                            ctx,
     VAO&                                    vao,
     const std::vector<glimac::ShapeVertex>& vertices,
-    Shader& wings, Shader& eyes, Shader& body, GLuint textures
+    Shader& wings, Shader& eyes, Shader& body, GLuint textures,
+    glm::mat4 ViewMatrix
 ) const
 {
     Bee boid;
@@ -73,7 +74,7 @@ void Swarm::draw(
         boid.draw(
             ctx, vao, vertices, wings, eyes, body, textures,
             b.position() * ctx.aspect_ratio() * (1.f + _size),
-            glm::vec3(_size)
+            glm::vec3(_size), ViewMatrix
         );
     }
 }
