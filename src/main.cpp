@@ -65,7 +65,7 @@ int main()
     // Creation Shader
     Shader body("3D", "bee/body");
     Shader eyes("3D", "bee/eyes");
-    Shader wings("3D", "bee/wings");
+    Shader wings("3D", "normals");
 
     // Chargement des textures
     // TODO rename triforce
@@ -149,7 +149,7 @@ int main()
 
         // TODO à mettre en param
         glm::mat4 ViewMatrix = camera.getViewMatrix();
-        glm::mat4 MVMatrix   = glm::translate(ViewMatrix, glm::vec3(0, 0, -5));
+        glm::mat4 MVMatrix   = glm::translate(ViewMatrix, glm::vec3(0));
         // // TODO mul mouse en fct de la taille de la sphere : 0.5f => size actuel
         // glm::mat4 MVMatrix = glm::translate(glm::mat4(1), glm::vec3(ctx.mouse() * ctx.aspect_ratio() * (1.5f + 0.5f / 2.f), -5));
         // MVMatrix           = glm::scale(MVMatrix, glm::vec3{0.6, 0.5f, 0.5});
