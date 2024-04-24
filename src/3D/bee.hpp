@@ -12,6 +12,7 @@
 
 class Bee {
     // Attributs
+    // TODO faire tri private / public
 private:
     // Shader body("3D", "bee/body");
     // Shader eyes("3D", "bee/eyes");
@@ -27,20 +28,33 @@ public:
     // {}
     Bee(){};
 
+private:
     // Methods
     // void move(glm::vec3 acceleration, float delta_time);
     // void initBee(VBO& vbo, VAO& vao);
-    void drawWing(
-        p6::Context& ctx, float angle,
-        VAO& vao, glm::mat4& bodyMatrix, Shader& wings,
-        const std::vector<glimac::ShapeVertex>& vertices
+    glm::mat4 giveWing(
+        p6::Context& ctx, float angle
     );
-    void drawFace(
+    // TODO return une matrice ?
+    void giveFace(
         p6::Context& ctx, VAO& vao, Shader& eyes,
         const std::vector<glimac::ShapeVertex>& vertices
     );
-    void drawBody(Shader& body, VAO& vao, p6::Context& ctx, const std::vector<glimac::ShapeVertex>& vertices, GLuint textures);
+    glm::mat4 giveBody(p6::Context& ctx);
 
-    // void drawBee(p6::Context& ctx) const;
+private:
+    // TODO à mettre dans une autre classe ?
+    void render(
+        VAO&                                    vao,
+        const std::vector<glimac::ShapeVertex>& vertices,
+        Shader& body, GLuint textures = -1, int textUnit = -1
+    );
+
+public:
+    void draw(
+        p6::Context& ctx, VAO& vao,
+        const std::vector<glimac::ShapeVertex>& vertices,
+        Shader& wings, Shader& eyes, Shader& body, GLuint textures
+    );
 };
 #endif

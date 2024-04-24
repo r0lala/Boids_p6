@@ -18,7 +18,7 @@ public:
     Shader(std::string vertex, std::string fragment);
     ~Shader();
     void use();
-    void giveMatrix(glm::mat4 ProjMatrix, glm::mat4 MVMatrix, glm::mat4 NormalMatrix);
+    void giveMatrix(p6::Context& ctx, glm::mat4 MVMatrix);
     void bindTexture(int textUnit);
 };
 

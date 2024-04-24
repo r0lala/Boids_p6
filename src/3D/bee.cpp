@@ -2,44 +2,38 @@
 
 // TODO => créer nos propres fct de matrice ?
 #include "3D/shader.hpp"
+#include "3D/vao.hpp"
 #include "glm/ext/matrix_clip_space.hpp"
 #include "glm/gtx/transform.hpp"
 
 // #include "3D/glimac/sphere_vertices.hpp"
 // void move(glm::vec3 acceleration, float delta_time);
-void Bee::drawWing(
-    p6::Context& ctx, float angle,
-    VAO& vao, glm::mat4& bodyMatrix, Shader& wings,
-    const std::vector<glimac::ShapeVertex>& vertices
+
+glm::mat4 Bee::giveWing(
+    p6::Context& ctx,
+    float        angle
 )
 {
-    glm::mat4 ProjMatrix = glm::perspective(glm::radians(70.f), ctx.aspect_ratio(), 0.1f, 100.f);
-
-    float     z        = angle > 0. ? 0.5 : -0.5;
-    glm::mat4 MVMatrix = glm::translate(bodyMatrix, {0.1f, 1.4f, z});
+    float z = angle > 0. ? 0.5 : -0.5;
+    // TODO faire en sorte qu'il ne dépend pas d'une autre matrice ?
+    glm::mat4 MVMatrix = glm::translate(this->giveBody(ctx), {0.1f, 1.4f, z});
     MVMatrix           = glm::rotate(MVMatrix, angle, glm::vec3{1.f, 0.f, 0.f});
 
     // TODO moyen de regrouper les scales ?
     MVMatrix = glm::scale(MVMatrix, glm::vec3{0.8f});
     MVMatrix = glm::scale(MVMatrix, glm::vec3{0.5f, 1.f, 0.1f});
 
-    glm::mat4 NormalMatrix = glm::transpose(glm::inverse(MVMatrix));
-
-    vao.bind();
-    wings.use();
-    wings.giveMatrix(ProjMatrix, MVMatrix, NormalMatrix);
-    glDrawArrays(GL_TRIANGLES, 0, vertices.size());
-    vao.unbind();
+    return MVMatrix;
 }
 
-void Bee::drawFace(
+// TODO donner un angle ?
+void Bee::giveFace(
     p6::Context& ctx, VAO& vao, Shader& eyes, const std::vector<glimac::ShapeVertex>& vertices
 )
 {
-    glm::mat4 ProjMatrix = glm::perspective(glm::radians(70.f), ctx.aspect_ratio(), 0.1f, 100.f);
-    glm::mat4 MVMatrix   = glm::translate(glm::mat4(1), glm::vec3(0, 0, -5));
-    MVMatrix             = glm::rotate(MVMatrix, ctx.time(), {0.f, 1.f, 0.f});
-    MVMatrix             = glm::scale(
+    glm::mat4 MVMatrix = glm::translate(glm::mat4(1), glm::vec3(0, 0, -5));
+    MVMatrix           = glm::rotate(MVMatrix, ctx.time(), {0.f, 1.f, 0.f});
+    MVMatrix           = glm::scale(
         glm::translate(
             MVMatrix,
             {-0.5f, 0.f, 0.25f}
@@ -47,52 +41,70 @@ void Bee::drawFace(
         glm::vec3{0.1f}
     );
 
-    glm::mat4 NormalMatrix = glm::transpose(glm::inverse(MVMatrix));
-
-    vao.bind();
     eyes.use();
-    eyes.giveMatrix(ProjMatrix, MVMatrix, NormalMatrix);
-    glDrawArrays(GL_TRIANGLES, 0, vertices.size());
+    eyes.giveMatrix(ctx, MVMatrix);
+    this->render(vao, vertices, eyes);
 
+    // Second eye
     MVMatrix = glm::translate(
         MVMatrix,
         {0.f, 0.f, -5.f}
     );
-    NormalMatrix = glm::transpose(glm::inverse(MVMatrix));
-    eyes.giveMatrix(ProjMatrix, MVMatrix, NormalMatrix);
-    glDrawArrays(GL_TRIANGLES, 0, vertices.size());
 
-    vao.unbind();
+    eyes.giveMatrix(ctx, MVMatrix);
+    this->render(vao, vertices, eyes);
 };
 
-void Bee::drawBody(Shader& body, VAO& vao, p6::Context& ctx, const std::vector<glimac::ShapeVertex>& vertices, GLuint textures)
+glm::mat4 Bee::giveBody(p6::Context& ctx)
 {
-    // Shader
-    body.use();
+    glm::mat4 MVMatrix = glm::translate(glm::mat4(1), glm::vec3(0, 0, -5));
+    MVMatrix           = glm::rotate(MVMatrix, ctx.time(), {0.f, 1.f, 0.f});
+    MVMatrix           = glm::scale(MVMatrix, glm::vec3{0.6, 0.5f, 0.5});
 
-    // Bind VAO
+    return MVMatrix;
+}
+
+// TODO rename => render ?
+void Bee::render(VAO& vao, const std::vector<glimac::ShapeVertex>& vertices, Shader& shader, GLuint textures, int textUnit)
+{
     vao.bind();
-
-    glm::mat4 ProjMatrix = glm::perspective(glm::radians(70.f), ctx.aspect_ratio(), 0.1f, 100.f);
-    glm::mat4 MVMatrix   = glm::translate(glm::mat4(1), glm::vec3(0, 0, -5));
-    // MVMatrix = glm::rotate(MVMatrix, 90.f, {0.f, 0.f, 0.f});
-    MVMatrix               = glm::rotate(MVMatrix, ctx.time(), {0.f, 1.f, 0.f});
-    MVMatrix               = glm::scale(MVMatrix, glm::vec3{0.6, 0.5f, 0.5});
-    glm::mat4 NormalMatrix = glm::transpose(glm::inverse(MVMatrix));
-    glm::mat4 bodyMatrix   = MVMatrix;
-    body.giveMatrix(ProjMatrix, MVMatrix, NormalMatrix); // TODO réduire le nombre de param
-
-    // Draw triangle
-    glBindTexture(GL_TEXTURE_2D, textures);
-    body.bindTexture(0);
+    if (textUnit >= 0)
+    {
+        glBindTexture(GL_TEXTURE_2D, textures);
+        shader.bindTexture(textUnit);
+    }
     glDrawArrays(GL_TRIANGLES, 0, vertices.size());
-    glBindTexture(GL_TEXTURE_2D, 0);
+
+    if (textUnit >= 0)
+    {
+        glBindTexture(GL_TEXTURE_2D, 0);
+    }
     vao.unbind();
 }
 
-// void drawBee(p6::Context& ctx) const
-// {
-// }
+// TODO trouver un meilleur nom
+void Bee::draw(
+    p6::Context& ctx, VAO& vao,
+    const std::vector<glimac::ShapeVertex>& vertices,
+    Shader& wings, Shader& eyes, Shader& body, GLuint textures // TODO supp param shader + texture
+)
+{
+    body.use();
+    body.giveMatrix(ctx, this->giveBody(ctx));
+    this->render(vao, vertices, body, textures, 0);
+
+    // TODO regrouper ctx et vao ?
+    // TODO dépendance avec le body
+    this->giveFace(ctx, vao, eyes, vertices);
+
+    // TODO regrouper en drawWings ? => boucle for ?
+    wings.use();
+    wings.giveMatrix(ctx, this->giveWing(ctx, 35.f));
+    this->render(vao, vertices, wings);
+
+    wings.giveMatrix(ctx, this->giveWing(ctx, -35.f));
+    this->render(vao, vertices, wings);
+}
 
 // void initBee(VBO& vbo, VAO& vao)
 // {
