@@ -5,8 +5,8 @@
 
 class vecTextures {
 private:
-    GLuint               _nbTextures = 8;
-    std::vector<Texture> _textures   = {0, 0, 0, 0, 0, 0, 0, 0}; // TODO
+    GLuint              _nbTextures = 8;
+    std::vector<GLuint> _textures   = {0, 0, 0, 0, 0, 0, 0, 0}; // TODO
 
 public:
     vecTextures()
@@ -18,4 +18,9 @@ public:
     {
         glDeleteTextures(this->_nbTextures, this->_textures.data());
     };
+
+    GLuint getIndexTexture(GLuint index)
+    {
+        return _textures[index];
+    }
 };

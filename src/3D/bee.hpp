@@ -3,6 +3,7 @@
 #define __BEE_HPP__
 // #include <vector>
 // #include "glm/glm.hpp"
+#include "3D/Texture.hpp"
 #include "3D/glimac/common.hpp"
 #include "p6/p6.h"
 #include "shader.hpp"
@@ -47,14 +48,14 @@ private:
     void render(
         VAO&                                    vao,
         const std::vector<glimac::ShapeVertex>& vertices,
-        Shader& body, GLuint textures = -1, int textUnit = -1
+        Shader& body, Texture& texture, int textUnit = -1
     );
 
 public:
     void draw(
         p6::Context& ctx, VAO& vao,
         const std::vector<glimac::ShapeVertex>& vertices,
-        Shader& wings, Shader& eyes, Shader& body, GLuint textures
+        Shader& wings, Shader& eyes, Shader& body, Texture& texture
     );
 };
 #endif

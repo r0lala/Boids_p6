@@ -9,18 +9,19 @@
 #include <ctime>
 #include <glm/glm.hpp>
 #include <vector>
+#include "3D/GLIMAC/sphere_vertices.hpp"
 #include "3D/bee.hpp"
 #include "3D/glimac/common.hpp"
 #include "3D/shader.hpp"
+#include "3D/texture.hpp"
 #include "3D/vao.hpp"
 #include "3D/vbo.hpp"
+#include "3D/vecTextures.hpp"
 #include "boids/swarm.hpp"
 #include "doctest/doctest.h"
 #include "p6/p6.h"
 #include "param/options.hpp"
 #include "random/rand.hpp"
-#include "texture.hpp"
-#include "vecTextures.hpp"
 
 int main()
 {
@@ -105,9 +106,9 @@ int main()
     glEnable(GL_DEPTH_TEST); // active le test de profondeur du GPU
 
     // Texture
-    vecTextures textures;
-    Texture     beeBody(textures[0], "../assets/textures/bodyTexture.png");
-    Texture     flower(textures[1], "../assets/textures/bodyTexture.png");
+    vecTextures texturesLib;
+    Texture     beeBody(texturesLib.getIndexTexture(0), "../assets/textures/bodyTexture.png");
+    // Texture     flower(textures[1], "../assets/textures/flower.png");
 
     // TODO dans un fichier
     // GLuint textures;
@@ -140,12 +141,12 @@ int main()
 
         // flower.drawBody(body, vao, ctx, vertices, textures);
         // TODO adapter le nb de vertices en fonction de la taille qu'elle représente ?
-        beez.draw(ctx, vao, vertices, wings, eyes, body, textures);
+        beez.draw(ctx, vao, vertices, wings, eyes, body, beeBody);
     };
 
     // Should be done last. It starts the infinite loop.
     ctx.start();
     // TODO dans un fichier
-    glDeleteTextures(1, &textures);
+    // glDeleteTextures(1, &textures);
     return EXIT_SUCCESS;
 }

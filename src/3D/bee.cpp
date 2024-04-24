@@ -3,6 +3,7 @@
 // TODO => créer nos propres fct de matrice ?
 #include "3D/shader.hpp"
 #include "3D/vao.hpp"
+#include "3D/vecTextures.hpp"
 #include "glm/ext/matrix_clip_space.hpp"
 #include "glm/gtx/transform.hpp"
 
@@ -65,19 +66,21 @@ glm::mat4 Bee::giveBody(p6::Context& ctx)
 }
 
 // TODO rename => render ?
-void Bee::render(VAO& vao, const std::vector<glimac::ShapeVertex>& vertices, Shader& shader, GLuint textures, int textUnit)
+void Bee::render(VAO& vao, const std::vector<glimac::ShapeVertex>& vertices, Shader& shader, Texture& texture, int textUnit)
 {
     vao.bind();
     if (textUnit >= 0)
     {
-        glBindTexture(GL_TEXTURE_2D, textures);
+        texture.bind();
+        // glBindTexture(GL_TEXTURE_2D, texture);
         shader.bindTexture(textUnit);
     }
     glDrawArrays(GL_TRIANGLES, 0, vertices.size());
 
     if (textUnit >= 0)
     {
-        glBindTexture(GL_TEXTURE_2D, 0);
+        texture.unbind();
+        // glBindTexture(GL_TEXTURE_2D, 0);
     }
     vao.unbind();
 }
@@ -86,12 +89,12 @@ void Bee::render(VAO& vao, const std::vector<glimac::ShapeVertex>& vertices, Sha
 void Bee::draw(
     p6::Context& ctx, VAO& vao,
     const std::vector<glimac::ShapeVertex>& vertices,
-    Shader& wings, Shader& eyes, Shader& body, GLuint textures // TODO supp param shader + texture
+    Shader& wings, Shader& eyes, Shader& body, Texture& texture // TODO supp param shader + texture
 )
 {
     body.use();
     body.giveMatrix(ctx, this->giveBody(ctx));
-    this->render(vao, vertices, body, textures, 0);
+    this->render(vao, vertices, body, texture.getIndexTexture(), 0);
 
     // TODO regrouper ctx et vao ?
     // TODO dépendance avec le body
