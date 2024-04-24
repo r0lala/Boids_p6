@@ -3,7 +3,7 @@
 
 class Camera {
 private:
-    float _distance = 5;
+    float _distance = -5;
     float _angleX   = 0;
     float _angleY   = 0;
 

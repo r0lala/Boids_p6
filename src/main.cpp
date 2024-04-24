@@ -27,12 +27,10 @@ int main()
 {
     // TODO : changer la direction pour qu'elle soit aléatoire
     Swarm groupe(50);
-    // Boid  test = groupe[0]; // TODO test
     srand(time(NULL)); // TODO à déplacer ?
 
     Camera camera;
     Bee    beez;
-    Bee    flower;
 
     // Run the tests
     if (doctest::Context{}.run() != 0)
@@ -43,18 +41,12 @@ int main()
     ctx.maximize_window();
 
     ctx.mouse_scrolled = [&](p6::MouseScroll scroll) {
-        // TODO
-        std::cout << "dy = " << scroll.dy << std::endl;
-        std::cout << "dx = " << scroll.dx << std::endl;
-
         camera.moveFront(scroll.dy / 10.);
     };
 
     ctx.mouse_dragged = [&](p6::MouseDrag mouse) {
-        float y = mouse.delta[0];
-        float x = mouse.delta[1];
-        camera.rotateLeft(x);
-        camera.rotateUp(y);
+        camera.rotateLeft(mouse.delta[1]); // x
+        camera.rotateUp(mouse.delta[0];);  // y
     };
 
     // Param UI
@@ -70,8 +62,6 @@ int main()
     // Chargement des textures
     // TODO rename triforce
     img::Image triforce = p6::load_image_buffer("../assets/textures/bodyTexture.png", false);
-    // std::unique_ptr<Image> triforce = loadImage("~/IMAC2/S4/GLImac-Template/assets/textures/triforce.png");
-    // assert(triforce != NULL && "error loading triforce.png");
 
     VBO vbo;
     vbo.bind();
@@ -93,7 +83,7 @@ int main()
     VAO vao;
     vao.bind();
 
-    // beez.initBee(vbo, vao);
+    // beez.initBee(vbo, vao); // TODO
     // // Activation vertex // TODO fct
     vbo.bind();
     static constexpr GLuint aVertexPosition = 0;
@@ -143,21 +133,8 @@ int main()
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         ctx.background(p6::NamedColor::VermilionPlochere);
 
+        // TODO cube
         // ctx.square(p6::Center{0., 0.}, p6::Radius{0.8f}, p6::Rotation{0.0_turn});
-
-        // body.use();
-
-        // TODO à mettre en param
-        glm::mat4 ViewMatrix = camera.getViewMatrix();
-        glm::mat4 MVMatrix   = glm::translate(ViewMatrix, glm::vec3(0));
-        // // TODO mul mouse en fct de la taille de la sphere : 0.5f => size actuel
-        // glm::mat4 MVMatrix = glm::translate(glm::mat4(1), glm::vec3(ctx.mouse() * ctx.aspect_ratio() * (1.5f + 0.5f / 2.f), -5));
-        // MVMatrix           = glm::scale(MVMatrix, glm::vec3{0.6, 0.5f, 0.5});
-
-        // body.giveMatrix(ctx, MVMatrix);
-        // vao.bind();
-        // glDrawArrays(GL_TRIANGLES, 0, vertices.size());
-        // vao.unbind();
 
         groupe.draw(
             ctx, vao, vertices,
@@ -172,7 +149,6 @@ int main()
             ctx.delta_time()
         );
 
-        // flower.drawBody(body, vao, ctx, vertices, textures);
         // TODO adapter le nb de vertices en fonction de la taille qu'elle représente ?
         beez.draw(
             ctx, vao, vertices,
@@ -181,16 +157,16 @@ int main()
             glm::vec3(0.3)
         );
 
-        // Draw triangle
-        vao.bind();
+        // Draw sphere
+        // TODO à mettre en param =>
+        glm::mat4 ViewMatrix = camera.getViewMatrix();
+        glm::mat4 MVMatrix   = glm::translate(ViewMatrix, glm::vec3(0));
 
-        body.use();
-        body.giveMatrix(ctx, MVMatrix);
-        body.bindTexture(0);
+        vao.bind();
+        wings.use();
+        wings.giveMatrix(ctx, MVMatrix);
         glDrawArrays(GL_TRIANGLES, 0, vertices.size());
         vao.unbind();
-
-        // Unbind vao
     };
 
     // Should be done last. It starts the infinite loop.
