@@ -3,31 +3,31 @@
 
 class Camera {
 private:
-    float m_Distance;
-    float m_AngleX;
-    float m_AngleY;
+    float _distance;
+    float _angleX;
+    float _angleY;
 
 public:
     void moveFront(float delta)
     {
-        m_Distance += delta;
+        _distance += delta;
     }
 
     void rotateLeft(float degrees)
     {
-        m_AngleX += degrees;
+        _angleX += degrees;
     }
 
     void rotateUp(float degrees)
     {
-        m_AngleY += degrees;
+        _angleY += degrees;
     }
 
     glm::mat4 getViewMatrix() const
     {
-        glm::mat4 transform = glm::translate(glm::mat4{1.f}, {0.f, 0.f, this->m_Distance});
-        transform           = glm::rotate(transform, -this->m_AngleX, {1.f, 0.f, 0.f});
-        transform           = glm::rotate(transform, -this->m_AngleY, {0.f, 1.f, 0.f});
+        glm::mat4 transform = glm::translate(glm::mat4{1.f}, {0.f, 0.f, this->_distance});
+        transform           = glm::rotate(transform, -this->_angleX, {1.f, 0.f, 0.f});
+        transform           = glm::rotate(transform, -this->_angleY, {0.f, 1.f, 0.f});
         return transform;
     }
 };
