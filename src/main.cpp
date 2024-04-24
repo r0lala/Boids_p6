@@ -10,7 +10,6 @@
 #include <glm/glm.hpp>
 #include <vector>
 #include "3D/GLIMAC/loader.h"
-#include "3D/GLIMAC/tiny_obj_loader.h"
 #include "3D/bee.hpp"
 #include "3D/glimac/common.hpp"
 #include "3D/glimac/sphere_vertices.hpp"
@@ -29,7 +28,7 @@ int main()
     Swarm groupe(50);
     srand(time(NULL)); // TODO à déplacer ?
     Bee beez;
-    Bee flower;
+    // Bee flower;
 
     // Run the tests
     if (doctest::Context{}.run() != 0)
@@ -50,21 +49,20 @@ int main()
     Shader wings("3D", "bee/wings");
 
     // Chargement des textures
-    // TODO rename triforce
-    img::Image triforce = p6::load_image_buffer("../assets/textures/flower.png", false);
-    // std::unique_ptr<Image> triforce = loadImage("~/IMAC2/S4/GLImac-Template/assets/textures/triforce.png");
-    // assert(triforce != NULL && "error loading triforce.png");
+    // TODO rename flowerTexture
+    img::Image     flowerTexture = p6::load_image_buffer("../assets/textures/flower.png", false);
+    const Object3D flower        = loadOBJ("../assets/obj/flower.obj");
 
     VBO vbo;
     vbo.bind();
 
     // Fill buffer
     // const std::vector<glimac::ShapeVertex> vertices = glimac::sphere_vertices(1.f, 32, 16);
-    const Object3D flower = loadOBJ("../assets/models/flower.obj");
+
     // Sending the data
     glBufferData(
         GL_ARRAY_BUFFER,
-        flower.vertices.size() * sizeof(vertex) * sizeof(vertex), // flower.vertices.size()*sizeof(vertex)
+        flower.vertices.size() * sizeof(vertex), // flower.vertices.size()*sizeof(vertex)
         flower.vertices.data(),
         GL_STATIC_DRAW
     );
@@ -92,7 +90,7 @@ int main()
         sizeof(vertex), (const GLvoid*)(offsetof(vertex, normal))
     );
 
-    vertex.size();
+    // vertex.size();
     static constexpr GLuint aVertexTexCoords = 2;
     glEnableVertexAttribArray(aVertexTexCoords);
     glVertexAttribPointer(
@@ -113,8 +111,8 @@ int main()
     glBindTexture(GL_TEXTURE_2D, textures);
     glTexImage2D(
         GL_TEXTURE_2D, 0, GL_RGBA,
-        triforce.width(), triforce.height(),
-        0, GL_RGBA, GL_UNSIGNED_BYTE, triforce.data()
+        flowerTexture.width(), flowerTexture.height(),
+        0, GL_RGBA, GL_UNSIGNED_BYTE, flowerTexture.data()
     );
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
@@ -122,23 +120,25 @@ int main()
 
     // Declare your infinite update loop.
     ctx.update = [&]() {
-        ctx.background(p6::NamedColor::VermilionPlochere);
-        // ctx.square(p6::Center{0., 0.}, p6::Radius{0.8f}, p6::Rotation{0.0_turn});
+        // ctx.background(p6::NamedColor::VermilionPlochere);
+        //  ctx.square(p6::Center{0., 0.}, p6::Radius{0.8f}, p6::Rotation{0.0_turn});
 
-        // ctx.circle(
-        //     p6::Center{ctx.mouse()},
-        //     p6::Radius{0.05f}
-        // );
+        glm::mat4 MVMatrix = glm::translate(glm::mat4(1), glm::vec3(0, 0, -2));
+        vao.bind();
+        MVMatrix = scale(MVMatrix, {100, 100, 100});
+        body.use();
+        body.giveMatrix(ctx, MVMatrix);
 
+        glDrawArrays(GL_TRIANGLES, 0, flower.vertices.size());
         // groupe.draw(ctx);
         // groupe.animate(ctx, align, separate, cohesion, coeffAlignement, coeffRepulsion, coeffCohesion, ctx.delta_time());
-
+        vao.unbind();
         // Clear the window
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         // flower.drawBody(body, vao, ctx, vertices, textures);
         // TODO adapter le nb de vertices en fonction de la taille qu'elle représente ?
-        beez.draw(ctx, vao, vertices, wings, eyes, body, textures);
+        // beez.draw(ctx, vao, vertices, wings, eyes, body, textures);
     };
 
     // Should be done last. It starts the infinite loop.
