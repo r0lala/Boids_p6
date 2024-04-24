@@ -3,9 +3,9 @@
 #include "shader.hpp"
 #include "vao.hpp"
 
-class Wall {
-public:
-    Wall();
-    ~Wall();
-    // drawWall();
-};
+// class Wall {
+// public:
+//     Wall();
+//     ~Wall();
+//     // drawWall();
+// };

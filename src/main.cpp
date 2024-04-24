@@ -1,24 +1,25 @@
 // TODO faire le tri des includes ...
 #include <cstdlib>
+#include "boids/boid.hpp"
 #include "glm/ext/matrix_clip_space.hpp"
 #include "glm/ext/matrix_transform.hpp"
 #include "glm/fwd.hpp"
+#include "glm/gtc/type_ptr.hpp"
 #include "glm/matrix.hpp"
 #include "glm/trigonometric.hpp"
 #define DOCTEST_CONFIG_IMPLEMENT
 #include <ctime>
 #include <glm/glm.hpp>
 #include <vector>
-#include "3D/bee.hpp"
+// #include "3D/GLIMAC/camera.hpp"
 #include "3D/glimac/common.hpp"
+#include "3D/glimac/default_shader.hpp"
 #include "3D/glimac/sphere_vertices.hpp"
-#include "3D/shader.hpp"
 #include "3D/vao.hpp"
 #include "3D/vbo.hpp"
 #include "boids/swarm.hpp"
 #include "doctest/doctest.h"
 #include "p6/p6.h"
-#include "param/options.hpp"
 #include "random/rand.hpp"
 
 int main()
@@ -26,37 +27,73 @@ int main()
     // TODO : changer la direction pour qu'elle soit aléatoire
     Swarm groupe(50);
     srand(time(NULL)); // TODO à déplacer ?
-    Bee beez;
+    // Camera camera;
 
     // Run the tests
     if (doctest::Context{}.run() != 0)
         return EXIT_FAILURE;
 
     // Actual application code
-    auto ctx = p6::Context{{.title = "Bee Boids"}};
+    auto ctx = p6::Context{{.title = "Simple-p6-Setup"}}; // TODO Bee Boids
     ctx.maximize_window();
 
+    // ctx.mouse_scrolled = [&](p6::MouseScroll scroll) {
+    //     // TODO
+    //     std::cout << "dy = " << scroll.dy << std::endl;
+    //     std::cout << "dx = " << scroll.dx << std::endl;
+
+    //     camera.moveFront(scroll.dy / 10.);
+    // };
+
+    // ctx.mouse_dragged = [&](p6::MouseDrag mouse) {
+    //     float y = mouse.delta[0];
+    //     float x = mouse.delta[1];
+    //     camera.rotateLeft(x);
+    //     camera.rotateUp(y);
+    // };
+
     // Param UI
-    Options options(ctx);
+    // TODO regrouper var et coeff ?
+    // TODO regrouper UI dans un nouveau fichier ?
+    auto align    = 0.3f;
+    auto separate = 0.1f;
+    auto cohesion = 0.6f;
+
+    auto coeffAlignement = 0.001f;
+    auto coeffRepulsion  = 1.f;
+    auto coeffCohesion   = 1.f;
+
+    ctx.imgui = [&]() {
+        ImGui::Begin("Parameters");
+        // ImGui::SliderFloat("Alignment", &align, 0.f, 1.f);
+        // ImGui::SliderFloat("Separation", &separate, 1.f, 2.f);
+        ImGui::SliderFloat("Cohesion", &cohesion, 0.f, 100.f);
+        ImGui::SliderFloat("Coefficient d'alignement", &coeffAlignement, 0.f, 50.f);
+        ImGui::SliderFloat("Coefficient de repulsion", &coeffRepulsion, 0.f, 50.f);
+        ImGui::SliderFloat("Coefficient de cohesion", &coeffCohesion, 0.f, 50.f);
+        ImGui::End();
+    };
 
     // --- 3D ---
 
     // Creation Shader
-    Shader body("3D", "bee/body");
-    Shader eyes("3D", "bee/eyes");
-    Shader wings("3D", "bee/wings");
-
-    // Chargement des textures
-    // TODO rename triforce
-    // TODO bug : c'est chargé à l'envers ???
-    // img::Image triforce = p6::load_image_buffer("../assets/textures/bodyTexture.png");
-    img::Image sky = p6::load_image_buffer("../assets/textures/sky.jpg");
-    // std::unique_ptr<Image> triforce = loadImage("~/IMAC2/S4/GLImac-Template/assets/textures/triforce.png");
-    // assert(triforce != NULL && "error loading triforce.png");
-    const p6::Shader boxShader = p6::load_shader(
-        "../src/3D/shaders/box.vs.glsl",
-        "../src/3D/shaders/box.fs.glsl"
+    // TODO verif path
+    const p6::Shader shader = p6::load_shader(
+        "../src/3D/shaders/wall.vs.glsl",
+        "../src/3D/shaders/wall.fs.glsl"
     );
+
+    img::Image sky = p6::load_image_buffer(
+        "../assets/textures/sky.jpg"
+    );
+
+    GLuint textureWall;
+    glGenTextures(1, &textureWall);
+    glBindTexture(GL_TEXTURE_2D, textureWall);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, sky.width(), sky.height(), 0, GL_RGBA, GL_UNSIGNED_BYTE, sky.data());
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glBindTexture(GL_TEXTURE_2D, 0);
 
     VBO vbo;
     vbo.bind();
@@ -64,27 +101,20 @@ int main()
     // Fill buffer
     // const std::vector<glimac::ShapeVertex> vertices = glimac::sphere_vertices(1.f, 32, 16);
 
-    Vertex3D verticesQuad[] = {
-        Vertex3D{{0.5f, -0.5f, -5.f}, {1.f, 0.f}},
-        Vertex3D{{-0.5f, 0.5f, -5.f}, {0.f, 1.f}},
-        Vertex3D{{-0.5f, -0.5f, -5.f}, {0.f, 0.f}},
-        Vertex3D{{0.5f, -0.5f, -5.f}, {1.f, 0.f}},
-        Vertex3D{{0.5f, 0.5f, -5.f}, {1.f, 1.f}},
-        Vertex3D{{-0.5f, 0.5f, -5.f}, {0.f, 1.f}}
+    Vertex3D vertices[] = {
+        Vertex3D{{0.5f, -0.5f, -7}, {1.f, 0.f}},
+        Vertex3D{{-0.5f, 0.5f, -7}, {1.f, 0.f}},
+        Vertex3D{{-0.5f, -0.5f, -7}, {0.5f, 0.5f}},
+        Vertex3D{{0.5f, -0.5f, -7}, {1.f, 0.f}},
+        Vertex3D{{0.5f, 0.5f, -7}, {0.f, 1.f}},
+        Vertex3D{{-0.5f, 0.5f, -7}, {0.f, 1.f}}
     };
 
     // Sending the data
-    // glBufferData(
-    //     GL_ARRAY_BUFFER,
-    //     vertices.size() * sizeof(glimac::ShapeVertex),
-    //     vertices.data(),
-    //     GL_STATIC_DRAW
-    // );
-
     glBufferData(
         GL_ARRAY_BUFFER,
         6 * sizeof(Vertex3D),
-        verticesQuad,
+        vertices,
         GL_STATIC_DRAW
     );
 
@@ -94,8 +124,7 @@ int main()
     VAO vao;
     vao.bind();
 
-    // beez.initBee(vbo, vao);
-    // // Activation vertex
+    // Activation vertex
     vbo.bind();
     static constexpr GLuint aVertexPosition = 0;
     glEnableVertexAttribArray(aVertexPosition);
@@ -111,7 +140,7 @@ int main()
     //     sizeof(glimac::ShapeVertex), (const GLvoid*)(offsetof(glimac::ShapeVertex, normal))
     // );
 
-    static constexpr GLuint aVertexTexCoords = 1;
+    static constexpr GLuint aVertexTexCoords = 2;
     glEnableVertexAttribArray(aVertexTexCoords);
     glVertexAttribPointer(
         aVertexTexCoords, 2, GL_FLOAT, GL_FALSE,
@@ -124,50 +153,44 @@ int main()
 
     glEnable(GL_DEPTH_TEST); // active le test de profondeur du GPU
 
-    // Texture
-    // TODO dans un fichier
-    GLuint textures;
-    glGenTextures(1, &textures);
-    glBindTexture(GL_TEXTURE_2D, textures);
-    glTexImage2D(
-        GL_TEXTURE_2D, 0, GL_RGBA,
-        sky.width(), sky.height(),
-        0, GL_RGBA, GL_UNSIGNED_BYTE, sky.data()
-    );
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    glBindTexture(GL_TEXTURE_2D, 0);
+    // Variables uniformes
+    // GLint uMVPMatrixLocation    = glGetUniformLocation(shader.id(), "uMVPMatrix");
+    // GLint uMVMatrixLocation     = glGetUniformLocation(shader.id(), "uMVMatrix");
+    // GLint uNormalMatrixLocation = glGetUniformLocation(shader.id(), "uNormalMatrix");
 
     // Declare your infinite update loop.
     ctx.update = [&]() {
-        ctx.background(p6::NamedColor::ParisGreen);
+        ctx.background(p6::NamedColor::VermilionPlochere);
+        // ctx.square(p6::Center{0., 0.}, p6::Radius{0.8f}, p6::Rotation{0.0_turn});
+
+        // ctx.circle(
+        //     p6::Center{ctx.mouse()},
+        //     p6::Radius{0.05f}
+        // );
+
+        // groupe.draw(ctx);
+        // groupe.animate(ctx, align, separate, cohesion, coeffAlignement, coeffRepulsion, coeffCohesion, ctx.delta_time());
+
         // Clear the window
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        boxShader.use();
-
-        GLuint uTexture = glGetUniformLocation(boxShader.id(), "uTexture");
-        glBindTexture(GL_TEXTURE_2D, textures);
+        // Shader
+        // TODO glimac::bind_default_shader();
+        shader.use();
+        GLuint uTexture = glGetUniformLocation(shader.id(), "uTexture");
+        glBindTexture(GL_TEXTURE_2D, textureWall);
         glUniform1i(uTexture, 0);
+
         // Bind VAO
         vao.bind();
 
-        // Shader
-        // glimac::bind_default_shader();
-
-        //  Draw triangle
+        // Draw triangle
         glDrawArrays(GL_TRIANGLES, 0, 6);
 
         // Unbind vao
         vao.unbind();
-
-        // TODO adapter le nb de vertices en fonction de la taille qu'elle représente ?
-        // beez.draw(ctx, vao, vertices, wings, eyes, body, textures);
     };
 
     // Should be done last. It starts the infinite loop.
     ctx.start();
-    // TODO dans un fichier
-    glDeleteTextures(1, &textures);
-    return EXIT_SUCCESS;
 }
