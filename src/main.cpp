@@ -155,7 +155,7 @@ int main()
         beez.draw(
             ctx, vao, vertices,
             wings, eyes, body, textures,
-            glm::vec3(ctx.mouse() * ctx.aspect_ratio() * (1.5f + 0.5f / 2.f), -5),
+            glm::vec3(ctx.mouse() * ctx.aspect_ratio() * (1.5f + 0.5f / 2.f), -5.),
             glm::vec3(0.3)
         );
     };

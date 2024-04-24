@@ -73,7 +73,7 @@ void Swarm::draw(
     {
         boid.draw(
             ctx, vao, vertices, wings, eyes, body, textures,
-            glm::vec3(b.position(), -5) * ctx.aspect_ratio() * (1.f + _size),
+            b.position() * ctx.aspect_ratio() * (1.f + _size),
             glm::vec3(_size)
         );
     }
@@ -88,7 +88,7 @@ void Swarm::animate(
 {
     for (Boid& b : _swarm)
     {
-        glm::vec2 acceleration{0.f};
+        glm::vec3 acceleration{0.f};
         // this->follow(b, zoneFollow, coeffFollow);
         // this->repulse(b, zoneSeparate, coeffSeparate);
         // acceleration += b.separation(_swarm, zoneSeparate, coeffSeparate);
