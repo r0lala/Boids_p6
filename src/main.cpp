@@ -76,7 +76,7 @@ int main()
     vao.bind();
 
     // beez.initBee(vbo, vao);
-    // // Activation vertex
+    // // Activation vertex // TODO fct
     vbo.bind();
     static constexpr GLuint aVertexPosition = 0;
     glEnableVertexAttribArray(aVertexPosition);
@@ -156,7 +156,7 @@ int main()
             ctx, vao, vertices,
             wings, eyes, body, textures,
             glm::vec3(ctx.mouse() * ctx.aspect_ratio() * (1.5f + 0.5f / 2.f), -5),
-            glm::vec3(0.001)
+            glm::vec3(0.3)
         );
     };
 

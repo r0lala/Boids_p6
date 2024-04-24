@@ -44,7 +44,6 @@ glm::mat4 Bee::giveBody()
     return MVMatrix;
 }
 
-// TODO rename => render ?
 void Bee::render(VAO& vao, const std::vector<glimac::ShapeVertex>& vertices, Shader& shader, GLuint textures, int textUnit)
 {
     vao.bind();
