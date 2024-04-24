@@ -5,5 +5,7 @@
 
 class Wall {
 public:
-    // drawWall();
+    Wall();
+    ~Wall();
+    drawWall();
 };
