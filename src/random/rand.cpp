@@ -24,7 +24,7 @@ float Esperance(float lambda)
 
     for (int i = 0; i < n; i++)
     {
-        moyenne += loi_Exp(lambda);
+        moyenne += loiExpo(lambda);
     }
     moyenne /= n;
 
