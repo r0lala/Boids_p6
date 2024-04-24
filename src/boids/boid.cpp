@@ -158,12 +158,12 @@ void Boid::teleport()
     {
         _position.y = radius;
     }
-    if (_position.z < -radius)
+    if (_position.z < -2 * radius)
     {
-        _position.z = radius;
+        _position.z = 0.;
     }
-    if (_position.z > radius)
+    if (_position.z > 0.)
     {
-        _position.z = -radius;
+        _position.z = -2 * radius;
     }
 }
