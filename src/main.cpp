@@ -49,8 +49,7 @@ int main()
 
     // Chargement des textures
     // TODO rename triforce
-    // TODO bug : c'est chargé à l'envers ???
-    img::Image triforce = p6::load_image_buffer("../assets/textures/bodyTexture.png");
+    img::Image triforce = p6::load_image_buffer("../assets/textures/bodyTexture.png", false);
     // std::unique_ptr<Image> triforce = loadImage("~/IMAC2/S4/GLImac-Template/assets/textures/triforce.png");
     // assert(triforce != NULL && "error loading triforce.png");
 
