@@ -7,5 +7,5 @@ class Wall {
 public:
     Wall();
     ~Wall();
-    drawWall();
+    // drawWall();
 };
