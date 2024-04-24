@@ -9,6 +9,8 @@
 #include <ctime>
 #include <glm/glm.hpp>
 #include <vector>
+#include "3D/GLIMAC/loader.h"
+#include "3D/GLIMAC/tiny_obj_loader.h"
 #include "3D/bee.hpp"
 #include "3D/glimac/common.hpp"
 #include "3D/glimac/sphere_vertices.hpp"
@@ -49,7 +51,7 @@ int main()
 
     // Chargement des textures
     // TODO rename triforce
-    img::Image triforce = p6::load_image_buffer("../assets/textures/bodyTexture.png", false);
+    img::Image triforce = p6::load_image_buffer("../assets/textures/flower.png", false);
     // std::unique_ptr<Image> triforce = loadImage("~/IMAC2/S4/GLImac-Template/assets/textures/triforce.png");
     // assert(triforce != NULL && "error loading triforce.png");
 
@@ -57,13 +59,13 @@ int main()
     vbo.bind();
 
     // Fill buffer
-    const std::vector<glimac::ShapeVertex> vertices = glimac::sphere_vertices(1.f, 32, 16);
-
+    // const std::vector<glimac::ShapeVertex> vertices = glimac::sphere_vertices(1.f, 32, 16);
+    const Object3D flower = loadOBJ("../assets/models/flower.obj");
     // Sending the data
     glBufferData(
         GL_ARRAY_BUFFER,
-        vertices.size() * sizeof(glimac::ShapeVertex),
-        vertices.data(),
+        flower.vertices.size() * sizeof(vertex) * sizeof(vertex), // flower.vertices.size()*sizeof(vertex)
+        flower.vertices.data(),
         GL_STATIC_DRAW
     );
 
@@ -80,21 +82,22 @@ int main()
     glEnableVertexAttribArray(aVertexPosition);
     glVertexAttribPointer(
         aVertexPosition, 3, GL_FLOAT, GL_FALSE,
-        sizeof(glimac::ShapeVertex), (const GLvoid*)(offsetof(glimac::ShapeVertex, position))
+        sizeof(vertex), (const GLvoid*)(offsetof(vertex, position))
     );
 
     static constexpr GLuint aVertexNormal = 1;
     glEnableVertexAttribArray(aVertexNormal);
     glVertexAttribPointer(
         aVertexNormal, 3, GL_FLOAT, GL_FALSE,
-        sizeof(glimac::ShapeVertex), (const GLvoid*)(offsetof(glimac::ShapeVertex, normal))
+        sizeof(vertex), (const GLvoid*)(offsetof(vertex, normal))
     );
 
+    vertex.size();
     static constexpr GLuint aVertexTexCoords = 2;
     glEnableVertexAttribArray(aVertexTexCoords);
     glVertexAttribPointer(
         aVertexTexCoords, 2, GL_FLOAT, GL_FALSE,
-        sizeof(glimac::ShapeVertex), (const GLvoid*)(offsetof(glimac::ShapeVertex, texCoords))
+        sizeof(vertex), (const GLvoid*)(offsetof(vertex, uv))
     );
     vbo.unbind();
     vao.unbind();
