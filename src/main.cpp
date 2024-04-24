@@ -4,7 +4,6 @@
 #include "glm/ext/matrix_clip_space.hpp"
 #include "glm/ext/matrix_transform.hpp"
 #include "glm/fwd.hpp"
-#include "glm/gtc/type_ptr.hpp"
 #include "glm/matrix.hpp"
 #include "glm/trigonometric.hpp"
 #define DOCTEST_CONFIG_IMPLEMENT
@@ -12,29 +11,35 @@
 #include <glm/glm.hpp>
 #include <vector>
 #include "3D/GLIMAC/camera.hpp"
+#include "3D/bee.hpp"
 #include "3D/glimac/common.hpp"
-#include "3D/glimac/default_shader.hpp"
 #include "3D/glimac/sphere_vertices.hpp"
+#include "3D/shader.hpp"
 #include "3D/vao.hpp"
 #include "3D/vbo.hpp"
 #include "boids/swarm.hpp"
 #include "doctest/doctest.h"
 #include "p6/p6.h"
+#include "param/options.hpp"
 #include "random/rand.hpp"
 
 int main()
 {
     // TODO : changer la direction pour qu'elle soit aléatoire
     Swarm groupe(50);
+    // Boid  test = groupe[0]; // TODO test
     srand(time(NULL)); // TODO à déplacer ?
+
     Camera camera;
+    Bee    beez;
+    Bee    flower;
 
     // Run the tests
     if (doctest::Context{}.run() != 0)
         return EXIT_FAILURE;
 
     // Actual application code
-    auto ctx = p6::Context{{.title = "Simple-p6-Setup"}}; // TODO Bee Boids
+    auto ctx = p6::Context{{.title = "Bee Boids"}};
     ctx.maximize_window();
 
     ctx.mouse_scrolled = [&](p6::MouseScroll scroll) {
@@ -53,35 +58,20 @@ int main()
     };
 
     // Param UI
-    // TODO regrouper var et coeff ?
-    // TODO regrouper UI dans un nouveau fichier ?
-    auto align    = 0.3f;
-    auto separate = 0.1f;
-    auto cohesion = 0.6f;
-
-    auto coeffAlignement = 0.001f;
-    auto coeffRepulsion  = 1.f;
-    auto coeffCohesion   = 1.f;
-
-    ctx.imgui = [&]() {
-        ImGui::Begin("Parameters");
-        // ImGui::SliderFloat("Alignment", &align, 0.f, 1.f);
-        // ImGui::SliderFloat("Separation", &separate, 1.f, 2.f);
-        ImGui::SliderFloat("Cohesion", &cohesion, 0.f, 100.f);
-        ImGui::SliderFloat("Coefficient d'alignement", &coeffAlignement, 0.f, 50.f);
-        ImGui::SliderFloat("Coefficient de repulsion", &coeffRepulsion, 0.f, 50.f);
-        ImGui::SliderFloat("Coefficient de cohesion", &coeffCohesion, 0.f, 50.f);
-        ImGui::End();
-    };
+    Options options(ctx);
 
     // --- 3D ---
 
     // Creation Shader
-    // TODO verif path
-    const p6::Shader shader = p6::load_shader(
-        "../src/3D/shaders/3D.vs.glsl",
-        "../src/3D/shaders/normals.fs.glsl"
-    );
+    Shader body("3D", "bee/body");
+    Shader eyes("3D", "bee/eyes");
+    Shader wings("3D", "bee/wings");
+
+    // Chargement des textures
+    // TODO rename triforce
+    img::Image triforce = p6::load_image_buffer("../assets/textures/bodyTexture.png", false);
+    // std::unique_ptr<Image> triforce = loadImage("~/IMAC2/S4/GLImac-Template/assets/textures/triforce.png");
+    // assert(triforce != NULL && "error loading triforce.png");
 
     VBO vbo;
     vbo.bind();
@@ -103,7 +93,8 @@ int main()
     VAO vao;
     vao.bind();
 
-    // Activation vertex
+    // beez.initBee(vbo, vao);
+    // // Activation vertex // TODO fct
     vbo.bind();
     static constexpr GLuint aVertexPosition = 0;
     glEnableVertexAttribArray(aVertexPosition);
@@ -132,50 +123,70 @@ int main()
 
     glEnable(GL_DEPTH_TEST); // active le test de profondeur du GPU
 
-    // Variables uniformes
-    GLint uMVPMatrixLocation    = glGetUniformLocation(shader.id(), "uMVPMatrix");
-    GLint uMVMatrixLocation     = glGetUniformLocation(shader.id(), "uMVMatrix");
-    GLint uNormalMatrixLocation = glGetUniformLocation(shader.id(), "uNormalMatrix");
+    // Texture
+    // TODO dans un fichier
+    GLuint textures;
+    glGenTextures(1, &textures);
+    glBindTexture(GL_TEXTURE_2D, textures);
+    glTexImage2D(
+        GL_TEXTURE_2D, 0, GL_RGBA,
+        triforce.width(), triforce.height(),
+        0, GL_RGBA, GL_UNSIGNED_BYTE, triforce.data()
+    );
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glBindTexture(GL_TEXTURE_2D, 0);
 
     // Declare your infinite update loop.
     ctx.update = [&]() {
-        ctx.background(p6::NamedColor::VermilionPlochere);
-        // ctx.square(p6::Center{0., 0.}, p6::Radius{0.8f}, p6::Rotation{0.0_turn});
-
-        // ctx.circle(
-        //     p6::Center{ctx.mouse()},
-        //     p6::Radius{0.05f}
-        // );
-
-        // groupe.draw(ctx);
-        // groupe.animate(ctx, align, separate, cohesion, coeffAlignement, coeffRepulsion, coeffCohesion, ctx.delta_time());
-
         // Clear the window
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        ctx.background(p6::NamedColor::VermilionPlochere);
 
-        // Shader
-        // TODO glimac::bind_default_shader();
-        shader.use();
+        // ctx.square(p6::Center{0., 0.}, p6::Radius{0.8f}, p6::Rotation{0.0_turn});
 
-        // Bind VAO
-        vao.bind();
+        // body.use();
 
+        // TODO à mettre en param
         glm::mat4 ViewMatrix   = camera.getViewMatrix();
         glm::mat4 ProjMatrix   = ViewMatrix * glm::perspective(glm::radians(70.f), ctx.aspect_ratio(), 0.1f, 100.f);
         glm::mat4 MVMatrix     = ViewMatrix * glm::translate(glm::mat4(1), glm::vec3(0, 0, -5));
         glm::mat4 NormalMatrix = glm::transpose(glm::inverse(MVMatrix));
+        // // TODO mul mouse en fct de la taille de la sphere : 0.5f => size actuel
+        // glm::mat4 MVMatrix = glm::translate(glm::mat4(1), glm::vec3(ctx.mouse() * ctx.aspect_ratio() * (1.5f + 0.5f / 2.f), -5));
+        // MVMatrix           = glm::scale(MVMatrix, glm::vec3{0.6, 0.5f, 0.5});
 
-        glUniformMatrix4fv(uMVPMatrixLocation, 1, GL_FALSE, glm::value_ptr(ProjMatrix * MVMatrix));
-        glUniformMatrix4fv(uMVMatrixLocation, 1, GL_FALSE, glm::value_ptr(MVMatrix));
-        glUniformMatrix4fv(uNormalMatrixLocation, 1, GL_FALSE, glm::value_ptr(NormalMatrix));
+        // body.giveMatrix(ctx, MVMatrix);
+        // vao.bind();
+        // glDrawArrays(GL_TRIANGLES, 0, vertices.size());
+        // vao.unbind();
 
-        // Draw triangle
-        glDrawArrays(GL_TRIANGLES, 0, vertices.size());
+        groupe.draw(
+            ctx, vao, vertices,
+            wings, eyes, body, textures
+        );
 
-        // Unbind vao
-        vao.unbind();
+        groupe.animate(
+            ctx,
+            options.align,
+            options.separate, options.cohesion,
+            options.coeffAlignement, options.coeffRepulsion, options.coeffCohesion,
+            ctx.delta_time()
+        );
+
+        // flower.drawBody(body, vao, ctx, vertices, textures);
+        // TODO adapter le nb de vertices en fonction de la taille qu'elle représente ?
+        beez.draw(
+            ctx, vao, vertices,
+            wings, eyes, body, textures,
+            glm::vec3(ctx.mouse() * ctx.aspect_ratio() * (1.5f + 0.5f / 2.f), -5.),
+            glm::vec3(0.3)
+        );
     };
 
     // Should be done last. It starts the infinite loop.
     ctx.start();
+    // TODO dans un fichier
+    glDeleteTextures(1, &textures);
+    return EXIT_SUCCESS;
 }

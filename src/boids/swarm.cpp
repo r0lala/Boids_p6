@@ -1,10 +1,9 @@
 #include "swarm.hpp"
-#include <iostream> // TODO pour les tests
 #include <vector>
+#include "3D/bee.hpp" // TODO à supp
 #include "boids/boid.hpp"
 #include "glm/fwd.hpp"
 
-// BOIDS ---
 // this.friction  = 0.999;
 
 // decelerate
@@ -59,27 +58,46 @@
 //     }
 // }
 
-void Swarm::draw(p6::Context& ctx) const
+// TODO faire un template
+void Swarm::draw(
+    p6::Context&                            ctx,
+    VAO&                                    vao,
+    const std::vector<glimac::ShapeVertex>& vertices,
+    Shader& wings, Shader& eyes, Shader& body, GLuint textures
+) const
 {
+    Bee boid;
+
     for (const Boid& b : _swarm)
     {
-        b.draw(ctx);
+        boid.draw(
+            ctx, vao, vertices, wings, eyes, body, textures,
+            b.position() * ctx.aspect_ratio() * (1.f + _size),
+            glm::vec3(_size)
+        );
     }
 }
 
-void Swarm::animate(p6::Context& ctx, float zoneFollow, float zoneSeparate, float zoneCohesion, float coeffFollow, float coeffSeparate, float coeffCohesion, float deltatime)
+void Swarm::animate(
+    p6::Context& ctx, // TODO à supp ?
+    float zoneFollow, float zoneSeparate, float zoneCohesion,
+    float coeffFollow, float coeffSeparate, float coeffCohesion,
+    float deltatime // TODO déjà inclus dans le ctx
+)
 {
     for (Boid& b : _swarm)
     {
-        glm::vec2 acceleration{0.f};
+        glm::vec3 acceleration{0.f};
         // this->follow(b, zoneFollow, coeffFollow);
         // this->repulse(b, zoneSeparate, coeffSeparate);
+
+        // TODO à terminer
         // acceleration += b.separation(_swarm, zoneSeparate, coeffSeparate);
         acceleration += b.cohesion(_swarm, zoneCohesion, coeffCohesion);
         acceleration += b.alignement(_swarm, zoneFollow, coeffFollow);
         acceleration = b.limitAcceleration(acceleration, 1.);
         b.setvelocity(b.limitAcceleration(b.velocity(), 1.));
         b.move(acceleration, deltatime);
-        b.teleport(ctx);
+        b.teleport();
     }
 }
