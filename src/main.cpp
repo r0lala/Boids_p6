@@ -84,7 +84,7 @@ int main()
     );
 
     img::Image sky = p6::load_image_buffer(
-        "../assets/textures/sky.jpg"
+        "../assets/textures/clouds.png"
     );
 
     GLuint textureWall;
