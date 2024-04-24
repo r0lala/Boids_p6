@@ -148,10 +148,8 @@ int main()
         // body.use();
 
         // TODO à mettre en param
-        glm::mat4 ViewMatrix   = camera.getViewMatrix();
-        glm::mat4 ProjMatrix   = ViewMatrix * glm::perspective(glm::radians(70.f), ctx.aspect_ratio(), 0.1f, 100.f);
-        glm::mat4 MVMatrix     = ViewMatrix * glm::translate(glm::mat4(1), glm::vec3(0, 0, -5));
-        glm::mat4 NormalMatrix = glm::transpose(glm::inverse(MVMatrix));
+        glm::mat4 ViewMatrix = camera.getViewMatrix();
+        glm::mat4 MVMatrix   = glm::translate(ViewMatrix, glm::vec3(0, 0, -5));
         // // TODO mul mouse en fct de la taille de la sphere : 0.5f => size actuel
         // glm::mat4 MVMatrix = glm::translate(glm::mat4(1), glm::vec3(ctx.mouse() * ctx.aspect_ratio() * (1.5f + 0.5f / 2.f), -5));
         // MVMatrix           = glm::scale(MVMatrix, glm::vec3{0.6, 0.5f, 0.5});
@@ -161,27 +159,38 @@ int main()
         // glDrawArrays(GL_TRIANGLES, 0, vertices.size());
         // vao.unbind();
 
-        groupe.draw(
-            ctx, vao, vertices,
-            wings, eyes, body, textures
-        );
+        // groupe.draw(
+        //     ctx, vao, vertices,
+        //     wings, eyes, body, textures
+        // );
 
-        groupe.animate(
-            ctx,
-            options.align,
-            options.separate, options.cohesion,
-            options.coeffAlignement, options.coeffRepulsion, options.coeffCohesion,
-            ctx.delta_time()
-        );
+        // groupe.animate(
+        //     ctx,
+        //     options.align,
+        //     options.separate, options.cohesion,
+        //     options.coeffAlignement, options.coeffRepulsion, options.coeffCohesion,
+        //     ctx.delta_time()
+        // );
 
         // flower.drawBody(body, vao, ctx, vertices, textures);
         // TODO adapter le nb de vertices en fonction de la taille qu'elle représente ?
-        beez.draw(
-            ctx, vao, vertices,
-            wings, eyes, body, textures,
-            glm::vec3(ctx.mouse() * ctx.aspect_ratio() * (1.5f + 0.5f / 2.f), -5.),
-            glm::vec3(0.3)
-        );
+        // beez.draw(
+        //     ctx, vao, vertices,
+        //     wings, eyes, body, textures,
+        //     glm::vec3(ctx.mouse() * ctx.aspect_ratio() * (1.5f + 0.5f / 2.f), -5.),
+        //     glm::vec3(0.3)
+        // );
+
+        // Draw triangle
+        vao.bind();
+
+        body.use();
+        body.giveMatrix(ctx, MVMatrix);
+        body.bindTexture(0);
+        glDrawArrays(GL_TRIANGLES, 0, vertices.size());
+        vao.unbind();
+
+        // Unbind vao
     };
 
     // Should be done last. It starts the infinite loop.
