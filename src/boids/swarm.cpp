@@ -1,11 +1,9 @@
 #include "swarm.hpp"
-#include <iostream> // TODO pour les tests
 #include <vector>
 #include "3D/bee.hpp" // TODO à supp
 #include "boids/boid.hpp"
 #include "glm/fwd.hpp"
 
-// BOIDS ---
 // this.friction  = 0.999;
 
 // decelerate
@@ -60,6 +58,7 @@
 //     }
 // }
 
+// TODO faire un template
 void Swarm::draw(
     p6::Context&                            ctx,
     VAO&                                    vao,
@@ -91,6 +90,8 @@ void Swarm::animate(
         glm::vec3 acceleration{0.f};
         // this->follow(b, zoneFollow, coeffFollow);
         // this->repulse(b, zoneSeparate, coeffSeparate);
+
+        // TODO à terminer
         // acceleration += b.separation(_swarm, zoneSeparate, coeffSeparate);
         acceleration += b.cohesion(_swarm, zoneCohesion, coeffCohesion);
         acceleration += b.alignement(_swarm, zoneFollow, coeffFollow);
