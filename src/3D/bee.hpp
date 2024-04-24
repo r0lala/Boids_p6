@@ -50,7 +50,7 @@ public:
         p6::Context& ctx, VAO& vao,
         const std::vector<glimac::ShapeVertex>& vertices,
         Shader& wings, Shader& eyes, Shader& body, GLuint textures,
-        glm::vec3 position
+        glm::vec3 position, glm::vec3 scale
     );
 };
 #endif

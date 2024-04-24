@@ -68,19 +68,20 @@ void Swarm::draw(
 ) const
 {
     Bee   boid;
-    float size = 0.09f;
+    float size = 0.5f; // TODO à mettre en attribut
 
     for (const Boid& b : _swarm)
     {
         boid.draw(
             ctx, vao, vertices, wings, eyes, body, textures,
-            glm::vec3(b.position(), -5) * ctx.aspect_ratio() * (1.f + size)
+            glm::vec3(b.position(), -5) * ctx.aspect_ratio() * (1.f + size),
+            glm::vec3(size)
         );
     }
 }
 
 void Swarm::animate(
-    p6::Context& ctx,
+    p6::Context& ctx, // TODO à supp ?
     float zoneFollow, float zoneSeparate, float zoneCohesion,
     float coeffFollow, float coeffSeparate, float coeffCohesion,
     float deltatime // TODO déjà inclus dans le ctx

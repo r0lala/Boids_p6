@@ -66,14 +66,14 @@ void Bee::draw(
     p6::Context& ctx, VAO& vao,
     const std::vector<glimac::ShapeVertex>& vertices,
     Shader& wings, Shader& eyes, Shader& body, GLuint textures, // TODO supp param shader + texture
-    // glm::mat4 scale
-    glm::vec3 position
+    glm::vec3 position, glm::vec3 scale
 )
 {
     glm::mat4 MVMatrix = this->giveBody();
     MVMatrix           = glm::translate(MVMatrix, position);
     MVMatrix           = glm::rotate(MVMatrix, ctx.time(), {0.f, 1.f, 0.f}); // TODO debug
     // TODO scale ?
+    MVMatrix = glm::scale(MVMatrix, scale);
 
     body.use();
     body.giveMatrix(ctx, MVMatrix);
