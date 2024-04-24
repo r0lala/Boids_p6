@@ -10,6 +10,7 @@
 #include <ctime>
 #include <glm/glm.hpp>
 #include <vector>
+#include "3D/GLIMAC/camera.hpp"
 #include "3D/bee.hpp"
 #include "3D/glimac/common.hpp"
 #include "3D/glimac/sphere_vertices.hpp"
@@ -28,7 +29,10 @@ int main()
     Swarm groupe(50);
     // Boid  test = groupe[0]; // TODO test
     srand(time(NULL)); // TODO à déplacer ?
-    Bee beez;
+
+    Camera camera;
+    Bee    beez;
+    Bee    flower;
 
     // Run the tests
     if (doctest::Context{}.run() != 0)
@@ -38,6 +42,21 @@ int main()
     auto ctx = p6::Context{{.title = "Bee Boids"}};
     ctx.maximize_window();
 
+    ctx.mouse_scrolled = [&](p6::MouseScroll scroll) {
+        // TODO
+        std::cout << "dy = " << scroll.dy << std::endl;
+        std::cout << "dx = " << scroll.dx << std::endl;
+
+        camera.moveFront(scroll.dy / 10.);
+    };
+
+    ctx.mouse_dragged = [&](p6::MouseDrag mouse) {
+        float y = mouse.delta[0];
+        float x = mouse.delta[1];
+        camera.rotateLeft(x);
+        camera.rotateUp(y);
+    };
+
     // Param UI
     Options options(ctx);
 
@@ -46,12 +65,11 @@ int main()
     // Creation Shader
     Shader body("3D", "bee/body");
     Shader eyes("3D", "bee/eyes");
-    Shader wings("3D", "bee/wings");
+    Shader wings("3D", "normals");
 
     // Chargement des textures
     // TODO rename triforce
-    // TODO bug : c'est chargé à l'envers ???
-    img::Image triforce = p6::load_image_buffer("../assets/textures/bodyTexture.png");
+    img::Image triforce = p6::load_image_buffer("../assets/textures/bodyTexture.png", false);
     // std::unique_ptr<Image> triforce = loadImage("~/IMAC2/S4/GLImac-Template/assets/textures/triforce.png");
     // assert(triforce != NULL && "error loading triforce.png");
 
@@ -129,6 +147,9 @@ int main()
 
         // body.use();
 
+        // TODO à mettre en param
+        glm::mat4 ViewMatrix = camera.getViewMatrix();
+        glm::mat4 MVMatrix   = glm::translate(ViewMatrix, glm::vec3(0));
         // // TODO mul mouse en fct de la taille de la sphere : 0.5f => size actuel
         // glm::mat4 MVMatrix = glm::translate(glm::mat4(1), glm::vec3(ctx.mouse() * ctx.aspect_ratio() * (1.5f + 0.5f / 2.f), -5));
         // MVMatrix           = glm::scale(MVMatrix, glm::vec3{0.6, 0.5f, 0.5});
@@ -151,6 +172,7 @@ int main()
             ctx.delta_time()
         );
 
+        // flower.drawBody(body, vao, ctx, vertices, textures);
         // TODO adapter le nb de vertices en fonction de la taille qu'elle représente ?
         beez.draw(
             ctx, vao, vertices,
@@ -158,6 +180,17 @@ int main()
             glm::vec3(ctx.mouse() * ctx.aspect_ratio() * (1.5f + 0.5f / 2.f), -5.),
             glm::vec3(0.3)
         );
+
+        // Draw triangle
+        vao.bind();
+
+        body.use();
+        body.giveMatrix(ctx, MVMatrix);
+        body.bindTexture(0);
+        glDrawArrays(GL_TRIANGLES, 0, vertices.size());
+        vao.unbind();
+
+        // Unbind vao
     };
 
     // Should be done last. It starts the infinite loop.
