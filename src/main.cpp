@@ -158,7 +158,6 @@ int main()
         );
 
         // Draw sphere
-        // TODO à mettre en param =>
 
         vao.bind();
         wings.use();

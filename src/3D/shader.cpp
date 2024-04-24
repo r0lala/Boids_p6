@@ -10,16 +10,17 @@ Shader::Shader(std::string vertex, std::string fragment)
     _uTexture      = glGetUniformLocation(_program.id(), "uTexture");
 }
 
-Shader::~Shader()
-{
-    // glDeleteTextures(1, &textures);
-}
-
 void Shader::use()
 {
     _program.use();
 }
 
+/**
+ * @brief give the matrix to the shader
+ *
+ * @param ctx
+ * @param ViewMatrix
+ */
 void Shader::giveMatrix(p6::Context& ctx, glm::mat4 ViewMatrix)
 {
     glm::mat4 ProjMatrix   = glm::perspective(glm::radians(70.f), ctx.aspect_ratio(), 0.1f, 100.f);
