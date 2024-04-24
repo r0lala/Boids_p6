@@ -8,12 +8,13 @@
 class Swarm {
 private:
     std::vector<Boid> _swarm; // vecteur qui contient tous les boids
-
+    float             _size;
     // float _avoidRadius   = 60;   // rayon d'évitement
     // float _avoidStrength = 0.02; // puissance de répulsion
 
 public:
-    Swarm(int n = 5) // constructeur (par défaut?)
+    Swarm(int n = 5, float size = 0.5f) // constructeur (par défaut?)
+        : _size(size)
     {
         for (int i = 1; i <= n; i++)
         {
