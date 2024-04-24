@@ -39,9 +39,7 @@ glm::mat4 Bee::giveFace(
 // TODO direction ?
 glm::mat4 Bee::giveBody()
 {
-    glm::mat4 MVMatrix = glm::mat4(1);
-    MVMatrix           = glm::translate(MVMatrix, glm::vec3(0, 0, -5));
-    return MVMatrix;
+    return glm::mat4(1); // MVMatrix
 }
 
 void Bee::render(VAO& vao, const std::vector<glimac::ShapeVertex>& vertices, Shader& shader, GLuint textures, int textUnit)
@@ -69,11 +67,10 @@ void Bee::draw(
     glm::mat4 ViewMatrix
 )
 {
-    glm::mat4 MVMatrix = ViewMatrix; // this->giveBody(); // TODO rectifier giveBody
+    glm::mat4 MVMatrix = ViewMatrix * this->giveBody();
     MVMatrix           = glm::translate(MVMatrix, position);
     MVMatrix           = glm::rotate(MVMatrix, ctx.time(), {0.f, 1.f, 0.f}); // TODO debug
-    // TODO scale ?
-    MVMatrix = glm::scale(MVMatrix, scale);
+    MVMatrix           = glm::scale(MVMatrix, scale);
 
     body.use();
     body.giveMatrix(ctx, MVMatrix);
