@@ -159,12 +159,10 @@ int main()
 
         // Draw sphere
         // TODO à mettre en param =>
-        glm::mat4 ViewMatrix = camera.getViewMatrix();
-        glm::mat4 MVMatrix   = glm::translate(ViewMatrix, glm::vec3(0));
 
         vao.bind();
         wings.use();
-        wings.giveMatrix(ctx, MVMatrix);
+        wings.giveMatrix(ctx, camera.getViewMatrix());
         glDrawArrays(GL_TRIANGLES, 0, vertices.size());
         vao.unbind();
     };
