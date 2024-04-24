@@ -131,7 +131,7 @@ int main()
     ctx.update = [&]() {
         // Clear the window
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        ctx.background(p6::NamedColor::VermilionPlochere);
+        ctx.background(p6::NamedColor::CeladonBlue);
 
         // TODO cube
         // ctx.square(p6::Center{0., 0.}, p6::Radius{0.8f}, p6::Rotation{0.0_turn});
@@ -157,14 +157,6 @@ int main()
             glm::vec3(ctx.mouse() * ctx.aspect_ratio() * (1.5f + 0.5f / 2.f), -5.),
             glm::vec3(0.3), camera.getViewMatrix()
         );
-
-        // Draw sphere
-
-        vao.bind();
-        wings.use();
-        wings.giveMatrix(ctx, camera.getViewMatrix());
-        glDrawArrays(GL_TRIANGLES, 0, vertices.size());
-        vao.unbind();
     };
 
     // Should be done last. It starts the infinite loop.
