@@ -66,7 +66,7 @@ glm::mat4 Bee::giveBody(p6::Context& ctx)
 }
 
 // TODO rename => render ?
-void Bee::render(VAO& vao, const std::vector<glimac::ShapeVertex>& vertices, Shader& shader, Texture& texture, int textUnit)
+void Bee::render(VAO& vao, const std::vector<glimac::ShapeVertex>& vertices, Shader& shader, const Texture& texture, int textUnit)
 {
     vao.bind();
     if (textUnit >= 0)
@@ -89,12 +89,12 @@ void Bee::render(VAO& vao, const std::vector<glimac::ShapeVertex>& vertices, Sha
 void Bee::draw(
     p6::Context& ctx, VAO& vao,
     const std::vector<glimac::ShapeVertex>& vertices,
-    Shader& wings, Shader& eyes, Shader& body, Texture& texture // TODO supp param shader + texture
+    Shader& wings, Shader& eyes, Shader& body, const Texture& texture // TODO supp param shader + texture
 )
 {
     body.use();
     body.giveMatrix(ctx, this->giveBody(ctx));
-    this->render(vao, vertices, body, texture.getIndexTexture(), 0);
+    this->render(vao, vertices, body, texture._id, 0);
 
     // TODO regrouper ctx et vao ?
     // TODO dépendance avec le body

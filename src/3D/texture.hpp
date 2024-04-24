@@ -8,11 +8,13 @@
 
 class Texture {
 private:
-    GLuint     _id{};
     img::Image _img;
 
 public:
-    Texture(GLuint id, std::string path)
+    GLuint _id{};
+
+public:
+    Texture(GLuint& id, std::string path)
         : _id(id), _img(p6::load_image_buffer(path, false))
     {
         glBindTexture(GL_TEXTURE_2D, id);
@@ -36,7 +38,7 @@ public:
         glBindTexture(GL_TEXTURE_2D, _id);
     };
 
-    GLuint getIndexTexture()
+    const GLuint getIndexTexture() const
     {
         return _id;
     }

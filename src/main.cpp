@@ -106,8 +106,10 @@ int main()
     glEnable(GL_DEPTH_TEST); // active le test de profondeur du GPU
 
     // Texture
-    vecTextures texturesLib;
-    Texture     beeBody(texturesLib.getIndexTexture(0), "../assets/textures/bodyTexture.png");
+    // vecTextures texturesLib;
+    std::vector<GLuint> vecTex;
+    glGenTextures(2, vecTex.data());
+    Texture beeBody(vecTex[0], "../assets/textures/bodyTexture.png");
     // Texture     flower(textures[1], "../assets/textures/flower.png");
 
     // TODO dans un fichier
@@ -147,6 +149,6 @@ int main()
     // Should be done last. It starts the infinite loop.
     ctx.start();
     // TODO dans un fichier
-    // glDeleteTextures(1, &textures);
+    glDeleteTextures(1, vecTex[0]);
     return EXIT_SUCCESS;
 }

@@ -48,14 +48,14 @@ private:
     void render(
         VAO&                                    vao,
         const std::vector<glimac::ShapeVertex>& vertices,
-        Shader& body, Texture& texture, int textUnit = -1
+        Shader& body, const Texture& texture, int textUnit = -1
     );
 
 public:
     void draw(
         p6::Context& ctx, VAO& vao,
         const std::vector<glimac::ShapeVertex>& vertices,
-        Shader& wings, Shader& eyes, Shader& body, Texture& texture
+        Shader& wings, Shader& eyes, Shader& body, const Texture& texture
     );
 };
 #endif

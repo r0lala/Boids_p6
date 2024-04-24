@@ -19,7 +19,7 @@ public:
         glDeleteTextures(this->_nbTextures, this->_textures.data());
     };
 
-    GLuint getIndexTexture(GLuint index)
+    const GLuint getIndexTexture(GLuint index) const
     {
         return _textures[index];
     }
