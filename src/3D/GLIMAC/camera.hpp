@@ -3,9 +3,9 @@
 
 class Camera {
 private:
-    float _distance;
-    float _angleX;
-    float _angleY;
+    float _distance = 5;
+    float _angleX   = 0;
+    float _angleY   = 0;
 
 public:
     void moveFront(float delta)
