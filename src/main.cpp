@@ -11,7 +11,6 @@
 #include <vector>
 #include "3D/bee.hpp"
 #include "3D/glimac/common.hpp"
-#include "3D/glimac/sphere_vertices.hpp"
 #include "3D/shader.hpp"
 #include "3D/vao.hpp"
 #include "3D/vbo.hpp"
@@ -20,6 +19,8 @@
 #include "p6/p6.h"
 #include "param/options.hpp"
 #include "random/rand.hpp"
+#include "texture.hpp"
+#include "vecTextures.hpp"
 
 int main()
 {
@@ -49,7 +50,7 @@ int main()
 
     // Chargement des textures
     // TODO rename triforce
-    img::Image triforce = p6::load_image_buffer("../assets/textures/bodyTexture.png", false);
+    // img::Image triforce = p6::load_image_buffer("../assets/textures/bodyTexture.png", false);
     // std::unique_ptr<Image> triforce = loadImage("~/IMAC2/S4/GLImac-Template/assets/textures/triforce.png");
     // assert(triforce != NULL && "error loading triforce.png");
 
@@ -104,18 +105,22 @@ int main()
     glEnable(GL_DEPTH_TEST); // active le test de profondeur du GPU
 
     // Texture
+    vecTextures textures;
+    Texture     beeBody(textures[0], "../assets/textures/bodyTexture.png");
+    Texture     flower(textures[1], "../assets/textures/bodyTexture.png");
+
     // TODO dans un fichier
-    GLuint textures;
-    glGenTextures(1, &textures);
-    glBindTexture(GL_TEXTURE_2D, textures);
-    glTexImage2D(
-        GL_TEXTURE_2D, 0, GL_RGBA,
-        triforce.width(), triforce.height(),
-        0, GL_RGBA, GL_UNSIGNED_BYTE, triforce.data()
-    );
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    glBindTexture(GL_TEXTURE_2D, 0);
+    // GLuint textures;
+    // glGenTextures(1, &textures);
+    // glBindTexture(GL_TEXTURE_2D, textures);
+    // glTexImage2D(
+    //     GL_TEXTURE_2D, 0, GL_RGBA,
+    //     triforce.width(), triforce.height(),
+    //     0, GL_RGBA, GL_UNSIGNED_BYTE, triforce.data()
+    // );
+    // glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    // glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    // glBindTexture(GL_TEXTURE_2D, 0);
 
     // Declare your infinite update loop.
     ctx.update = [&]() {
