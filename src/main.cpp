@@ -46,7 +46,7 @@ int main()
 
     ctx.mouse_dragged = [&](p6::MouseDrag mouse) {
         camera.rotateLeft(mouse.delta[1]); // x
-        camera.rotateUp(mouse.delta[0];);  // y
+        camera.rotateUp(mouse.delta[0]);   // y
     };
 
     // Param UI

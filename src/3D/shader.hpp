@@ -16,7 +16,7 @@ private:
 
 public:
     Shader(std::string vertex, std::string fragment);
-    ~Shader();
+    // ~Shader();
     void use();
     void giveMatrix(p6::Context& ctx, glm::mat4 ViewMatrix);
     void bindTexture(int textUnit);
