@@ -10,13 +10,13 @@ uniform float uShininess;
 uniform vec3 uLightPos_vs;
 uniform vec3 uLightIntensity;
 
-vec3 blinnPhong(vPosition_vs, uLightPos_vs){
+vec3 blinnPhong(){
     w_i = normalize(uLightPos_vs - vPosition_vs);
     w_0 = normalize(-vPosition_vs); // pointe vers la caméra
 
     return (uLightIntensity / (distance(uLightPos_vs) * distance(uLightPos_vs))) 
-    * (uKd * dot(normalize(uLightPos_vs))) 
-    + uKs * (pow(dot((w_0 + w_i) / 2.), uShininess));
+    * (uKd * dot(normalize(uLightPos_vs), vNormal_vs)) 
+    + uKs * (pow(dot((w_0 + w_i) / 2., vNormal_vs), uShininess));
 }
 
 void main(){
