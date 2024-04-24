@@ -7,13 +7,15 @@
 #include "vao.hpp"
 
 class Flower {
+private:
     glm::vec3 _position{0, 0, 0};
 
     Flower();
 
-    void moveFlower(p6::Context ctx, float wall);
-    void moveFront(float delta, float wall);
-    void moveBack(float delta, float wall);
-    void moveLeft(float delta, float wall);
-    void moveRight(float delta, float wall);
+    void      moveFlower(p6::Context ctx, float wall);
+    void      moveFront(float delta, float wall);
+    void      moveBack(float delta, float wall);
+    void      moveLeft(float delta, float wall);
+    void      moveRight(float delta, float wall);
+    glm::mat4 getViewMatrix() const;
 };
