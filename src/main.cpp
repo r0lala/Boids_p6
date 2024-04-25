@@ -1,15 +1,17 @@
 // TODO faire le tri des includes ...
 #include <cstdlib>
+#include "boids/boid.hpp"
 #include "glm/ext/matrix_clip_space.hpp"
 #include "glm/ext/matrix_transform.hpp"
 #include "glm/fwd.hpp"
-#include "glm/gtc/type_ptr.hpp"
 #include "glm/matrix.hpp"
 #include "glm/trigonometric.hpp"
 #define DOCTEST_CONFIG_IMPLEMENT
 #include <ctime>
 #include <glm/glm.hpp>
 #include <vector>
+#include "3D/GLIMAC/camera.hpp"
+#include "3D/bee.hpp"
 #include "3D/glimac/common.hpp"
 #include "3D/glimac/sphere_vertices.hpp"
 #include "3D/shader.hpp"
@@ -27,6 +29,9 @@ int main()
     Swarm groupe(50);
     srand(time(NULL)); // TODO à déplacer ?
 
+    Camera camera;
+    Bee    beez;
+
     // Run the tests
     if (doctest::Context{}.run() != 0)
         return EXIT_FAILURE;
@@ -35,16 +40,29 @@ int main()
     auto ctx = p6::Context{{.title = "Bee Boids"}};
     ctx.maximize_window();
 
+    ctx.mouse_scrolled = [&](p6::MouseScroll scroll) {
+        camera.moveFront(scroll.dy / 10.);
+    };
+
+    ctx.mouse_dragged = [&](p6::MouseDrag mouse) {
+        camera.rotateLeft(mouse.delta[1]); // x
+        camera.rotateUp(mouse.delta[0]);   // y
+    };
+
     // Param UI
     Options options(ctx);
 
     // --- 3D ---
 
     // Creation Shader
+    Shader body("3D", "bee/body");
+    Shader eyes("3D", "bee/eyes");
+    Shader wings("3D", "normals");
     Shader tree("3D", "tree/leaf");
 
     // Chargement des textures
-    // TODO bug : c'est chargé à l'envers ???
+    // TODO rename triforce
+    img::Image triforce = p6::load_image_buffer("../assets/textures/bodyTexture.png", false);
     img::Image leaf = p6::load_image_buffer("../assets/textures/leaf.png");
 
     VBO vbo;
@@ -88,7 +106,8 @@ int main()
     VAO vao;
     vao.bind();
 
-    // Activation vertex 3D
+    // beez.initBee(vbo, vao); // TODO
+    // // Activation vertex // TODO fct
     vbo.bind();
     static constexpr GLuint aVertexPosition = 0;
     glEnableVertexAttribArray(aVertexPosition);
@@ -133,47 +152,29 @@ int main()
 
     // Declare your infinite update loop.
     ctx.update = [&]() {
-        ctx.background(p6::NamedColor::VermilionPlochere);
-        // ctx.square(p6::Center{0., 0.}, p6::Radius{0.8f}, p6::Rotation{0.0_turn});
-
-        // ctx.circle(
-        //     p6::Center{ctx.mouse()},
-        //     p6::Radius{0.05f}
-        // );
-
-        // groupe.draw(ctx);
-        // groupe.animate(ctx, align, separate, cohesion, coeffAlignement, coeffRepulsion, coeffCohesion, ctx.delta_time());
-
         // Clear the window
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        ctx.background(p6::NamedColor::CeladonBlue);
 
-        // Shader
-        // tree.use();
+        // TODO cube
+        // ctx.square(p6::Center{0., 0.}, p6::Radius{0.8f}, p6::Rotation{0.0_turn});
 
-        // Bind VAO
-        // vao.bind();
-        // glDrawArrays(GL_TRIANGLES, 0, N * 3);
-        // vao.unbind();
+        groupe.draw(
+            ctx, vao, vertices,
+            wings, eyes, body, textures,
+            camera.getViewMatrix()
+        );
 
         tree.use();
-
         vao.bind();
-        // glDrawArrays(GL_TRIANGLES, 0, N * 3);
-        // glm::mat4 ProjMatrix = glm::perspective(glm::radians(70.f), ctx.aspect_ratio(), 0.1f, 100.f);
-        // glm::mat4 MVMatrix   = glm::translate(glm::mat4(1), glm::vec3(-2., 0, -5));
-        // MVMatrix             = glm::translate(MVMatrix, {0.5f, 0.8f, 0.f});
-        // vao.unbind();
 
         glm::mat4 ProjMatrix = glm::perspective(glm::radians(70.f), ctx.aspect_ratio(), 0.1f, 100.f);
         glm::mat4 MVMatrix   = glm::translate(glm::mat4(1), glm::vec3(0, 0, -5));
-        // MVMatrix = glm::rotate(MVMatrix, 90.f, {0.f, 0.f, 0.f});
-
         MVMatrix               = glm::scale(MVMatrix, glm::vec3(0.8f, 0.6f, 0.8f));
         glm::mat4 NormalMatrix = glm::transpose(glm::inverse(MVMatrix));
 
         tree.giveMatrix(ProjMatrix, MVMatrix, NormalMatrix);
 
-        // // Draw triangle
         glBindTexture(GL_TEXTURE_2D, textures);
         tree.bindTexture(0);
         glDrawArrays(GL_TRIANGLES, 0, vertices.size());
@@ -193,7 +194,6 @@ int main()
             ),
             glm::vec3{0.6f}
         );
-        NormalMatrix = glm::transpose(glm::inverse(MVMatrix));
 
         tree.giveMatrix(ProjMatrix, MVMatrix, NormalMatrix);
 
@@ -260,10 +260,27 @@ int main()
         glDrawArrays(GL_TRIANGLES, 0, vertices.size());
         glBindTexture(GL_TEXTURE_2D, 0);
         vao.unbind();
+
+        groupe.animate(
+            ctx,
+            options.align,
+            options.separate, options.cohesion,
+            options.coeffAlignement, options.coeffRepulsion, options.coeffCohesion,
+            ctx.delta_time()
+        );
+
+        // TODO adapter le nb de vertices en fonction de la taille qu'elle représente ?
+        beez.draw(
+            ctx, vao, vertices,
+            wings, eyes, body, textures,
+            glm::vec3(ctx.mouse() * ctx.aspect_ratio() * (1.5f + 0.5f / 2.f), -5.),
+            glm::vec3(0.3), camera.getViewMatrix()
+        );
     };
 
     // Should be done last. It starts the infinite loop.
     ctx.start();
+    // TODO dans un fichier
     glDeleteTextures(1, &textures);
     return EXIT_SUCCESS;
 }

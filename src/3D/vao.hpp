@@ -1,6 +1,8 @@
+#ifndef __VAO_H__
+#define __VAO_H__
+
 #include "glm/glm.hpp"
 #include "p6/p6.h"
-
 
 class VAO {
 private:
@@ -44,3 +46,5 @@ public:
         glBindVertexArray(0);
     }
 };
+
+#endif
