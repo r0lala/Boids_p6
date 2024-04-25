@@ -9,6 +9,7 @@
 #define DOCTEST_CONFIG_IMPLEMENT
 #include <ctime>
 #include <glm/glm.hpp>
+#include <glm/gtc/type_ptr.hpp> // TODO
 #include <vector>
 #include "3D/GLIMAC/camera.hpp"
 #include "3D/bee.hpp"
@@ -22,7 +23,6 @@
 #include "p6/p6.h"
 #include "param/options.hpp"
 #include "random/rand.hpp"
-#include <glm/gtc/type_ptr.hpp> // TODO 
 
 int main()
 {
@@ -114,11 +114,11 @@ int main()
 
     // ---
     // Lumière
-    GLuint uKd = glGetUniformLocation(light.id(), "uKd");
-    GLuint uKs = glGetUniformLocation(light.id(), "uKs");
+    GLuint uKd        = glGetUniformLocation(light.id(), "uKd");
+    GLuint uKs        = glGetUniformLocation(light.id(), "uKs");
     GLuint uShininess = glGetUniformLocation(light.id(), "uShininess");
 
-    GLuint uLightPos_vs = glGetUniformLocation(light.id(), "uLightPos_vs");
+    GLuint uLightPos_vs    = glGetUniformLocation(light.id(), "uLightPos_vs");
     GLuint uLightIntensity = glGetUniformLocation(light.id(), "uLightIntensity");
 
     GLuint uMVPMatrix    = glGetUniformLocation(light.id(), "uMVPMatrix");
@@ -168,15 +168,16 @@ int main()
         glUniform3fv(uKd, 1, glm::value_ptr(glm::vec3(1.))); // coeff de réflexion diffuse de l'objet
         glUniform3fv(uKs, 1, glm::value_ptr(glm::vec3(1.))); // coeff de réglexion glossy de l'objet
         glUniform1f(uShininess, 2.f);
-        glUniform3fv(uLightPos_vs, 1, glm::value_ptr(glm::vec3(1) * camera.getViewMatrix())); // TODO passage d'une matrice en vec
+        glm::vec3 tmp = glm::vec4(1) * camera.getViewMatrix();
+        glUniform3fv(uLightPos_vs, 1, glm::value_ptr(glm::vec3(tmp.x, tmp.y, tmp.z))); // TODO passage d'une matrice en vec
         glUniform3fv(uLightIntensity, 1, glm::value_ptr(glm::vec3(1.)));
-// TODO on utiliserait le multi-texturing pour binder une texture diffuse, une texture glossy et une texture de brillance.
-// uniform vec3 uKd;
-// uniform vec3 uKs;
-// uniform float uShininess;
+        // TODO on utiliserait le multi-texturing pour binder une texture diffuse, une texture glossy et une texture de brillance.
+        // uniform vec3 uKd;
+        // uniform vec3 uKs;
+        // uniform float uShininess;
 
-// uniform vec3 uLightPos_vs;
-// uniform vec3 uLightIntensity;
+        // uniform vec3 uLightPos_vs;
+        // uniform vec3 uLightIntensity;
 
         glm::mat4 ProjMatrix   = glm::perspective(glm::radians(70.f), ctx.aspect_ratio(), 0.1f, 100.f);
         glm::mat4 MVMatrix     = glm::translate(camera.getViewMatrix(), glm::vec3(0));
