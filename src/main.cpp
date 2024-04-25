@@ -173,7 +173,7 @@ int main()
         MVMatrix               = glm::scale(MVMatrix, glm::vec3(0.8f, 0.6f, 0.8f));
         glm::mat4 NormalMatrix = glm::transpose(glm::inverse(MVMatrix));
 
-        tree.giveMatrix(ProjMatrix, MVMatrix, NormalMatrix);
+        tree.giveMatrix(ctx, camera.getViewMatrix() * MVMatrix);
 
         glBindTexture(GL_TEXTURE_2D, textures);
         tree.bindTexture(0);
@@ -195,7 +195,7 @@ int main()
             glm::vec3{0.6f}
         );
 
-        tree.giveMatrix(ProjMatrix, MVMatrix, NormalMatrix);
+        tree.giveMatrix(ctx, camera.getViewMatrix() * MVMatrix);
 
         glDrawArrays(GL_TRIANGLES, 0, vertices.size());
         vao.unbind();
@@ -215,7 +215,7 @@ int main()
         );
         NormalMatrix = glm::transpose(glm::inverse(MVMatrix));
 
-        tree.giveMatrix(ProjMatrix, MVMatrix, NormalMatrix);
+        tree.giveMatrix(ctx, camera.getViewMatrix() * MVMatrix);
 
         glDrawArrays(GL_TRIANGLES, 0, vertices.size());
         vao.unbind();
@@ -235,7 +235,7 @@ int main()
         );
         NormalMatrix = glm::transpose(glm::inverse(MVMatrix));
 
-        tree.giveMatrix(ProjMatrix, MVMatrix, NormalMatrix);
+        tree.giveMatrix(ctx, camera.getViewMatrix() * MVMatrix);
 
         glDrawArrays(GL_TRIANGLES, 0, vertices.size());
         vao.unbind();
@@ -255,12 +255,13 @@ int main()
         );
         NormalMatrix = glm::transpose(glm::inverse(MVMatrix));
 
-        tree.giveMatrix(ProjMatrix, MVMatrix, NormalMatrix);
+        tree.giveMatrix(ctx, camera.getViewMatrix() * MVMatrix);
 
         glDrawArrays(GL_TRIANGLES, 0, vertices.size());
         glBindTexture(GL_TEXTURE_2D, 0);
         vao.unbind();
 
+        // TODO faire gaffe au chargement des textures
         groupe.animate(
             ctx,
             options.align,
