@@ -67,8 +67,7 @@ int main()
     vbo.bind();
 
     // Fill buffer
-    const std::vector<glimac::ShapeVertex> vertices;
-
+    std::vector<glimac::ShapeVertex> vertices = glimac::sphere_vertices(1.f, 32, 16);
     // Sending the data
     glBufferData(
         GL_ARRAY_BUFFER,
