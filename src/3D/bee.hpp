@@ -5,9 +5,11 @@
 // #include "glm/glm.hpp"
 #include "3D/glimac/common.hpp"
 #include "glm/fwd.hpp"
+#include "glm/gtx/vector_angle.hpp"
 #include "p6/p6.h"
 #include "shader.hpp"
 #include "vao.hpp"
+
 
 // #include "vbo.hpp"
 
@@ -43,7 +45,7 @@ public:
         const std::vector<glimac::ShapeVertex>& vertices,
         Shader& wings, Shader& eyes, Shader& body, GLuint textures,
         glm::vec3 position, glm::vec3 scale,
-        glm::mat4 ViewMatrix
+        glm::mat4 ViewMatrix, float angle, glm::vec3 axe
     );
 };
 #endif

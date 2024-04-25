@@ -1,6 +1,5 @@
 // TODO faire le tri des includes ...
 #include <cstdlib>
-#include "boids/boid.hpp"
 #include "glm/ext/matrix_clip_space.hpp"
 #include "glm/ext/matrix_transform.hpp"
 #include "glm/fwd.hpp"
@@ -31,8 +30,10 @@ int main()
     srand(time(NULL)); // TODO à déplacer ?
 
     Camera camera;
-    Bee    beez;
-    Bush   bush;
+
+    // TODO test, à supp plus tard
+    Bee  beez;
+    Bush bush;
 
     // Run the tests
     if (doctest::Context{}.run() != 0)
@@ -42,6 +43,7 @@ int main()
     auto ctx = p6::Context{{.title = "Bee Boids"}};
     ctx.maximize_window();
 
+    // TODO => option.cpp ?
     ctx.mouse_scrolled = [&](p6::MouseScroll scroll) {
         camera.moveFront(scroll.dy / 10.);
     };
@@ -63,16 +65,14 @@ int main()
     Shader tree("3D", "tree/leaf");
 
     // Chargement des textures
-    // TODO rename triforce
-    img::Image triforce = p6::load_image_buffer("../assets/textures/bodyTexture.png", false);
-    img::Image leaf     = p6::load_image_buffer("../assets/textures/leaf.png");
+    img::Image beeBody = p6::load_image_buffer("../assets/textures/bodyTexture.png", false);
+    img::Image leaf    = p6::load_image_buffer("../assets/textures/leaf.png", false);
 
     VBO vbo;
     vbo.bind();
 
     // Fill buffer
-    const std::vector<glimac::ShapeVertex> vertices = glimac::sphere_vertices(1.f, 32, 16); // TODO rendre ça variable
-
+    std::vector<glimac::ShapeVertex> vertices = glimac::sphere_vertices(1.f, 32, 16);
     // Sending the data
     glBufferData(
         GL_ARRAY_BUFFER,
@@ -119,13 +119,25 @@ int main()
 
     // Texture
     // TODO dans un fichier
-    GLuint textures;
-    glGenTextures(1, &textures);
-    glBindTexture(GL_TEXTURE_2D, textures);
+    GLuint treeTexture;
+    glGenTextures(1, &treeTexture);
+    glBindTexture(GL_TEXTURE_2D, treeTexture);
     glTexImage2D(
         GL_TEXTURE_2D, 0, GL_RGBA,
         leaf.width(), leaf.height(),
         0, GL_RGBA, GL_UNSIGNED_BYTE, leaf.data()
+    );
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glBindTexture(GL_TEXTURE_2D, 0);
+
+    GLuint beeTexture;
+    glGenTextures(1, &beeTexture);
+    glBindTexture(GL_TEXTURE_2D, beeTexture);
+    glTexImage2D(
+        GL_TEXTURE_2D, 0, GL_RGBA,
+        beeBody.width(), beeBody.height(),
+        0, GL_RGBA, GL_UNSIGNED_BYTE, beeBody.data()
     );
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
@@ -139,23 +151,56 @@ int main()
 
         // TODO cube
         // ctx.square(p6::Center{0., 0.}, p6::Radius{0.8f}, p6::Rotation{0.0_turn});
-        tree.use();
-        // groupe.draw(
-        //     ctx, vao, vertices,
-        //     wings, eyes, body, textures,
-        //     camera.getViewMatrix()
-        // );
+        body.use();
+        body.bindTexture(beeTexture);
 
+        // TODO adapter le nb de vertices en fonction de la taille qu'elle représente ?
+        beez.draw(
+            ctx, vao, vertices,
+            wings, eyes, body, beeTexture,
+            glm::vec3(ctx.mouse() * ctx.aspect_ratio() * (1.5f + 0.5f / 2.f), -5.),
+            glm::vec3(0.3), camera.getViewMatrix(), 0., glm::vec3{0, 1, 0}
+        );
+
+        groupe.draw(
+            ctx, vao, vertices,
+            wings, eyes, body, beeTexture,
+            camera.getViewMatrix()
+        );
+
+        vbo.bind();
+        switch (options.getLods())
+        {
+        case 1:
+            vertices = glimac::sphere_vertices(1.f, 32, 16);
+            break;
+        case 0:
+            vertices = glimac::sphere_vertices(1.f, 10, 4);
+            break;
+
+        default:
+            vertices = glimac::sphere_vertices(1.f, 32, 16);
+        };
+
+        glBufferData(
+            GL_ARRAY_BUFFER,
+            vertices.size() * sizeof(glimac::ShapeVertex),
+            vertices.data(),
+            GL_STATIC_DRAW
+        );
+        vbo.unbind();
+        tree.use();
+        tree.bindTexture(treeTexture);
         // TODO test
         // for (float i; i < 10; i++){ avec var aleatoire}
-        bush.draw(ctx, vao, tree, vertices, camera.getViewMatrix(), textures, glm::vec3({2.f, -1.2f, 2.f}), glm::vec3(0.7), 0.2);
-        bush.draw(ctx, vao, tree, vertices, camera.getViewMatrix(), textures, glm::vec3({4.f, -1.2f, -5.f}), glm::vec3(0.9), 0.5);
-        bush.draw(ctx, vao, tree, vertices, camera.getViewMatrix(), textures, glm::vec3({-1.f, -1.2f, -4.f}), glm::vec3(1.1), 0.1);
-        bush.draw(ctx, vao, tree, vertices, camera.getViewMatrix(), textures, glm::vec3({0.2f, -1.2f, 0.4f}), glm::vec3(0.8), 0.8);
-        bush.draw(ctx, vao, tree, vertices, camera.getViewMatrix(), textures, glm::vec3({-6.f, -1.2f, -4.f}), glm::vec3(1.1), 2.f);
-        bush.draw(ctx, vao, tree, vertices, camera.getViewMatrix(), textures, glm::vec3({0.2f, -1.2f, -6.f}), glm::vec3(0.8), 4.f);
-        bush.draw(ctx, vao, tree, vertices, camera.getViewMatrix(), textures, glm::vec3({-1.f, -1.2f, -4.f}), glm::vec3(1.1), 15.f);
-        bush.draw(ctx, vao, tree, vertices, camera.getViewMatrix(), textures, glm::vec3({-4.f, -1.2f, 4.f}), glm::vec3(0.8), 80.f);
+        bush.draw(ctx, vao, tree, vertices, camera.getViewMatrix(), treeTexture, glm::vec3({2.f, -5.f, 2.f}), glm::vec3(3.), 5);
+        bush.draw(ctx, vao, tree, vertices, camera.getViewMatrix(), treeTexture, glm::vec3({4.f, -5.f, -5.f}), glm::vec3(3.), 0.2);
+        // bush.draw(ctx, vao, tree, vertices, camera.getViewMatrix(), textures, glm::vec3({-1.f, -1.2f, -4.f}), glm::vec3(1.1), 0.1);
+        // bush.draw(ctx, vao, tree, vertices, camera.getViewMatrix(), textures, glm::vec3({0.2f, -1.2f, 0.4f}), glm::vec3(0.8), 0.8);
+        // bush.draw(ctx, vao, tree, vertices, camera.getViewMatrix(), textures, glm::vec3({-6.f, -1.2f, -4.f}), glm::vec3(1.1), 2.f);
+        // bush.draw(ctx, vao, tree, vertices, camera.getViewMatrix(), textures, glm::vec3({0.2f, -1.2f, -6.f}), glm::vec3(0.8), 4.f);
+        // bush.draw(ctx, vao, tree, vertices, camera.getViewMatrix(), textures, glm::vec3({-1.f, -1.2f, -4.f}), glm::vec3(1.1), 15.f);
+        // bush.draw(ctx, vao, tree, vertices, camera.getViewMatrix(), textures, glm::vec3({-4.f, -1.2f, 4.f}), glm::vec3(0.8), 80.f);
 
         // TODO faire gaffe au chargement des textures
         groupe.animate(
@@ -165,19 +210,12 @@ int main()
             options.coeffAlignement, options.coeffRepulsion, options.coeffCohesion,
             ctx.delta_time()
         );
-
-        // TODO adapter le nb de vertices en fonction de la taille qu'elle représente ?
-        // beez.draw(
-        //     ctx, vao, vertices,
-        //     wings, eyes, body, textures,
-        //     glm::vec3(ctx.mouse() * ctx.aspect_ratio() * (1.5f + 0.5f / 2.f), -5.),
-        //     glm::vec3(0.3), camera.getViewMatrix()
-        // );
     };
 
     // Should be done last. It starts the infinite loop.
     ctx.start();
     // TODO dans un fichier
-    glDeleteTextures(1, &textures);
+    glDeleteTextures(1, &treeTexture);
+    glDeleteTextures(1, &beeTexture);
     return EXIT_SUCCESS;
 }

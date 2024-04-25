@@ -47,12 +47,12 @@ void Bee::draw(
     const std::vector<glimac::ShapeVertex>& vertices,
     Shader& wings, Shader& eyes, Shader& body, GLuint textures, // TODO supp param shader + texture
     glm::vec3 position, glm::vec3 scale,
-    glm::mat4 ViewMatrix
+    glm::mat4 ViewMatrix, float angle, glm::vec3 axe
 )
 {
     glm::mat4 MVMatrix = ViewMatrix * this->giveBody();
     MVMatrix           = glm::translate(MVMatrix, position);
-    MVMatrix           = glm::rotate(MVMatrix, ctx.time(), {0.f, 1.f, 0.f}); // TODO debug
+    MVMatrix           = glm::rotate(MVMatrix, angle, axe); // TODO debug
     MVMatrix           = glm::scale(MVMatrix, scale);
 
     body.use();
