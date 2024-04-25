@@ -7,7 +7,7 @@
 
 class Bush {
 public:
-    glm::vec3 _position; // TODO random
+    glm::vec3 _position; // TODO random // TODO private
     // TODO réduire le nb de param
     void draw(
         p6::Context& ctx,

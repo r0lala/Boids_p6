@@ -32,7 +32,7 @@ void Shader::giveMatrix(p6::Context& ctx, glm::mat4 ViewMatrix)
     glUniformMatrix4fv(_uNormalMatrix, 1, GL_FALSE, glm::value_ptr(NormalMatrix));
 }
 
-void Shader::bindTexture(int textUnit)
+void Shader::bindTexture(int textUnit) // TODO a supp
 {
     glUniform1i(_uTexture, textUnit);
 }
