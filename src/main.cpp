@@ -73,20 +73,6 @@ int main()
     // Fill buffer
     const std::vector<glimac::ShapeVertex> vertices = glimac::sphere_vertices(1.f, 32, 16); // TODO rendre ça variable
 
-    // std::vector<glimac::ShapeVertex> verticesCircle;
-    // GLuint                           N     = 20;
-    // float                            theta = (2 * glm::pi<float>()) / N;
-    // float                            r     = 0.5;
-
-    // for (GLuint i = 0; i < N; i++)
-    // {
-    //     verticesCircle.push_back(glimac::ShapeVertex{{r * glm::cos(theta * i), r * glm::sin(theta * i), 0.}, {0., 0., 0.}, {1.f, 0.f}});
-
-    //     verticesCircle.push_back(glimac::ShapeVertex{{r * glm::cos(theta * (i + 1)), r * glm::sin(theta * (i + 1)), 0.}, {0., 0., 0.}, {0.f, 1.f}});
-
-    //     verticesCircle.push_back(glimac::ShapeVertex{{0., 0., 0.}, {0., 0., 0.}, {0.f, 0.f}});
-    // }
-
     // Sending the data
     glBufferData(
         GL_ARRAY_BUFFER,
@@ -94,13 +80,6 @@ int main()
         vertices.data(),
         GL_STATIC_DRAW
     );
-
-    // glBufferData(
-    //     GL_ARRAY_BUFFER,
-    //     verticesCircle.size() * sizeof(glimac::ShapeVertex),
-    //     verticesCircle.data(),
-    //     GL_STATIC_DRAW
-    // );
 
     vbo.unbind();
 
