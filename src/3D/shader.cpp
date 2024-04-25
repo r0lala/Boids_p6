@@ -10,22 +10,23 @@ Shader::Shader(std::string vertex, std::string fragment)
     _uTexture      = glGetUniformLocation(_program.id(), "uTexture");
 }
 
-Shader::~Shader()
-{
-    // glDeleteTextures(1, &textures);
-}
-
 void Shader::use()
 {
     _program.use();
 }
 
-void Shader::giveMatrix(p6::Context& ctx, glm::mat4 MVMatrix)
+/**
+ * @brief give the matrix to the shader
+ *
+ * @param ctx
+ * @param ViewMatrix
+ */
+void Shader::giveMatrix(p6::Context& ctx, glm::mat4 ViewMatrix)
 {
     glm::mat4 ProjMatrix   = glm::perspective(glm::radians(70.f), ctx.aspect_ratio(), 0.1f, 100.f);
+    glm::mat4 MVMatrix     = glm::translate(ViewMatrix, glm::vec3(0));
     glm::mat4 NormalMatrix = glm::transpose(glm::inverse(MVMatrix));
 
-    // TODO : seulement MVMatrix suffit ? le reste ne change pas
     glUniformMatrix4fv(_uMVPMatrix, 1, GL_FALSE, glm::value_ptr(ProjMatrix * MVMatrix));
     glUniformMatrix4fv(_uMVMatrix, 1, GL_FALSE, glm::value_ptr(MVMatrix));
     glUniformMatrix4fv(_uNormalMatrix, 1, GL_FALSE, glm::value_ptr(NormalMatrix));

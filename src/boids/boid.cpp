@@ -1,6 +1,6 @@
 #include "boid.hpp"
 #include <cstdlib>
-#include <iostream>
+#include <iostream> // TODO debug
 #include "glm/exponential.hpp"
 #include "glm/ext/quaternion_exponential.hpp"
 #include "glm/fwd.hpp"
@@ -8,13 +8,15 @@
 // #include "random/rand.hpp"
 #include <cmath>
 #include <limits>
+#include "glm/ext/matrix_clip_space.hpp"
+#include "glm/gtx/transform.hpp"
 
 bool Boid::operator==(const Boid& other) const
 {
     return other._position == _position && other._velocity == _velocity;
 }
 
-glm::vec2 Boid::limitAcceleration(glm::vec2 acceleration, float maxAcceleration)
+glm::vec3 Boid::limitAcceleration(glm::vec3 acceleration, float maxAcceleration)
 {
     if (glm::length(acceleration) > maxAcceleration)
     {
@@ -23,15 +25,15 @@ glm::vec2 Boid::limitAcceleration(glm::vec2 acceleration, float maxAcceleration)
     return acceleration;
 }
 
-void Boid::move(glm::vec2 acceleration, float delta_time)
+void Boid::move(glm::vec3 acceleration, float delta_time) // TODO acceleration vec3
 {
     _velocity += acceleration * delta_time;
     _position += _velocity * delta_time;
 }
 
-glm::vec2 Boid::separation(const std::vector<Boid>& others, float zoneSeparation, float coeffSeparation)
+glm::vec3 Boid::separation(const std::vector<Boid>& others, float zoneSeparation, float coeffSeparation)
 {
-    glm::vec2 direct(0, 0);
+    glm::vec3 direct(0, 0, 0);
     int       count = 0;
 
     for (int i = 0; i < others.size(); i++)
@@ -40,7 +42,7 @@ glm::vec2 Boid::separation(const std::vector<Boid>& others, float zoneSeparation
 
         if (distance > 0 && distance < zoneSeparation)
         {
-            glm::vec2 diff(0., 0.);
+            glm::vec3 diff(0.);
             diff = _position - others[i]._position;
             glm::normalize(diff);
             diff /= distance; // Weight by distance
@@ -65,7 +67,7 @@ glm::vec2 Boid::separation(const std::vector<Boid>& others, float zoneSeparation
     return direct * coeffSeparation;
 }
 
-glm::vec2 Boid::cohesion(const std::vector<Boid>& boids, float zone, float coeff)
+glm::vec3 Boid::cohesion(const std::vector<Boid>& boids, float zone, float coeff)
 {
     // search the closest friend
     Boid  closestBoid = boids[0];
@@ -88,15 +90,15 @@ glm::vec2 Boid::cohesion(const std::vector<Boid>& boids, float zone, float coeff
     // go to him
     if (closest != std::numeric_limits<float>::infinity())
     {
-        glm::vec2 difference = glm::normalize(closestBoid.position() - this->position());
+        glm::vec3 difference = glm::normalize(closestBoid.position() - this->position());
         return this->limitAcceleration(glm::normalize(this->_velocity - difference) * coeff, 0.5f);
     }
-    return glm::vec2(0., 0.);
+    return glm::vec3(0.);
 }
 
-glm::vec2 Boid::alignement(const std::vector<Boid>& boids, float zoneAlignement, float coeffAlignement)
+glm::vec3 Boid::alignement(const std::vector<Boid>& boids, float zoneAlignement, float coeffAlignement)
 {
-    glm::vec2 sum   = this->_position;
+    glm::vec3 sum   = this->_position;
     float     count = 0;
 
     for (int i = 0; i < boids.size(); i++)
@@ -117,8 +119,7 @@ glm::vec2 Boid::alignement(const std::vector<Boid>& boids, float zoneAlignement,
     }
     else
     {
-        glm::vec2 lonely(0, 0);
-        return lonely;
+        return glm::vec3(0); // lonely
     }
 }
 
@@ -136,49 +137,33 @@ glm::vec2 Boid::alignement(const std::vector<Boid>& boids, float zoneAlignement,
 
 // TODO change direction aléatoire
 
-void Boid::teleport(p6::Context& ctx) // TODO remove ctx param
+void Boid::teleport()
 {
     // constexpr float eps    = 0.02; // TODO comparaison de float
-    constexpr float radius = 0.8; // TODO param ?
+    constexpr float radius = 5.; // TODO param ?
 
-    if (_position.x + _size > radius)
+    if (_position.x > radius)
     {
-        _position.x = -radius + _size;
+        _position.x = -radius;
     }
-    if (_position.x - _size < -radius)
+    if (_position.x < -radius)
     {
-        _position.x = radius - _size;
+        _position.x = radius;
     }
-    if (_position.y + _size > radius)
+    if (_position.y > radius)
     {
-        _position.y = -radius + _size;
+        _position.y = -radius;
     }
-    if (_position.y - _size < -radius)
+    if (_position.y < -radius)
     {
-        _position.y = radius - _size;
+        _position.y = radius;
     }
-}
-
-void Boid::draw(p6::Context& ctx) const
-{
-    // TODO size
-    ctx.circle(
-        p6::Center{_position}, // center = _position de mon boid
-        p6::Radius{_size}
-    );
-
-    // TODO regrouper dans une sous fonction de drawBody
-    // glm::mat4 bodyMatrix = glm::translate(glm::mat4(1), glm::vec3(0, 0, -5));
-    // MVMatrix             = glm::rotate(MVMatrix, ctx.time(), {0.f, 1.f, 0.f});
-    // MVMatrix             = glm::scale(MVMatrix, glm::vec3{0.6, 0.5f, 0.5});
-
-    // beez.drawBody(body, vao, ctx, vertices, textures);
-
-    // // TODO regrouper ctx et vao ?
-    // beez.drawFace(ctx, vao, eyes, vertices);
-
-    // // TODO regrouper en drawWings ? => boucle for ?
-    // // TODO supp bodymatrix
-    // beez.drawWing(ctx, 35.f, vao, bodyMatrix, wings, vertices);
-    // beez.drawWing(ctx, -35.f, vao, bodyMatrix, wings, vertices);
+    if (_position.z < -2 * radius)
+    {
+        _position.z = 0.;
+    }
+    if (_position.z > 0.)
+    {
+        _position.z = -2 * radius;
+    }
 }

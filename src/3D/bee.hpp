@@ -4,6 +4,7 @@
 // #include <vector>
 // #include "glm/glm.hpp"
 #include "3D/glimac/common.hpp"
+#include "glm/fwd.hpp"
 #include "p6/p6.h"
 #include "shader.hpp"
 #include "vao.hpp"
@@ -32,15 +33,9 @@ private:
     // Methods
     // void move(glm::vec3 acceleration, float delta_time);
     // void initBee(VBO& vbo, VAO& vao);
-    glm::mat4 giveWing(
-        p6::Context& ctx, float angle
-    );
-    // TODO return une matrice ?
-    void giveFace(
-        p6::Context& ctx, VAO& vao, Shader& eyes,
-        const std::vector<glimac::ShapeVertex>& vertices
-    );
-    glm::mat4 giveBody(p6::Context& ctx);
+    glm::mat4 giveWing(float angle);
+    glm::mat4 giveFace(float angle);
+    glm::mat4 giveBody();
 
 private:
     // TODO à mettre dans une autre classe ?
@@ -54,7 +49,9 @@ public:
     void draw(
         p6::Context& ctx, VAO& vao,
         const std::vector<glimac::ShapeVertex>& vertices,
-        Shader& wings, Shader& eyes, Shader& body, GLuint textures
+        Shader& wings, Shader& eyes, Shader& body, GLuint textures,
+        glm::vec3 position, glm::vec3 scale,
+        glm::mat4 ViewMatrix
     );
 };
 #endif
