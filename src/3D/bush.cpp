@@ -8,18 +8,16 @@ void Bush::draw(
     VAO& vao, Shader& tree,
     const std::vector<glimac::ShapeVertex>& vertices,
     const glm::mat4& viewMatrix, GLuint textures,
-    glm::vec3 position, glm::vec3 scale
+    glm::vec3 position, glm::vec3 scale, float degree
 )
 {
     glm::mat4 base = glm::translate(viewMatrix, position);
-    base           = glm::rotate(base, 1.f, {0.f, 1.f, 0.f}); // TODO debug
+    base           = glm::rotate(base, degree, {0.f, 1.f, 0.f}); // TODO debug
     base           = glm::scale(base, scale);
 
     // TODO découper en sous fonction ? boucle for ?
     // part 1
     glm::mat4 MVMatrix = glm::scale(base, glm::vec3(0.8f, 0.6f, 0.8f));
-
-    tree.use();
 
     vao.bind();
     tree.giveMatrix(ctx, MVMatrix);

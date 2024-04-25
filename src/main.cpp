@@ -160,18 +160,23 @@ int main()
 
         // TODO cube
         // ctx.square(p6::Center{0., 0.}, p6::Radius{0.8f}, p6::Rotation{0.0_turn});
-
-        groupe.draw(
-            ctx, vao, vertices,
-            wings, eyes, body, textures,
-            camera.getViewMatrix()
-        );
+        tree.use();
+        // groupe.draw(
+        //     ctx, vao, vertices,
+        //     wings, eyes, body, textures,
+        //     camera.getViewMatrix()
+        // );
 
         // TODO test
-        for (GLuint i; i < 10; i++)
-        {
-            bush.draw(ctx, vao, tree, vertices, camera.getViewMatrix(), textures, glm::vec3({2.f, 0.f, 2.f}), glm::vec3(0.3));
-        }
+        // for (float i; i < 10; i++){ avec var aleatoire}
+        bush.draw(ctx, vao, tree, vertices, camera.getViewMatrix(), textures, glm::vec3({2.f, -1.2f, 2.f}), glm::vec3(0.7), 0.2);
+        bush.draw(ctx, vao, tree, vertices, camera.getViewMatrix(), textures, glm::vec3({4.f, -1.2f, -5.f}), glm::vec3(0.9), 0.5);
+        bush.draw(ctx, vao, tree, vertices, camera.getViewMatrix(), textures, glm::vec3({-1.f, -1.2f, -4.f}), glm::vec3(1.1), 0.1);
+        bush.draw(ctx, vao, tree, vertices, camera.getViewMatrix(), textures, glm::vec3({0.2f, -1.2f, 0.4f}), glm::vec3(0.8), 0.8);
+        bush.draw(ctx, vao, tree, vertices, camera.getViewMatrix(), textures, glm::vec3({-6.f, -1.2f, -4.f}), glm::vec3(1.1), 2.f);
+        bush.draw(ctx, vao, tree, vertices, camera.getViewMatrix(), textures, glm::vec3({0.2f, -1.2f, -6.f}), glm::vec3(0.8), 4.f);
+        bush.draw(ctx, vao, tree, vertices, camera.getViewMatrix(), textures, glm::vec3({-1.f, -1.2f, -4.f}), glm::vec3(1.1), 15.f);
+        bush.draw(ctx, vao, tree, vertices, camera.getViewMatrix(), textures, glm::vec3({-4.f, -1.2f, 4.f}), glm::vec3(0.8), 80.f);
 
         // TODO faire gaffe au chargement des textures
         groupe.animate(

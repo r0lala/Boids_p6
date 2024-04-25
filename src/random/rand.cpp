@@ -16,14 +16,14 @@ bool pileFace(double p) // TODO : à renommer
     return rand01() < p;
 }
 
-double loiExpo(double lambda)
+float loiExp(float lambda)
 {
-    double u = rand01();
+    float u = rand01();
     return -1. / lambda * std::log(1. - u); // = Z
 }
 
 double genDirection()
 {
-    double speed = loiExpo(100.) + 0.5;
+    double speed = loiExp(100.) + 0.5;
     return pileFace(0.5) ? speed : -1 * speed;
 }
