@@ -108,12 +108,12 @@ int main()
     vbo2.bind();
 
     Vertex3D vertices2[] = {
-        Vertex3D{{5, 0.5f, -0.5}, {1.f, 0.f}},
-        Vertex3D{{5, -0.5f, 0.5}, {1.f, 0.f}},
-        Vertex3D{{5, -0.5f, -0.5}, {0.5f, 0.5f}},
-        Vertex3D{{5, 0.5f, -0.5}, {1.f, 0.f}},
-        Vertex3D{{5, 0.5f, 0.5}, {0.f, 1.f}},
-        Vertex3D{{5, -0.5f, 0.5}, {0.f, 1.f}}
+        Vertex3D{{0.5f, -0.5f, 4}, {1.f, 0.f}},
+        Vertex3D{{-0.5f, 0.5f, 4}, {1.f, 0.f}},
+        Vertex3D{{-0.5f, -0.5f, 4}, {0.5f, 0.5f}},
+        Vertex3D{{0.5f, -0.5f, 4}, {1.f, 0.f}},
+        Vertex3D{{0.5f, 0.5f, 4}, {0.f, 1.f}},
+        Vertex3D{{-0.5f, 0.5f, 4}, {0.f, 1.f}}
     };
     glBufferData(
         GL_ARRAY_BUFFER,
@@ -147,20 +147,18 @@ int main()
 
     VAO vao2;
     vao2.bind();
-
     // Activation vertex
     vbo2.bind();
-    static constexpr GLuint aVertexPosition2 = 0;
-    glEnableVertexAttribArray(aVertexPosition2);
+    static constexpr GLuint aVertexPosition = 0;
+    glEnableVertexAttribArray(aVertexPosition);
     glVertexAttribPointer(
-        aVertexPosition2, 3, GL_FLOAT, GL_FALSE,
+        aVertexPosition, 3, GL_FLOAT, GL_FALSE,
         sizeof(Vertex3D), (const GLvoid*)(offsetof(Vertex3D, position))
     );
-
-    static constexpr GLuint aVertexTexCoords2 = 2;
-    glEnableVertexAttribArray(aVertexTexCoords2);
+    static constexpr GLuint aVertexTexCoords = 2;
+    glEnableVertexAttribArray(aVertexTexCoords);
     glVertexAttribPointer(
-        aVertexTexCoords2, 2, GL_FLOAT, GL_FALSE,
+        aVertexTexCoords, 2, GL_FLOAT, GL_FALSE,
         sizeof(Vertex3D), (const GLvoid*)(offsetof(Vertex3D, texture))
     );
     vbo2.unbind();
@@ -191,18 +189,14 @@ int main()
 
         // Bind VAO
         vao.bind();
-
         // Draw triangle
         glDrawArrays(GL_TRIANGLES, 0, 6);
-
         // Unbind vao
         vao.unbind();
 
         vao2.bind();
-
         // Draw triangle
         glDrawArrays(GL_TRIANGLES, 0, 6);
-
         // Unbind vao
         vao2.unbind();
     };
