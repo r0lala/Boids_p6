@@ -43,7 +43,7 @@ void Shader::render(VAO& vao, const std::vector<glimac::ShapeVertex>& vertices, 
     if (textUnit >= 0)
     {
         glBindTexture(GL_TEXTURE_2D, textures);
-        this->bindTexture(textUnit);
+        this->bindTexture(textUnit); // TODO supp fct bindTexture ?
     }
     glDrawArrays(GL_TRIANGLES, 0, vertices.size());
 
