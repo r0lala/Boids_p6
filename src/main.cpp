@@ -37,21 +37,6 @@ int main()
     auto ctx = p6::Context{{.title = "Simple-p6-Setup"}}; // TODO Bee Boids
     ctx.maximize_window();
 
-    // ctx.mouse_scrolled = [&](p6::MouseScroll scroll) {
-    //     // TODO
-    //     std::cout << "dy = " << scroll.dy << std::endl;
-    //     std::cout << "dx = " << scroll.dx << std::endl;
-
-    //     camera.moveFront(scroll.dy / 10.);
-    // };
-
-    // ctx.mouse_dragged = [&](p6::MouseDrag mouse) {
-    //     float y = mouse.delta[0];
-    //     float x = mouse.delta[1];
-    //     camera.rotateLeft(x);
-    //     camera.rotateUp(y);
-    // };
-
     // Param UI
     // TODO regrouper var et coeff ?
     // TODO regrouper UI dans un nouveau fichier ?
@@ -99,15 +84,14 @@ int main()
     vbo.bind();
 
     // Fill buffer
-    // const std::vector<glimac::ShapeVertex> vertices = glimac::sphere_vertices(1.f, 32, 16);
 
     Vertex3D vertices[] = {
-        Vertex3D{{0.5f, -0.5f, -7}, {1.f, 0.f}},
-        Vertex3D{{-0.5f, 0.5f, -7}, {1.f, 0.f}},
-        Vertex3D{{-0.5f, -0.5f, -7}, {0.5f, 0.5f}},
-        Vertex3D{{0.5f, -0.5f, -7}, {1.f, 0.f}},
-        Vertex3D{{0.5f, 0.5f, -7}, {0.f, 1.f}},
-        Vertex3D{{-0.5f, 0.5f, -7}, {0.f, 1.f}}
+        Vertex3D{{0.5f, -0.5f, -2}, {1.f, 0.f}},
+        Vertex3D{{-0.5f, 0.5f, -2}, {1.f, 0.f}},
+        Vertex3D{{-0.5f, -0.5f, -2}, {0.5f, 0.5f}},
+        Vertex3D{{0.5f, -0.5f, -2}, {1.f, 0.f}},
+        Vertex3D{{0.5f, 0.5f, -2}, {0.f, 1.f}},
+        Vertex3D{{-0.5f, 0.5f, -2}, {0.f, 1.f}}
     };
 
     // Sending the data
@@ -119,6 +103,25 @@ int main()
     );
 
     vbo.unbind();
+
+    VBO vbo2;
+    vbo2.bind();
+
+    Vertex3D vertices2[] = {
+        Vertex3D{{5, 0.5f, -0.5}, {1.f, 0.f}},
+        Vertex3D{{5, -0.5f, 0.5}, {1.f, 0.f}},
+        Vertex3D{{5, -0.5f, -0.5}, {0.5f, 0.5f}},
+        Vertex3D{{5, 0.5f, -0.5}, {1.f, 0.f}},
+        Vertex3D{{5, 0.5f, 0.5}, {0.f, 1.f}},
+        Vertex3D{{5, -0.5f, 0.5}, {0.f, 1.f}}
+    };
+    glBufferData(
+        GL_ARRAY_BUFFER,
+        6 * sizeof(Vertex3D),
+        vertices2,
+        GL_STATIC_DRAW
+    );
+    vbo2.unbind();
 
     // VAO
     VAO vao;
@@ -133,13 +136,6 @@ int main()
         sizeof(Vertex3D), (const GLvoid*)(offsetof(Vertex3D, position))
     );
 
-    // static constexpr GLuint aVertexNormal = 1;
-    // glEnableVertexAttribArray(aVertexNormal);
-    // glVertexAttribPointer(
-    //     aVertexNormal, 3, GL_FLOAT, GL_FALSE,
-    //     sizeof(glimac::ShapeVertex), (const GLvoid*)(offsetof(glimac::ShapeVertex, normal))
-    // );
-
     static constexpr GLuint aVertexTexCoords = 2;
     glEnableVertexAttribArray(aVertexTexCoords);
     glVertexAttribPointer(
@@ -148,6 +144,27 @@ int main()
     );
     vbo.unbind();
     vao.unbind();
+
+    VAO vao2;
+    vao2.bind();
+
+    // Activation vertex
+    vbo2.bind();
+    static constexpr GLuint aVertexPosition2 = 0;
+    glEnableVertexAttribArray(aVertexPosition2);
+    glVertexAttribPointer(
+        aVertexPosition2, 3, GL_FLOAT, GL_FALSE,
+        sizeof(Vertex3D), (const GLvoid*)(offsetof(Vertex3D, position))
+    );
+
+    static constexpr GLuint aVertexTexCoords2 = 2;
+    glEnableVertexAttribArray(aVertexTexCoords2);
+    glVertexAttribPointer(
+        aVertexTexCoords2, 2, GL_FLOAT, GL_FALSE,
+        sizeof(Vertex3D), (const GLvoid*)(offsetof(Vertex3D, texture))
+    );
+    vbo2.unbind();
+    vao2.unbind();
 
     // ---
 
@@ -160,16 +177,7 @@ int main()
 
     // Declare your infinite update loop.
     ctx.update = [&]() {
-        ctx.background(p6::NamedColor::VermilionPlochere);
-        // ctx.square(p6::Center{0., 0.}, p6::Radius{0.8f}, p6::Rotation{0.0_turn});
-
-        // ctx.circle(
-        //     p6::Center{ctx.mouse()},
-        //     p6::Radius{0.05f}
-        // );
-
-        // groupe.draw(ctx);
-        // groupe.animate(ctx, align, separate, cohesion, coeffAlignement, coeffRepulsion, coeffCohesion, ctx.delta_time());
+        // ctx.background(p6::NamedColor::VermilionPlochere);
 
         // Clear the window
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -189,6 +197,14 @@ int main()
 
         // Unbind vao
         vao.unbind();
+
+        vao2.bind();
+
+        // Draw triangle
+        glDrawArrays(GL_TRIANGLES, 0, 6);
+
+        // Unbind vao
+        vao2.unbind();
     };
 
     // Should be done last. It starts the infinite loop.
