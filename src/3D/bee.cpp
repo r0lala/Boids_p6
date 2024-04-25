@@ -42,23 +42,6 @@ glm::mat4 Bee::giveBody()
     return glm::mat4(1); // MVMatrix
 }
 
-void Bee::render(VAO& vao, const std::vector<glimac::ShapeVertex>& vertices, Shader& shader, GLuint textures, int textUnit)
-{
-    vao.bind();
-    if (textUnit >= 0)
-    {
-        glBindTexture(GL_TEXTURE_2D, textures);
-        shader.bindTexture(textUnit);
-    }
-    glDrawArrays(GL_TRIANGLES, 0, vertices.size());
-
-    if (textUnit >= 0)
-    {
-        glBindTexture(GL_TEXTURE_2D, 0);
-    }
-    vao.unbind();
-}
-
 void Bee::draw(
     p6::Context& ctx, VAO& vao,
     const std::vector<glimac::ShapeVertex>& vertices,
@@ -74,23 +57,23 @@ void Bee::draw(
 
     body.use();
     body.giveMatrix(ctx, MVMatrix);
-    this->render(vao, vertices, body, textures, 0);
+    body.render(vao, vertices, textures, 0);
 
     // TODO regrouper ctx et vao ?
     // TODO angle = à quel point on fronce les yeux de l'abeille ?
     eyes.use();
     eyes.giveMatrix(ctx, MVMatrix * this->giveFace(1.f));
-    this->render(vao, vertices, eyes);
+    eyes.render(vao, vertices);
     eyes.giveMatrix(ctx, MVMatrix * this->giveFace(-1.f));
-    this->render(vao, vertices, eyes);
+    eyes.render(vao, vertices);
 
     // TODO regrouper en drawWings ? => boucle for ?
     wings.use();
     wings.giveMatrix(ctx, MVMatrix * this->giveWing(35.f));
-    this->render(vao, vertices, wings);
+    wings.render(vao, vertices);
 
     wings.giveMatrix(ctx, MVMatrix * this->giveWing(-35.f));
-    this->render(vao, vertices, wings);
+    wings.render(vao, vertices);
 }
 
 // void initBee(VBO& vbo, VAO& vao)

@@ -3,6 +3,8 @@
 
 #include <string>
 #include "p6/p6.h"
+#include "vao.hpp"
+#include "GLIMAC/sphere_vertices.hpp"
 
 class Shader {
 private:
@@ -20,6 +22,11 @@ public:
     void use();
     void giveMatrix(p6::Context& ctx, glm::mat4 ViewMatrix);
     void bindTexture(int textUnit);
+    void render(
+        VAO& vao, 
+        const std::vector<glimac::ShapeVertex>& vertices,
+        GLuint textures = -1, int textUnit = -1
+    );
 };
 
 #endif
