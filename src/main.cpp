@@ -149,16 +149,16 @@ int main()
     vao2.bind();
     // Activation vertex
     vbo2.bind();
-    static constexpr GLuint aVertexPosition = 0;
-    glEnableVertexAttribArray(aVertexPosition);
+    static constexpr GLuint aVertexPosition_2 = 0;
+    glEnableVertexAttribArray(aVertexPosition_2);
     glVertexAttribPointer(
-        aVertexPosition, 3, GL_FLOAT, GL_FALSE,
+        aVertexPosition_2, 3, GL_FLOAT, GL_FALSE,
         sizeof(Vertex3D), (const GLvoid*)(offsetof(Vertex3D, position))
     );
-    static constexpr GLuint aVertexTexCoords = 2;
-    glEnableVertexAttribArray(aVertexTexCoords);
+    static constexpr GLuint aVertexTexCoords_2 = 2;
+    glEnableVertexAttribArray(aVertexTexCoords_2);
     glVertexAttribPointer(
-        aVertexTexCoords, 2, GL_FLOAT, GL_FALSE,
+        aVertexTexCoords_2, 2, GL_FLOAT, GL_FALSE,
         sizeof(Vertex3D), (const GLvoid*)(offsetof(Vertex3D, texture))
     );
     vbo2.unbind();
