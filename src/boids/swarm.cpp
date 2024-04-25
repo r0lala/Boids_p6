@@ -71,10 +71,12 @@ void Swarm::draw(
 
     for (const Boid& b : _swarm)
     {
+        float     angle = glm::angle(glm::vec3{-1, 0, 0}, glm::normalize(b.velocity()));
+        glm::vec3 axe   = glm::cross(glm::vec3{-1, 0, 0}, glm::normalize(b.velocity()));
         boid.draw(
             ctx, vao, vertices, wings, eyes, body, textures,
             b.position() * ctx.aspect_ratio() * (1.f + _size),
-            glm::vec3(_size), ViewMatrix
+            glm::vec3(_size), ViewMatrix, angle, axe
         );
     }
 }
