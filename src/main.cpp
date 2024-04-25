@@ -22,6 +22,7 @@
 #include "p6/p6.h"
 #include "param/options.hpp"
 #include "random/rand.hpp"
+#include "3D/bush.hpp" // TODO test
 
 int main()
 {
@@ -31,6 +32,7 @@ int main()
 
     Camera camera;
     Bee    beez;
+    Bush bush;
 
     // Run the tests
     if (doctest::Context{}.run() != 0)
@@ -165,101 +167,7 @@ int main()
             camera.getViewMatrix()
         );
 
-        tree.use();
-        vao.bind();
-
-        glm::mat4 ProjMatrix = glm::perspective(glm::radians(70.f), ctx.aspect_ratio(), 0.1f, 100.f);
-        glm::mat4 MVMatrix   = glm::translate(glm::mat4(1), glm::vec3(0, 0, -5));
-        MVMatrix               = glm::scale(MVMatrix, glm::vec3(0.8f, 0.6f, 0.8f));
-        glm::mat4 NormalMatrix = glm::transpose(glm::inverse(MVMatrix));
-
-        tree.giveMatrix(ctx, camera.getViewMatrix() * MVMatrix);
-
-        glBindTexture(GL_TEXTURE_2D, textures);
-        tree.bindTexture(0);
-        glDrawArrays(GL_TRIANGLES, 0, vertices.size());
-        // glBindTexture(GL_TEXTURE_2D, 0);
-        vao.unbind();
-
-        vao.bind();
-        tree.use();
-
-        MVMatrix = glm::translate(glm::mat4(1), glm::vec3(0, 0, -5));
-        MVMatrix = glm::scale(MVMatrix, glm::vec3(1.2f, 1.f, 1.2f));
-
-        MVMatrix = glm::scale(
-            glm::translate(
-                MVMatrix,
-                {0.8f, 0.f, 0.25f}
-            ),
-            glm::vec3{0.6f}
-        );
-
-        tree.giveMatrix(ctx, camera.getViewMatrix() * MVMatrix);
-
-        glDrawArrays(GL_TRIANGLES, 0, vertices.size());
-        vao.unbind();
-
-        vao.bind();
-        tree.use();
-
-        MVMatrix = glm::translate(glm::mat4(1), glm::vec3(0, 0, -5));
-        MVMatrix = glm::scale(MVMatrix, glm::vec3(1.2f, 1.f, 1.2f));
-
-        MVMatrix = glm::scale(
-            glm::translate(
-                MVMatrix,
-                {0.5f, 0.8f, 0.f}
-            ),
-            glm::vec3{0.6f}
-        );
-        NormalMatrix = glm::transpose(glm::inverse(MVMatrix));
-
-        tree.giveMatrix(ctx, camera.getViewMatrix() * MVMatrix);
-
-        glDrawArrays(GL_TRIANGLES, 0, vertices.size());
-        vao.unbind();
-
-        vao.bind();
-        tree.use();
-
-        MVMatrix = glm::translate(glm::mat4(1), glm::vec3(0, 0, -5));
-        MVMatrix = glm::scale(MVMatrix, glm::vec3(1.2f, 1.f, 1.2f));
-
-        MVMatrix = glm::scale(
-            glm::translate(
-                MVMatrix,
-                {0.f, 0.6f, 0.1f}
-            ),
-            glm::vec3{0.3f}
-        );
-        NormalMatrix = glm::transpose(glm::inverse(MVMatrix));
-
-        tree.giveMatrix(ctx, camera.getViewMatrix() * MVMatrix);
-
-        glDrawArrays(GL_TRIANGLES, 0, vertices.size());
-        vao.unbind();
-
-        vao.bind();
-        tree.use();
-
-        MVMatrix = glm::translate(glm::mat4(1), glm::vec3(0, 0, -5));
-        MVMatrix = glm::scale(MVMatrix, glm::vec3(1.2f, 1.f, 1.2f));
-
-        MVMatrix = glm::scale(
-            glm::translate(
-                MVMatrix,
-                {0.4f, 0.4f, 0.4f}
-            ),
-            glm::vec3{0.3f}
-        );
-        NormalMatrix = glm::transpose(glm::inverse(MVMatrix));
-
-        tree.giveMatrix(ctx, camera.getViewMatrix() * MVMatrix);
-
-        glDrawArrays(GL_TRIANGLES, 0, vertices.size());
-        glBindTexture(GL_TEXTURE_2D, 0);
-        vao.unbind();
+        bush.draw(ctx, vao, tree, vertices, camera.getViewMatrix(), textures);
 
         // TODO faire gaffe au chargement des textures
         groupe.animate(
