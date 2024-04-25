@@ -69,6 +69,7 @@ int main()
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     glBindTexture(GL_TEXTURE_2D, 0);
+
     Shader body("3D", "bee/body");
     Shader eyes("3D", "bee/eyes");
     Shader wings("3D", "normals");
@@ -81,43 +82,38 @@ int main()
     vbo.bind();
 
     // Fill buffer
-    const std::vector<glimac::ShapeVertex> vertices_sphere = glimac::sphere_vertices(1.f, 32, 16);
-    float                                  fond            = -10.f;
-    float                                  bord            = 0.5f;
-    Vertex3D                               vertices_wall[] = {
+    const std::vector<glimac::ShapeVertex> verticesSphere = glimac::sphere_vertices(1.f, 32, 16);
+    constexpr float                        fond           = -10.f;
+    constexpr float                        bord           = 4.f;
+
+    // TODO 4 = hauteur pour nos abeilles
+
+    std::vector<Vertex3D> verticesWall = {
         Vertex3D{{bord, -bord, fond}, {1.f, 0.f}},
         Vertex3D{{-bord, bord, fond}, {1.f, 0.f}},
         Vertex3D{{-bord, -bord, fond}, {0.5f, 0.5f}},
         Vertex3D{{bord, -bord, fond}, {1.f, 0.f}},
         Vertex3D{{bord, bord, fond}, {0.f, 1.f}},
-        Vertex3D{{-bord, bord, fond}, {0.f, 1.f}},
-
-        // Vertex3D{{0.5f, -0.5f, 4}, {1.f, 0.f}},
-        // Vertex3D{{-0.5f, 0.5f, 4}, {1.f, 0.f}},
-        // Vertex3D{{-0.5f, -0.5f, 4}, {0.5f, 0.5f}},
-        // Vertex3D{{0.5f, -0.5f, 4}, {1.f, 0.f}},
-        // Vertex3D{{0.5f, 0.5f, 4}, {0.f, 1.f}},
-        // Vertex3D{{-0.5f, 0.5f, 4}, {0.f, 1.f}}
+        Vertex3D{{-bord, bord, fond}, {0.f, 1.f}}
     };
-    const unsigned int sizeVertice_wall = sizeof(vertices_wall) / sizeof(Vertex3D);
 
     // Sending the data
     glBufferData(
         GL_ARRAY_BUFFER,
-        vertices_sphere.size() * sizeof(glimac::ShapeVertex),
-        vertices_sphere.data(),
+        verticesSphere.size() * sizeof(glimac::ShapeVertex),
+        verticesSphere.data(),
         GL_STATIC_DRAW
     );
 
     vbo.unbind();
 
-    VBO vbo_wall;
-    vbo_wall.bind();
+    VBO vboWall;
+    vboWall.bind();
 
     glBufferData(
         GL_ARRAY_BUFFER,
-        sizeVertice_wall * sizeof(Vertex3D),
-        vertices_wall,
+        verticesWall.size() * sizeof(Vertex3D),
+        verticesWall.data(),
         GL_STATIC_DRAW
     );
     vbo.unbind();
@@ -145,24 +141,24 @@ int main()
     vbo.unbind();
     vao.unbind();
 
-    VAO vao_wall;
-    vao_wall.bind();
+    VAO vaoWall;
+    vaoWall.bind();
     // Activation vertex
-    vbo_wall.bind();
-    static constexpr GLuint aVertexPosition_wall = 0;
-    glEnableVertexAttribArray(aVertexPosition_wall);
+    vboWall.bind();
+    static constexpr GLuint aVertexPositionWall = 0;
+    glEnableVertexAttribArray(aVertexPositionWall);
     glVertexAttribPointer(
-        aVertexPosition_wall, 3, GL_FLOAT, GL_FALSE,
+        aVertexPositionWall, 3, GL_FLOAT, GL_FALSE,
         sizeof(Vertex3D), (const GLvoid*)(offsetof(Vertex3D, position))
     );
-    static constexpr GLuint aVertexTexCoords_wall = 2;
-    glEnableVertexAttribArray(aVertexTexCoords_wall);
+    static constexpr GLuint aVertexTexCoordsWall = 2;
+    glEnableVertexAttribArray(aVertexTexCoordsWall);
     glVertexAttribPointer(
-        aVertexTexCoords_wall, 2, GL_FLOAT, GL_FALSE,
+        aVertexTexCoordsWall, 2, GL_FLOAT, GL_FALSE,
         sizeof(Vertex3D), (const GLvoid*)(offsetof(Vertex3D, texture))
     );
-    vbo_wall.unbind();
-    vao_wall.unbind();
+    vboWall.unbind();
+    vaoWall.unbind();
 
     // ---
 
@@ -190,7 +186,7 @@ int main()
         // ctx.square(p6::Center{0., 0.}, p6::Radius{0.8f}, p6::Rotation{0.0_turn});
 
         groupe.draw(
-            ctx, vao, vertices_sphere,
+            ctx, vao, verticesSphere,
             wings, eyes, body, textures,
             camera.getViewMatrix()
         );
@@ -212,23 +208,32 @@ int main()
         // glUniform1i(uTexture, 0);
 
         // Bind VAO
-        vao_wall.bind();
+        vaoWall.bind();
 
         glm::mat4 MVMatrix = camera.getViewMatrix();
-        MVMatrix           = glm::scale(MVMatrix, glm::vec3(10., 5., 1.));
 
-        // shader.giveMatrix(ctx, MVMatrix);
-        // glDrawArrays(GL_TRIANGLES, 0, sizeVertice_wall); // TODO render
-
-        MVMatrix = glm::rotate(MVMatrix, 0.09f, glm::vec3(0., 1., 0.));
+        // --- Sol
+        MVMatrix = glm::translate(MVMatrix, glm::vec3{0.f, 0.f, -2.f});
+        MVMatrix = glm::rotate(MVMatrix, glm::degrees(90.f), glm::vec3(1., 0., 0.));
+        MVMatrix = glm::scale(MVMatrix, glm::vec3(6., 6., 1.));
         shader.giveMatrix(ctx, MVMatrix);
-        glDrawArrays(GL_TRIANGLES, 0, sizeVertice_wall); // TODO render
+        // TODO utiliser vertex grass dans le main
+        glDrawArrays(GL_TRIANGLES, 0, verticesWall.size()); // TODO render
 
-        vao_wall.unbind();
+        // --- Plafond
+        MVMatrix = glm::translate(MVMatrix, glm::vec3{0.f, 0.f, -fond * 3.});
+        shader.giveMatrix(ctx, MVMatrix);
+        glDrawArrays(GL_TRIANGLES, 0, verticesWall.size()); // TODO render
+
+        // TODO les autres murs
+        // shader.giveMatrix(ctx, MVMatrix);
+        // glDrawArrays(GL_TRIANGLES, 0, verticesWall.size()); // TODO render
+
+        vaoWall.unbind();
 
         // TODO adapter le nb de vertices en fonction de la taille qu'elle représente ?
         beez.draw(
-            ctx, vao, vertices_sphere,
+            ctx, vao, verticesSphere,
             wings, eyes, body, textures,
             glm::vec3(ctx.mouse() * ctx.aspect_ratio() * (1.5f + 0.5f / 2.f), -5.),
             glm::vec3(0.3), camera.getViewMatrix()
