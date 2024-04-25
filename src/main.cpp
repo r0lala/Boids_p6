@@ -42,7 +42,7 @@ int main()
         return EXIT_FAILURE;
 
     // Actual application code
-    auto ctx = p6::Context{{.title = "Simple-p6-Setup"}}; // TODO Bee Boids
+    auto ctx = p6::Context{{.title = "Bee Boids"}};
     ctx.maximize_window();
 
     // TODO => option.cpp ?
@@ -77,10 +77,10 @@ int main()
     Shader eyes("3D", "bee/eyes");
     Shader wings("3D", "normals");
     Shader tree("3D", "tree/leaf"); // TODO renamme bush ???
-    // Shader grass("3D", "grass");
-    Shader shader("3D", "wall");
+    Shader grass("3D", "grass");
+    Shader ground("3D", "wall");
 
-    // Chargement des textures
+    // Load textures
     img::Image beeBody = p6::load_image_buffer("../assets/textures/bodyTexture.png", false);
     img::Image leaf    = p6::load_image_buffer("../assets/textures/leaf.png", false);
     img::Image wall    = p6::load_image_buffer("../assets/textures/clouds.png", false);
@@ -95,14 +95,6 @@ int main()
 
     // TODO 4 = hauteur pour nos abeilles
 
-    std::vector<Vertex3D> verticesWall = {
-        Vertex3D{{bord, -bord, fond}, {1.f, 0.f}},
-        Vertex3D{{-bord, bord, fond}, {1.f, 0.f}},
-        Vertex3D{{-bord, -bord, fond}, {0.5f, 0.5f}},
-        Vertex3D{{bord, -bord, fond}, {1.f, 0.f}},
-        Vertex3D{{bord, bord, fond}, {0.f, 1.f}},
-        Vertex3D{{-bord, bord, fond}, {0.f, 1.f}}
-    };
     // Sending the data
     glBufferData(
         GL_ARRAY_BUFFER,
@@ -116,6 +108,15 @@ int main()
     VBO vboWall;
     vboWall.bind();
 
+    std::vector<Vertex3D> verticesWall = {
+        Vertex3D{{bord, -bord, fond}, {1.f, 0.f}},
+        Vertex3D{{-bord, bord, fond}, {1.f, 0.f}},
+        Vertex3D{{-bord, -bord, fond}, {0.5f, 0.5f}},
+        Vertex3D{{bord, -bord, fond}, {1.f, 0.f}},
+        Vertex3D{{bord, bord, fond}, {0.f, 1.f}},
+        Vertex3D{{-bord, bord, fond}, {0.f, 1.f}}
+    };
+
     glBufferData(
         GL_ARRAY_BUFFER,
         verticesWall.size() * sizeof(Vertex3D),
@@ -127,18 +128,19 @@ int main()
     // VAO
     VAO vao;
     vao.bind();
+    vbo.bind();
 
     // beez.initBee(vbo, vao); // TODO
     // // Activation vertex // TODO fct
-    vbo.bind();
-    static constexpr GLuint aVertexPosition = 0;
+
+    constexpr GLuint aVertexPosition = 0;
     glEnableVertexAttribArray(aVertexPosition);
     glVertexAttribPointer(
         aVertexPosition, 3, GL_FLOAT, GL_FALSE,
         sizeof(glimac::ShapeVertex), (const GLvoid*)(offsetof(glimac::ShapeVertex, position))
     );
 
-    static constexpr GLuint aVertexTexCoords = 2;
+    constexpr GLuint aVertexTexCoords = 2;
     glEnableVertexAttribArray(aVertexTexCoords);
     glVertexAttribPointer(
         aVertexTexCoords, 2, GL_FLOAT, GL_FALSE,
@@ -149,15 +151,16 @@ int main()
 
     VAO vaoWall;
     vaoWall.bind();
-    // Activation vertex
     vboWall.bind();
-    static constexpr GLuint aVertexPositionWall = 0;
+
+    constexpr GLuint aVertexPositionWall = 0;
     glEnableVertexAttribArray(aVertexPositionWall);
     glVertexAttribPointer(
         aVertexPositionWall, 3, GL_FLOAT, GL_FALSE,
         sizeof(Vertex3D), (const GLvoid*)(offsetof(Vertex3D, position))
     );
-    static constexpr GLuint aVertexTexCoordsWall = 2;
+
+    constexpr GLuint aVertexTexCoordsWall = 2;
     glEnableVertexAttribArray(aVertexTexCoordsWall);
     glVertexAttribPointer(
         aVertexTexCoordsWall, 2, GL_FLOAT, GL_FALSE,
@@ -215,11 +218,9 @@ int main()
         ctx.background(p6::NamedColor::CeladonBlue);
 
         // Shader
-        shader.use();
-        shader.bindTexture(textureWall);
-        ;
-        // Bind VAO
         vaoWall.bind();
+        ground.use();
+        ground.bindTexture(textureWall);
 
         glm::mat4 MVMatrix = camera.getViewMatrix();
 
@@ -227,20 +228,20 @@ int main()
         MVMatrix = glm::translate(MVMatrix, glm::vec3{0.f, 0.f, -2.f});
         MVMatrix = glm::rotate(MVMatrix, glm::degrees(90.f), glm::vec3(1., 0., 0.));
         MVMatrix = glm::scale(MVMatrix, glm::vec3(6., 6., 1.));
-        shader.giveMatrix(ctx, MVMatrix);
+        ground.giveMatrix(ctx, MVMatrix);
         // TODO utiliser vertex grass dans le main
         glDrawArrays(GL_TRIANGLES, 0, verticesWall.size()); // TODO render
 
         // --- Plafond
         MVMatrix = glm::translate(MVMatrix, glm::vec3{0.f, 0.f, -fond * 3.});
-        shader.giveMatrix(ctx, MVMatrix);
+        ground.giveMatrix(ctx, MVMatrix);
         glDrawArrays(GL_TRIANGLES, 0, verticesWall.size()); // TODO render
 
         // TODO les autres murs
-        // shader.giveMatrix(ctx, MVMatrix);
+        // ground.giveMatrix(ctx, MVMatrix);
         // glDrawArrays(GL_TRIANGLES, 0, verticesWall.size()); // TODO render
-
         vaoWall.unbind();
+
         body.use();
         body.bindTexture(beeTexture);
 
