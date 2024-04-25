@@ -27,3 +27,15 @@ double genDirection()
     double speed = loiExp(100.) + 0.5;
     return pileFace(0.5) ? speed : -1 * speed;
 }
+
+float loiBeta(float alpha, float beta)
+{
+    float v = rand01();
+    float w = rand01();
+
+    // Distribution b^ta
+    float x = std::pow(v, 1.0f / alpha);
+    float y = std::pow(w, 1.0f / beta);
+
+    return x / (x + y);
+}
