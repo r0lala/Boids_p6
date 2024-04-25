@@ -67,7 +67,7 @@ int main()
     vbo.bind();
 
     // Fill buffer
-    const std::vector<glimac::ShapeVertex> vertices = glimac::sphere_vertices(1.f, 32, 16);
+    const std::vector<glimac::ShapeVertex> vertices;
 
     // Sending the data
     glBufferData(
@@ -135,6 +135,28 @@ int main()
 
         // TODO cube
         // ctx.square(p6::Center{0., 0.}, p6::Radius{0.8f}, p6::Rotation{0.0_turn});
+        vbo.bind();
+        switch (options.getLods())
+        {
+        case 1:
+            vertices = glimac::sphere_vertices(1.f, 32, 16);
+            break;
+        case 0:
+            vertices = glimac::sphere_vertices(1.f, 10, 4);
+            break;
+
+        default:
+            vertices = glimac::sphere_vertices(1.f, 32, 16);
+        };
+
+        glBufferData(
+            GL_ARRAY_BUFFER,
+            vertices.size() * sizeof(glimac::ShapeVertex),
+            vertices.data(),
+            GL_STATIC_DRAW
+        );
+
+        vbo.unbind();
 
         groupe.draw(
             ctx, vao, vertices,
