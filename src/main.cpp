@@ -12,6 +12,7 @@
 #include <vector>
 #include "3D/GLIMAC/camera.hpp"
 #include "3D/bee.hpp"
+#include "3D/bush.hpp" // TODO test
 #include "3D/glimac/common.hpp"
 #include "3D/glimac/sphere_vertices.hpp"
 #include "3D/shader.hpp"
@@ -22,7 +23,6 @@
 #include "p6/p6.h"
 #include "param/options.hpp"
 #include "random/rand.hpp"
-#include "3D/bush.hpp" // TODO test
 
 int main()
 {
@@ -32,7 +32,7 @@ int main()
 
     Camera camera;
     Bee    beez;
-    Bush bush;
+    Bush   bush;
 
     // Run the tests
     if (doctest::Context{}.run() != 0)
@@ -65,7 +65,7 @@ int main()
     // Chargement des textures
     // TODO rename triforce
     img::Image triforce = p6::load_image_buffer("../assets/textures/bodyTexture.png", false);
-    img::Image leaf = p6::load_image_buffer("../assets/textures/leaf.png");
+    img::Image leaf     = p6::load_image_buffer("../assets/textures/leaf.png");
 
     VBO vbo;
     vbo.bind();
@@ -168,10 +168,10 @@ int main()
         );
 
         // TODO test
-        bush.draw(ctx, vao, tree, vertices, camera.getViewMatrix(), textures, 
-            glm::vec3(ctx.mouse() * ctx.aspect_ratio() * (1.5f + 0.5f / 2.f), -5.),
-            glm::vec3(0.3)
-        );
+        for (GLuint i; i < 10; i++)
+        {
+            bush.draw(ctx, vao, tree, vertices, camera.getViewMatrix(), textures, glm::vec3({2.f, 0.f, 2.f}), glm::vec3(0.3));
+        }
 
         // TODO faire gaffe au chargement des textures
         groupe.animate(

@@ -1,21 +1,22 @@
 #include "bush.hpp"
 #include <glm/ext/matrix_clip_space.hpp> // TODO à coder nous même ?
-#include <glm/ext/matrix_transform.hpp> // TODO à coder nous même ?
+#include <glm/ext/matrix_transform.hpp>  // TODO à coder nous même ?
 
 void Bush::draw(
-// TODO ctx pas nécessaire ? à stocker directement dans shader ?
-    p6::Context &ctx,
-    VAO &vao, Shader &tree,
+    // TODO ctx pas nécessaire ? à stocker directement dans shader ?
+    p6::Context& ctx,
+    VAO& vao, Shader& tree,
     const std::vector<glimac::ShapeVertex>& vertices,
-    const glm::mat4 &viewMatrix, GLuint textures,
+    const glm::mat4& viewMatrix, GLuint textures,
     glm::vec3 position, glm::vec3 scale
-){
+)
+{
     glm::mat4 base = glm::translate(viewMatrix, position);
-    base           = glm::rotate(base, ctx.time(), {0.f, 1.f, 0.f}); // TODO debug
+    base           = glm::rotate(base, 1.f, {0.f, 1.f, 0.f}); // TODO debug
     base           = glm::scale(base, scale);
 
-// TODO découper en sous fonction ? boucle for ?
-// part 1
+    // TODO découper en sous fonction ? boucle for ?
+    // part 1
     glm::mat4 MVMatrix = glm::scale(base, glm::vec3(0.8f, 0.6f, 0.8f));
 
     tree.use();
@@ -30,7 +31,7 @@ void Bush::draw(
 
     vao.unbind();
 
-// part 2
+    // part 2
     vao.bind();
     MVMatrix = glm::scale(base, glm::vec3(1.2f, 1.f, 1.2f));
     MVMatrix = glm::scale(
@@ -46,7 +47,7 @@ void Bush::draw(
     glDrawArrays(GL_TRIANGLES, 0, vertices.size());
     vao.unbind();
 
-// part 3
+    // part 3
     vao.bind();
 
     MVMatrix = glm::scale(base, glm::vec3(1.2f, 1.f, 1.2f));
@@ -63,7 +64,7 @@ void Bush::draw(
     glDrawArrays(GL_TRIANGLES, 0, vertices.size());
     vao.unbind();
 
-// part 4
+    // part 4
     vao.bind();
 
     MVMatrix = glm::scale(base, glm::vec3(1.2f, 1.f, 1.2f));
@@ -80,7 +81,7 @@ void Bush::draw(
     glDrawArrays(GL_TRIANGLES, 0, vertices.size());
     vao.unbind();
 
-// part 5
+    // part 5
     vao.bind();
 
     MVMatrix = glm::scale(base, glm::vec3(1.2f, 1.f, 1.2f));
