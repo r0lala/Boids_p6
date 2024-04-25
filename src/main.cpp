@@ -82,15 +82,15 @@ int main()
 
     // Fill buffer
     const std::vector<glimac::ShapeVertex> vertices_sphere = glimac::sphere_vertices(1.f, 32, 16);
-    int                                    fond            = -10;
-
-    Vertex3D vertices_wall[] = {
-        Vertex3D{{0.5f, -0.5f, fond}, {1.f, 0.f}},
-        Vertex3D{{-0.5f, 0.5f, fond}, {1.f, 0.f}},
-        Vertex3D{{-0.5f, -0.5f, fond}, {0.5f, 0.5f}},
-        Vertex3D{{0.5f, -0.5f, fond}, {1.f, 0.f}},
-        Vertex3D{{0.5f, 0.5f, fond}, {0.f, 1.f}},
-        Vertex3D{{-0.5f, 0.5f, fond}, {0.f, 1.f}},
+    float                                  fond            = -10.f;
+    float                                  bord            = 0.5f;
+    Vertex3D                               vertices_wall[] = {
+        Vertex3D{{bord, -bord, fond}, {1.f, 0.f}},
+        Vertex3D{{-bord, bord, fond}, {1.f, 0.f}},
+        Vertex3D{{-bord, -bord, fond}, {0.5f, 0.5f}},
+        Vertex3D{{bord, -bord, fond}, {1.f, 0.f}},
+        Vertex3D{{bord, bord, fond}, {0.f, 1.f}},
+        Vertex3D{{-bord, bord, fond}, {0.f, 1.f}},
 
         // Vertex3D{{0.5f, -0.5f, 4}, {1.f, 0.f}},
         // Vertex3D{{-0.5f, 0.5f, 4}, {1.f, 0.f}},
@@ -213,13 +213,18 @@ int main()
 
         // Bind VAO
         vao_wall.bind();
-        shader.giveMatrix(ctx, camera.getViewMatrix());
-        glDrawArrays(GL_TRIANGLES, 0, sizeVertice_wall);
-        vao_wall.unbind();
 
-        // vao2.bind();
-        // glDrawArrays(GL_TRIANGLES, 0, 6);
-        // vao2.unbind();
+        glm::mat4 MVMatrix = camera.getViewMatrix();
+        MVMatrix           = glm::scale(MVMatrix, glm::vec3(10., 5., 1.));
+
+        // shader.giveMatrix(ctx, MVMatrix);
+        // glDrawArrays(GL_TRIANGLES, 0, sizeVertice_wall); // TODO render
+
+        MVMatrix = glm::rotate(MVMatrix, 0.09f, glm::vec3(0., 1., 0.));
+        shader.giveMatrix(ctx, MVMatrix);
+        glDrawArrays(GL_TRIANGLES, 0, sizeVertice_wall); // TODO render
+
+        vao_wall.unbind();
 
         // TODO adapter le nb de vertices en fonction de la taille qu'elle représente ?
         beez.draw(
