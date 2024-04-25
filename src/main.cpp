@@ -62,11 +62,13 @@ int main()
     Shader body("3D", "bee/body");
     Shader eyes("3D", "bee/eyes");
     Shader wings("3D", "normals");
-    Shader tree("3D", "tree/leaf");
+    Shader tree("3D", "tree/leaf"); // TODO renamme bush ???
+    // Shader grass("3D", "grass");
 
     // Chargement des textures
     img::Image beeBody = p6::load_image_buffer("../assets/textures/bodyTexture.png", false);
     img::Image leaf    = p6::load_image_buffer("../assets/textures/leaf.png", false);
+    img::Image wall    = p6::load_image_buffer("../assets/textures/clouds.png", false);
 
     VBO vbo;
     vbo.bind();
@@ -143,6 +145,18 @@ int main()
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     glBindTexture(GL_TEXTURE_2D, 0);
 
+    GLuint wallTexture;
+    glGenTextures(1, &wallTexture);
+    glBindTexture(GL_TEXTURE_2D, wallTexture);
+    glTexImage2D(
+        GL_TEXTURE_2D, 0, GL_RGBA,
+        wall.width(), wall.height(),
+        0, GL_RGBA, GL_UNSIGNED_BYTE, wall.data()
+    );
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glBindTexture(GL_TEXTURE_2D, 0);
+
     // Declare your infinite update loop.
     ctx.update = [&]() {
         // Clear the window
@@ -191,18 +205,23 @@ int main()
         vbo.unbind();
         tree.use();
         tree.bindTexture(treeTexture);
-        // TODO test
-        // for (float i; i < 10; i++){ avec var aleatoire}
-        bush.draw(ctx, vao, tree, vertices, camera.getViewMatrix(), treeTexture, glm::vec3({2.f, -5.f, 2.f}), glm::vec3(3.), 5);
-        bush.draw(ctx, vao, tree, vertices, camera.getViewMatrix(), treeTexture, glm::vec3({4.f, -5.f, -5.f}), glm::vec3(3.), 0.2);
-        // bush.draw(ctx, vao, tree, vertices, camera.getViewMatrix(), textures, glm::vec3({-1.f, -1.2f, -4.f}), glm::vec3(1.1), 0.1);
-        // bush.draw(ctx, vao, tree, vertices, camera.getViewMatrix(), textures, glm::vec3({0.2f, -1.2f, 0.4f}), glm::vec3(0.8), 0.8);
-        // bush.draw(ctx, vao, tree, vertices, camera.getViewMatrix(), textures, glm::vec3({-6.f, -1.2f, -4.f}), glm::vec3(1.1), 2.f);
-        // bush.draw(ctx, vao, tree, vertices, camera.getViewMatrix(), textures, glm::vec3({0.2f, -1.2f, -6.f}), glm::vec3(0.8), 4.f);
-        // bush.draw(ctx, vao, tree, vertices, camera.getViewMatrix(), textures, glm::vec3({-1.f, -1.2f, -4.f}), glm::vec3(1.1), 15.f);
-        // bush.draw(ctx, vao, tree, vertices, camera.getViewMatrix(), textures, glm::vec3({-4.f, -1.2f, 4.f}), glm::vec3(0.8), 80.f);
 
-        // TODO faire gaffe au chargement des textures
+        std::vector<glm::vec3> scale = {
+            glm::vec3({2.f, -5.f, 2.f}),
+            glm::vec3({4.f, -5.f, -5.f}),
+            glm::vec3({-1.f, -5.f, 0.f}),
+            glm::vec3({7.f, -5.f, 0.4f}),
+            glm::vec3({-6.f, -5.f, -4.f}),
+            glm::vec3({0.2f, -5.f, -6.f}),
+            glm::vec3({-1.f, -5.f, -7.f}),
+            glm::vec3({-4.f, -5.f, 4.f})
+        };
+
+        for (unsigned int i = 0; i < scale.size(); i++)
+        {
+            bush.draw(ctx, vao, tree, vertices, camera.getViewMatrix(), treeTexture, scale[i], glm::vec3(3.), i * 8);
+        }
+
         groupe.animate(
             ctx,
             options.align,
