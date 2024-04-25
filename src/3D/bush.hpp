@@ -11,6 +11,7 @@ public:
         p6::Context &ctx,
         VAO &vao, Shader &tree,
         const std::vector<glimac::ShapeVertex>& vertices,
-        const glm::mat4 &viewMatrix, GLuint textures
+        const glm::mat4 &viewMatrix, GLuint textures,
+        glm::vec3 position, glm::vec3 scale
     );
 };
