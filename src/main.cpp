@@ -44,10 +44,8 @@ int main()
     Shader tree("3D", "tree/leaf");
 
     // Chargement des textures
-    // TODO rename leaf
     // TODO bug : c'est chargé à l'envers ???
     img::Image leaf = p6::load_image_buffer("../assets/textures/leaf.png");
-    // assert(leaf != NULL && "error loading leaf.png");
 
     VBO vbo;
     vbo.bind();
@@ -55,34 +53,34 @@ int main()
     // Fill buffer
     const std::vector<glimac::ShapeVertex> vertices = glimac::sphere_vertices(1.f, 32, 16); // TODO rendre ça variable
 
-    std::vector<glimac::ShapeVertex> verticesCircle;
-    GLuint                           N     = 20;
-    float                            theta = (2 * glm::pi<float>()) / N;
-    float                            r     = 0.5;
+    // std::vector<glimac::ShapeVertex> verticesCircle;
+    // GLuint                           N     = 20;
+    // float                            theta = (2 * glm::pi<float>()) / N;
+    // float                            r     = 0.5;
 
-    for (GLuint i = 0; i < N; i++)
-    {
-        verticesCircle.push_back(glimac::ShapeVertex{{r * glm::cos(theta * i), r * glm::sin(theta * i), 0.}, {0., 0., 0.}, {1.f, 0.f}});
+    // for (GLuint i = 0; i < N; i++)
+    // {
+    //     verticesCircle.push_back(glimac::ShapeVertex{{r * glm::cos(theta * i), r * glm::sin(theta * i), 0.}, {0., 0., 0.}, {1.f, 0.f}});
 
-        verticesCircle.push_back(glimac::ShapeVertex{{r * glm::cos(theta * (i + 1)), r * glm::sin(theta * (i + 1)), 0.}, {0., 0., 0.}, {0.f, 1.f}});
+    //     verticesCircle.push_back(glimac::ShapeVertex{{r * glm::cos(theta * (i + 1)), r * glm::sin(theta * (i + 1)), 0.}, {0., 0., 0.}, {0.f, 1.f}});
 
-        verticesCircle.push_back(glimac::ShapeVertex{{0., 0., 0.}, {0., 0., 0.}, {0.f, 0.f}});
-    }
+    //     verticesCircle.push_back(glimac::ShapeVertex{{0., 0., 0.}, {0., 0., 0.}, {0.f, 0.f}});
+    // }
 
     // Sending the data
-    // glBufferData(
-    //     GL_ARRAY_BUFFER,
-    //     vertices.size() * sizeof(glimac::ShapeVertex),
-    //     vertices.data(),
-    //     GL_STATIC_DRAW
-    // );
-
     glBufferData(
         GL_ARRAY_BUFFER,
-        verticesCircle.size() * sizeof(glimac::ShapeVertex),
-        verticesCircle.data(),
+        vertices.size() * sizeof(glimac::ShapeVertex),
+        vertices.data(),
         GL_STATIC_DRAW
     );
+
+    // glBufferData(
+    //     GL_ARRAY_BUFFER,
+    //     verticesCircle.size() * sizeof(glimac::ShapeVertex),
+    //     verticesCircle.data(),
+    //     GL_STATIC_DRAW
+    // );
 
     vbo.unbind();
 
@@ -160,108 +158,108 @@ int main()
         tree.use();
 
         vao.bind();
-        glDrawArrays(GL_TRIANGLES, 0, N * 3);
+        // glDrawArrays(GL_TRIANGLES, 0, N * 3);
         // glm::mat4 ProjMatrix = glm::perspective(glm::radians(70.f), ctx.aspect_ratio(), 0.1f, 100.f);
         // glm::mat4 MVMatrix   = glm::translate(glm::mat4(1), glm::vec3(-2., 0, -5));
         // MVMatrix             = glm::translate(MVMatrix, {0.5f, 0.8f, 0.f});
-        vao.unbind();
+        // vao.unbind();
 
-        // glm::mat4 ProjMatrix = glm::perspective(glm::radians(70.f), ctx.aspect_ratio(), 0.1f, 100.f);
-        // glm::mat4 MVMatrix   = glm::translate(glm::mat4(1), glm::vec3(0, 0, -5));
-        // // MVMatrix = glm::rotate(MVMatrix, 90.f, {0.f, 0.f, 0.f});
+        glm::mat4 ProjMatrix = glm::perspective(glm::radians(70.f), ctx.aspect_ratio(), 0.1f, 100.f);
+        glm::mat4 MVMatrix   = glm::translate(glm::mat4(1), glm::vec3(0, 0, -5));
+        // MVMatrix = glm::rotate(MVMatrix, 90.f, {0.f, 0.f, 0.f});
 
-        // MVMatrix               = glm::scale(MVMatrix, glm::vec3(0.8f, 0.6f, 0.8f));
-        // glm::mat4 NormalMatrix = glm::transpose(glm::inverse(MVMatrix));
+        MVMatrix               = glm::scale(MVMatrix, glm::vec3(0.8f, 0.6f, 0.8f));
+        glm::mat4 NormalMatrix = glm::transpose(glm::inverse(MVMatrix));
 
-        // tree.giveMatrix(ProjMatrix, MVMatrix, NormalMatrix);
+        tree.giveMatrix(ProjMatrix, MVMatrix, NormalMatrix);
 
         // // Draw triangle
-        // glBindTexture(GL_TEXTURE_2D, textures);
-        // tree.bindTexture(0);
-        // glDrawArrays(GL_TRIANGLES, 0, vertices.size());
-        // // glBindTexture(GL_TEXTURE_2D, 0);
-        // vao.unbind();
-
-        // vao.bind();
-        // tree.use();
-
-        // MVMatrix = glm::translate(glm::mat4(1), glm::vec3(0, 0, -5));
-        // MVMatrix = glm::scale(MVMatrix, glm::vec3(1.2f, 1.f, 1.2f));
-
-        // MVMatrix = glm::scale(
-        //     glm::translate(
-        //         MVMatrix,
-        //         {0.8f, 0.f, 0.25f}
-        //     ),
-        //     glm::vec3{0.6f}
-        // );
-        // NormalMatrix = glm::transpose(glm::inverse(MVMatrix));
-
-        // tree.giveMatrix(ProjMatrix, MVMatrix, NormalMatrix);
-
-        // glDrawArrays(GL_TRIANGLES, 0, vertices.size());
-        // vao.unbind();
-
-        // vao.bind();
-        // tree.use();
-
-        // MVMatrix = glm::translate(glm::mat4(1), glm::vec3(0, 0, -5));
-        // MVMatrix = glm::scale(MVMatrix, glm::vec3(1.2f, 1.f, 1.2f));
-
-        // MVMatrix = glm::scale(
-        //     glm::translate(
-        //         MVMatrix,
-        //         {0.5f, 0.8f, 0.f}
-        //     ),
-        //     glm::vec3{0.6f}
-        // );
-        // NormalMatrix = glm::transpose(glm::inverse(MVMatrix));
-
-        // tree.giveMatrix(ProjMatrix, MVMatrix, NormalMatrix);
-
-        // glDrawArrays(GL_TRIANGLES, 0, vertices.size());
-        // vao.unbind();
-
-        // vao.bind();
-        // tree.use();
-
-        // MVMatrix = glm::translate(glm::mat4(1), glm::vec3(0, 0, -5));
-        // MVMatrix = glm::scale(MVMatrix, glm::vec3(1.2f, 1.f, 1.2f));
-
-        // MVMatrix = glm::scale(
-        //     glm::translate(
-        //         MVMatrix,
-        //         {0.f, 0.6f, 0.1f}
-        //     ),
-        //     glm::vec3{0.3f}
-        // );
-        // NormalMatrix = glm::transpose(glm::inverse(MVMatrix));
-
-        // tree.giveMatrix(ProjMatrix, MVMatrix, NormalMatrix);
-
-        // glDrawArrays(GL_TRIANGLES, 0, vertices.size());
-        // vao.unbind();
-
-        // vao.bind();
-        // tree.use();
-
-        // MVMatrix = glm::translate(glm::mat4(1), glm::vec3(0, 0, -5));
-        // MVMatrix = glm::scale(MVMatrix, glm::vec3(1.2f, 1.f, 1.2f));
-
-        // MVMatrix = glm::scale(
-        //     glm::translate(
-        //         MVMatrix,
-        //         {0.4f, 0.4f, 0.4f}
-        //     ),
-        //     glm::vec3{0.3f}
-        // );
-        // NormalMatrix = glm::transpose(glm::inverse(MVMatrix));
-
-        // tree.giveMatrix(ProjMatrix, MVMatrix, NormalMatrix);
-
-        // glDrawArrays(GL_TRIANGLES, 0, vertices.size());
+        glBindTexture(GL_TEXTURE_2D, textures);
+        tree.bindTexture(0);
+        glDrawArrays(GL_TRIANGLES, 0, vertices.size());
         // glBindTexture(GL_TEXTURE_2D, 0);
-        // vao.unbind();
+        vao.unbind();
+
+        vao.bind();
+        tree.use();
+
+        MVMatrix = glm::translate(glm::mat4(1), glm::vec3(0, 0, -5));
+        MVMatrix = glm::scale(MVMatrix, glm::vec3(1.2f, 1.f, 1.2f));
+
+        MVMatrix = glm::scale(
+            glm::translate(
+                MVMatrix,
+                {0.8f, 0.f, 0.25f}
+            ),
+            glm::vec3{0.6f}
+        );
+        NormalMatrix = glm::transpose(glm::inverse(MVMatrix));
+
+        tree.giveMatrix(ProjMatrix, MVMatrix, NormalMatrix);
+
+        glDrawArrays(GL_TRIANGLES, 0, vertices.size());
+        vao.unbind();
+
+        vao.bind();
+        tree.use();
+
+        MVMatrix = glm::translate(glm::mat4(1), glm::vec3(0, 0, -5));
+        MVMatrix = glm::scale(MVMatrix, glm::vec3(1.2f, 1.f, 1.2f));
+
+        MVMatrix = glm::scale(
+            glm::translate(
+                MVMatrix,
+                {0.5f, 0.8f, 0.f}
+            ),
+            glm::vec3{0.6f}
+        );
+        NormalMatrix = glm::transpose(glm::inverse(MVMatrix));
+
+        tree.giveMatrix(ProjMatrix, MVMatrix, NormalMatrix);
+
+        glDrawArrays(GL_TRIANGLES, 0, vertices.size());
+        vao.unbind();
+
+        vao.bind();
+        tree.use();
+
+        MVMatrix = glm::translate(glm::mat4(1), glm::vec3(0, 0, -5));
+        MVMatrix = glm::scale(MVMatrix, glm::vec3(1.2f, 1.f, 1.2f));
+
+        MVMatrix = glm::scale(
+            glm::translate(
+                MVMatrix,
+                {0.f, 0.6f, 0.1f}
+            ),
+            glm::vec3{0.3f}
+        );
+        NormalMatrix = glm::transpose(glm::inverse(MVMatrix));
+
+        tree.giveMatrix(ProjMatrix, MVMatrix, NormalMatrix);
+
+        glDrawArrays(GL_TRIANGLES, 0, vertices.size());
+        vao.unbind();
+
+        vao.bind();
+        tree.use();
+
+        MVMatrix = glm::translate(glm::mat4(1), glm::vec3(0, 0, -5));
+        MVMatrix = glm::scale(MVMatrix, glm::vec3(1.2f, 1.f, 1.2f));
+
+        MVMatrix = glm::scale(
+            glm::translate(
+                MVMatrix,
+                {0.4f, 0.4f, 0.4f}
+            ),
+            glm::vec3{0.3f}
+        );
+        NormalMatrix = glm::transpose(glm::inverse(MVMatrix));
+
+        tree.giveMatrix(ProjMatrix, MVMatrix, NormalMatrix);
+
+        glDrawArrays(GL_TRIANGLES, 0, vertices.size());
+        glBindTexture(GL_TEXTURE_2D, 0);
+        vao.unbind();
     };
 
     // Should be done last. It starts the infinite loop.
