@@ -1,11 +1,16 @@
-#version 330
-in vec2 vFragPosition;
+#version 330 core
 
-out vec3 fFragTexture;
+// in vec3 vPosition_vs; // dans l'espace View (vs)
+// in vec3 vNormal_vs; // dans l'espace View (vs)
+in vec2 vTexCoords; // Coordonnées de texture du sommet
+
+// in vec2 vFragPosition;
+
+out vec4 fFragTexture;
 
 uniform sampler2D uTexture;
 
 void main()
 {
-    fFragTexture =  texture(uTexture, vFragPosition).xyz;
+    fFragTexture =  texture(uTexture, vTexCoords);
 }

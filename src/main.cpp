@@ -56,10 +56,7 @@ int main()
     // --- 3D ---
 
     // Creation Shader
-    const p6::Shader shader = p6::load_shader(
-        "../src/3D/shaders/wall.vs.glsl",
-        "../src/3D/shaders/wall.fs.glsl"
-    );
+    Shader shader("3D", "wall");
 
     img::Image sky = p6::load_image_buffer(
         "../assets/textures/clouds.png"
@@ -209,12 +206,14 @@ int main()
         // Shader
         // TODO glimac::bind_default_shader();
         shader.use();
-        GLuint uTexture = glGetUniformLocation(shader.id(), "uTexture");
+        // GLuint uTexture = glGetUniformLocation(shader.id(), "uTexture");
         glBindTexture(GL_TEXTURE_2D, textureWall);
-        glUniform1i(uTexture, 0);
+        shader.bindTexture(0);
+        // glUniform1i(uTexture, 0);
 
         // Bind VAO
         vao_wall.bind();
+        shader.giveMatrix(ctx, camera.getViewMatrix());
         glDrawArrays(GL_TRIANGLES, 0, sizeVertice_wall);
         vao_wall.unbind();
 
