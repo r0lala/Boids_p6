@@ -1,6 +1,5 @@
-// #pragma once
-#ifndef __BEE_HPP__
-#define __BEE_HPP__
+#pragma once
+
 #include <vector>
 #include "3D/glimac/common.hpp"
 #include "glm/fwd.hpp"
@@ -28,4 +27,3 @@ public:
         glm::mat4 ViewMatrix, float angle, glm::vec3 axe
     );
 };
-#endif

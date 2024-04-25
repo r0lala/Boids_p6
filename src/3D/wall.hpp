@@ -1,3 +1,4 @@
+#pragma once
 #include "3D/glimac/common.hpp"
 #include "p6/p6.h"
 #include "shader.hpp"

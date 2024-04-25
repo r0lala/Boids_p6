@@ -1,10 +1,9 @@
-#ifndef __SHADER_HPP__
-#define __SHADER_HPP__
+#pragma once
 
 #include <string>
+#include "GLIMAC/sphere_vertices.hpp"
 #include "p6/p6.h"
 #include "vao.hpp"
-#include "GLIMAC/sphere_vertices.hpp"
 
 class Shader {
 private:
@@ -23,10 +22,8 @@ public:
     void giveMatrix(p6::Context& ctx, glm::mat4 ViewMatrix);
     void bindTexture(int textUnit);
     void render(
-        VAO& vao, 
+        VAO&                                    vao,
         const std::vector<glimac::ShapeVertex>& vertices,
         GLuint textures = -1, int textUnit = -1
     );
 };
-
-#endif

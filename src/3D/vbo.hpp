@@ -1,5 +1,4 @@
-#ifndef __VBO_H__
-#define __VBO_H__
+#pragma once
 
 #include "glm/glm.hpp"
 #include "p6/p6.h"
@@ -46,5 +45,3 @@ public:
         glBindBuffer(GL_ARRAY_BUFFER, 0);
     }
 };
-
-#endif

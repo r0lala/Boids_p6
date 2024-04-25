@@ -218,14 +218,12 @@ int main()
         // ctx.square(p6::Center{0., 0.}, p6::Radius{0.8f}, p6::Rotation{0.0_turn});
 
         // Shader
-        // TODO glimac::bind_default_shader();
         shader.use();
-
         // GLuint uTexture = glGetUniformLocation(shader.id(), "uTexture");
-        glBindTexture(GL_TEXTURE_2D, textureWall);
-        shader.bindTexture(textureWall);
         // glUniform1i(uTexture, 0);
 
+        shader.bindTexture(textureWall);
+        ;
         // Bind VAO
         vaoWall.bind();
 
@@ -249,7 +247,6 @@ int main()
         // glDrawArrays(GL_TRIANGLES, 0, verticesWall.size()); // TODO render
 
         vaoWall.unbind();
-
         // TODO adapter le nb de vertices en fonction de la taille qu'elle représente ?
         body.use();
         body.bindTexture(beeTexture);

@@ -1,5 +1,4 @@
 #pragma once
-#include <iostream> // TODO test
 #include <vector>
 #include "3D/GLIMAC/common.hpp"
 #include "3D/shader.hpp"
@@ -15,7 +14,6 @@ private:
     // bool _predator;
     glm::vec3 _velocity;
     // glm::vec2 _acceleration;
-    // glm::vec3 seek(const glm::vec3& v); // ???
 
 public:
     Boid(const glm::vec3& position, const glm::vec3& velocity) // TODO velocity random
@@ -23,18 +21,9 @@ public:
     {}
 
     // Methods
-    void move(glm::vec3 acceleration, float delta_time);
-    void draw(
-        p6::Context& ctx,
-        VAO& vao, Shader& shader,
-        const std::vector<glimac::ShapeVertex>& vertices,
-        // TODO à supp par Bee
-        Shader& wings, Shader& eyes, Shader& body, GLuint textures
-    ) const;
-    // void collide(const Boid& other);
-
     bool operator==(const Boid& other) const;
 
+    void move(glm::vec3 acceleration, float delta_time);
     void teleport();
 
 public:

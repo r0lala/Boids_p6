@@ -1,5 +1,4 @@
-#ifndef __VAO_H__
-#define __VAO_H__
+#pragma once
 
 #include "glm/glm.hpp"
 #include "p6/p6.h"
@@ -46,5 +45,3 @@ public:
         glBindVertexArray(0);
     }
 };
-
-#endif

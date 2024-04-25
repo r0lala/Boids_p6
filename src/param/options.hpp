@@ -1,3 +1,4 @@
+#pragma once
 #include <imgui.h>
 #include "p6/p6.h"
 
@@ -20,10 +21,12 @@ public:
     {
         ctx.imgui = [&]() {
             ImGui::Begin("Parameters");
-            // ImGui::SliderFloat("Alignment", &align, 0.f, 1.f);
-            // ImGui::SliderFloat("Separation", &separate, 1.f, 2.f);
             ImGui::SliderInt("LODS", &lods, 0, 1);
+
+            ImGui::SliderFloat("Alignment", &align, 0.f, 1.f);
+            ImGui::SliderFloat("Separation", &separate, 1.f, 2.f);
             ImGui::SliderFloat("Cohesion", &cohesion, 0.f, 100.f);
+
             ImGui::SliderFloat("Coefficient d'alignement", &coeffAlignement, 0.f, 50.f);
             ImGui::SliderFloat("Coefficient de repulsion", &coeffRepulsion, 0.f, 50.f);
             ImGui::SliderFloat("Coefficient de cohesion", &coeffCohesion, 0.f, 50.f);
@@ -31,8 +34,5 @@ public:
         };
     }
 
-    const int getLods()
-    {
-        return lods;
-    }
+    int getLods() const { return lods; }
 };
