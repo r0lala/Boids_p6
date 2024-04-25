@@ -36,3 +36,20 @@ void Shader::bindTexture(int textUnit)
 {
     glUniform1i(_uTexture, textUnit);
 }
+
+void Shader::render(VAO& vao, const std::vector<glimac::ShapeVertex>& vertices, GLuint textures, int textUnit)
+{
+    vao.bind();
+    if (textUnit >= 0)
+    {
+        glBindTexture(GL_TEXTURE_2D, textures);
+        this->bindTexture(textUnit); // TODO supp fct bindTexture ?
+    }
+    glDrawArrays(GL_TRIANGLES, 0, vertices.size());
+
+    if (textUnit >= 0)
+    {
+        glBindTexture(GL_TEXTURE_2D, 0);
+    }
+    vao.unbind();
+}

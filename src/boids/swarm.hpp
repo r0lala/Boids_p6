@@ -9,8 +9,6 @@ class Swarm {
 private:
     std::vector<Boid> _swarm; // vecteur qui contient tous les boids
     float             _size;
-    // float _avoidRadius   = 60;   // rayon d'évitement
-    // float _avoidStrength = 0.02; // puissance de répulsion
 
 public:
     Swarm(int n = 5, float size = 0.5f) // constructeur (par défaut?)
@@ -25,7 +23,7 @@ public:
         }
     }
     void draw(
-        p6::Context&                            ctx,
+        p6::Context&                            ctx, // TODO delete
         VAO&                                    vao,
         const std::vector<glimac::ShapeVertex>& vertices,
         Shader& wings, Shader& eyes, Shader& body, GLuint textures,
