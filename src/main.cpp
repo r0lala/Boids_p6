@@ -85,14 +85,14 @@ int main()
 
     // Fill buffer
     const std::vector<glimac::ShapeVertex> vertices_sphere = glimac::sphere_vertices(1.f, 32, 16);
-    Vertex3D                               vertices[]      = {
-        Vertex3D{{0.5f, -0.5f, -2}, {1.f, 0.f}},
-        Vertex3D{{-0.5f, 0.5f, -2}, {1.f, 0.f}},
-        Vertex3D{{-0.5f, -0.5f, -2}, {0.5f, 0.5f}},
-        Vertex3D{{0.5f, -0.5f, -2}, {1.f, 0.f}},
-        Vertex3D{{0.5f, 0.5f, -2}, {0.f, 1.f}},
-        Vertex3D{{-0.5f, 0.5f, -2}, {0.f, 1.f}}
-    };
+    // Vertex3D                               vertices[]      = {
+    //     Vertex3D{{0.5f, -0.5f, -2}, {1.f, 0.f}},
+    //     Vertex3D{{-0.5f, 0.5f, -2}, {1.f, 0.f}},
+    //     Vertex3D{{-0.5f, -0.5f, -2}, {0.5f, 0.5f}},
+    //     Vertex3D{{0.5f, -0.5f, -2}, {1.f, 0.f}},
+    //     Vertex3D{{0.5f, 0.5f, -2}, {0.f, 1.f}},
+    //     Vertex3D{{-0.5f, 0.5f, -2}, {0.f, 1.f}}
+    // };
 
     // Sending the data
     glBufferData(
@@ -104,31 +104,31 @@ int main()
 
     vbo.unbind();
 
-    VBO vbo2;
-    vbo2.bind();
+    // VBO vbo2;
+    // vbo2.bind();
 
-    Vertex3D vertices2[] = {
-        // Vertex3D{{0.5f, -0.5f, 4}, {1.f, 0.f}},
-        // Vertex3D{{-0.5f, 0.5f, 4}, {1.f, 0.f}},
-        // Vertex3D{{-0.5f, -0.5f, 4}, {0.5f, 0.5f}},
-        // Vertex3D{{0.5f, -0.5f, 4}, {1.f, 0.f}},
-        // Vertex3D{{0.5f, 0.5f, 4}, {0.f, 1.f}},
-        // Vertex3D{{-0.5f, 0.5f, 4}, {0.f, 1.f}}
-        Vertex3D{{0.5f, -0.5f, -2}, {1.f, 0.f}},
-        Vertex3D{{-0.5f, 0.5f, -2}, {1.f, 0.f}},
-        Vertex3D{{-0.5f, -0.5f, -2}, {0.5f, 0.5f}},
-        Vertex3D{{0.5f, -0.5f, -2}, {1.f, 0.f}},
-        Vertex3D{{0.5f, 0.5f, -2}, {0.f, 1.f}},
-        Vertex3D{{-0.5f, 0.5f, -2}, {0.f, 1.f}}
-    };
+    // Vertex3D vertices2[] = {
+    //     // Vertex3D{{0.5f, -0.5f, 4}, {1.f, 0.f}},
+    //     // Vertex3D{{-0.5f, 0.5f, 4}, {1.f, 0.f}},
+    //     // Vertex3D{{-0.5f, -0.5f, 4}, {0.5f, 0.5f}},
+    //     // Vertex3D{{0.5f, -0.5f, 4}, {1.f, 0.f}},
+    //     // Vertex3D{{0.5f, 0.5f, 4}, {0.f, 1.f}},
+    //     // Vertex3D{{-0.5f, 0.5f, 4}, {0.f, 1.f}}
+    //     Vertex3D{{0.5f, -0.5f, -2}, {1.f, 0.f}},
+    //     Vertex3D{{-0.5f, 0.5f, -2}, {1.f, 0.f}},
+    //     Vertex3D{{-0.5f, -0.5f, -2}, {0.5f, 0.5f}},
+    //     Vertex3D{{0.5f, -0.5f, -2}, {1.f, 0.f}},
+    //     Vertex3D{{0.5f, 0.5f, -2}, {0.f, 1.f}},
+    //     Vertex3D{{-0.5f, 0.5f, -2}, {0.f, 1.f}}
+    // };
 
-    glBufferData(
-        GL_ARRAY_BUFFER,
-        6 * sizeof(Vertex3D),
-        vertices2,
-        GL_STATIC_DRAW
-    );
-    vbo2.unbind();
+    // glBufferData(
+    //     GL_ARRAY_BUFFER,
+    //     6 * sizeof(Vertex3D),
+    //     vertices2,
+    //     GL_STATIC_DRAW
+    // );
+    // vbo2.unbind();
 
     // VAO
     VAO vao;
@@ -153,24 +153,24 @@ int main()
     vbo.unbind();
     vao.unbind();
 
-    VAO vao2;
-    vao2.bind();
+    // VAO vao2;
+    // vao2.bind();
     // Activation vertex
-    vbo2.bind();
-    static constexpr GLuint aVertexPosition_2 = 0;
-    glEnableVertexAttribArray(aVertexPosition_2);
-    glVertexAttribPointer(
-        aVertexPosition_2, 3, GL_FLOAT, GL_FALSE,
-        sizeof(Vertex3D), (const GLvoid*)(offsetof(Vertex3D, position))
-    );
-    static constexpr GLuint aVertexTexCoords_2 = 2;
-    glEnableVertexAttribArray(aVertexTexCoords_2);
-    glVertexAttribPointer(
-        aVertexTexCoords_2, 2, GL_FLOAT, GL_FALSE,
-        sizeof(Vertex3D), (const GLvoid*)(offsetof(Vertex3D, texture))
-    );
-    vbo2.unbind();
-    vao2.unbind();
+    // vbo2.bind();
+    // static constexpr GLuint aVertexPosition_2 = 0;
+    // glEnableVertexAttribArray(aVertexPosition_2);
+    // glVertexAttribPointer(
+    //     aVertexPosition_2, 3, GL_FLOAT, GL_FALSE,
+    //     sizeof(Vertex3D), (const GLvoid*)(offsetof(Vertex3D, position))
+    // );
+    // static constexpr GLuint aVertexTexCoords_2 = 2;
+    // glEnableVertexAttribArray(aVertexTexCoords_2);
+    // glVertexAttribPointer(
+    //     aVertexTexCoords_2, 2, GL_FLOAT, GL_FALSE,
+    //     sizeof(Vertex3D), (const GLvoid*)(offsetof(Vertex3D, texture))
+    // );
+    // vbo2.unbind();
+    // vao2.unbind();
 
     // ---
 
@@ -225,9 +225,9 @@ int main()
         // Unbind vao
         vao.unbind();
 
-        vao2.bind();
-        glDrawArrays(GL_TRIANGLES, 0, 6);
-        vao2.unbind();
+        // vao2.bind();
+        // glDrawArrays(GL_TRIANGLES, 0, 6);
+        // vao2.unbind();
         // TODO adapter le nb de vertices en fonction de la taille qu'elle représente ?
         beez.draw(
             ctx, vao, vertices_sphere,
