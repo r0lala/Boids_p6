@@ -76,7 +76,7 @@ int main()
     Shader body("3D", "bee/body");
     Shader eyes("3D", "bee/eyes");
     Shader wings("3D", "normals");
-    Shader tree("3D", "tree/leaf"); // TODO renamme bush ???
+    Shader tree("3D", "tree/leaf"); // TODO rename bush ???
     Shader grass("3D", "grass");
     Shader ground("3D", "wall");
 

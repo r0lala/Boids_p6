@@ -39,3 +39,22 @@ float loiBeta(float alpha, float beta)
 
     return x / (x + y);
 }
+
+float loiCauchy(float alpha, float x)
+{
+    float p = rand01();
+    return x + alpha * std::tan(M_PI * (p - 0.5));
+}
+
+int loiBinomiale(int tries, float p)
+{
+    int x = 0;
+    for (int i = 0; i < tries; ++i)
+    {
+        if (rand01() < p)
+        {
+            x++;
+        }
+    }
+    return x;
+}
