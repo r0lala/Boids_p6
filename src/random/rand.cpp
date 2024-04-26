@@ -46,15 +46,31 @@ float loiCauchy(float alpha, float x)
     return x + alpha * std::tan(M_PI * (p - 0.5));
 }
 
-int loiBinomiale(int tries, float p)
+int loiBernoulli(double p)
+{
+    if (rand01() < p)
+    {
+        return 1;
+    }
+    return 0;
+}
+
+int loiBinomiale(int iteration, float p)
 {
     int x = 0;
-    for (int i = 0; i < tries; ++i)
+    for (int i = 0; i < iteration; ++i)
     {
-        if (rand01() < p)
+        if (loiBernoulli(p))
         {
             x++;
         }
     }
     return x;
+}
+
+int loiUniforme(int min, int max)
+{
+    int inter = max - min + 1;
+
+    return int(rand01() * inter);
 }
